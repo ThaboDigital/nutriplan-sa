@@ -191,14 +191,14 @@ export const ProfileView: React.FC = () => {
         </p>
       </div>
 
-      {/* Reset to Demo Data */}
+      {/* Reset / New Plan */}
       <div className="pt-2">
         <button
           onClick={resetToDemo}
           className="w-full py-3 rounded-2xl bg-white border border-[#E8EDE9] text-[#6B756C] hover:text-red-600 hover:border-red-200 text-xs font-bold flex items-center justify-center gap-1.5 transition active:scale-98"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset to Demo Data (Thabo)</span>
+          <span>Reset & Start New Plan Questionnaire</span>
         </button>
       </div>
     </div>
