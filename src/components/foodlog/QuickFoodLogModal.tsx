@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { X, Search, Camera, Plus, CheckCircle2, Flame, Dumbbell, AlertCircle } from 'lucide-react';
 import { SA_RECIPES } from '../../data/saFoodDatabase';
@@ -159,7 +159,7 @@ export const QuickFoodLogModal: React.FC = () => {
                   <div>
                     <span className="font-bold text-xs text-[#17211B] block">{f.name}</span>
                     <span className="text-[10px] text-[#6B756C]">
-                      {f.portion} � {f.calories} kcal � {f.proteinG}g protein
+                      {f.portion} ' {f.calories} kcal ' {f.proteinG}g protein
                     </span>
                   </div>
 

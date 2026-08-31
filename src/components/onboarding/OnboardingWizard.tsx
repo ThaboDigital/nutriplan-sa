@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserProfile, MainGoal, DietaryPreference, BudgetTier } from '../../types';
 import { generatePersonalizedMealPlan } from '../../services/mealPlannerService';
@@ -10,24 +10,24 @@ export const OnboardingWizard: React.FC = () => {
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState<Partial<UserProfile>>({
-    name: 'Thabo',
-    age: 34,
-    sex: 'male',
-    heightCm: 178,
-    weightKg: 89.5,
-    targetWeightKg: 82.0,
-    waistCm: 96,
+    name: '',
+    age: 28,
+    sex: 'female',
+    heightCm: 168,
+    weightKg: 70,
+    targetWeightKg: 65,
+    waistCm: 80,
     activityLevel: 'moderately_active',
     mainGoal: 'lose_weight',
-    mealsPerDay: 2,
-    preferredEatingTimes: ['12:00', '19:00'],
+    mealsPerDay: 3,
+    preferredEatingTimes: ['08:00', '13:00', '19:00'],
     dietaryPreference: 'lower_carb',
     allergies: [],
     foodsDisliked: [],
     foodsAvoided: ['Pap', 'Bread', 'Rice', 'Potatoes'],
     cookingSkill: 'intermediate',
     cookingTimeMinutes: 25,
-    householdSize: 2,
+    householdSize: 1,
     weeklyBudget: 'R750',
     trackCalories: true,
     dailyWaterTargetLiters: 2.0,
@@ -54,10 +54,11 @@ export const OnboardingWizard: React.FC = () => {
   const finishOnboarding = () => {
     const fullProfile = {
       ...formData,
-      calorieTargetKcal: 1750,
-      proteinTargetGrams: 115,
-      carbsTargetGrams: 65,
-      fatsTargetGrams: 85,
+      name: formData.name?.trim() || 'Health Champion',
+      calorieTargetKcal: 1800,
+      proteinTargetGrams: 110,
+      carbsTargetGrams: 90,
+      fatsTargetGrams: 70,
       onboardingCompleted: true,
     } as UserProfile;
 
@@ -118,7 +119,7 @@ export const OnboardingWizard: React.FC = () => {
                   type="text"
                   value={formData.name || ''}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Thabo, Lerato, David"
+                  placeholder="Enter your name"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68]"
                 />
               </div>
@@ -130,6 +131,7 @@ export const OnboardingWizard: React.FC = () => {
                     type="number"
                     value={formData.weightKg || ''}
                     onChange={e => setFormData({ ...formData, weightKg: parseFloat(e.target.value) })}
+                    placeholder="e.g. 78"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68]"
                   />
                 </div>
@@ -139,6 +141,30 @@ export const OnboardingWizard: React.FC = () => {
                     type="number"
                     value={formData.heightCm || ''}
                     onChange={e => setFormData({ ...formData, heightCm: parseInt(e.target.value) })}
+                    placeholder="e.g. 175"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-bold text-[#17211B] block mb-1">Target Weight (kg)</label>
+                  <input
+                    type="number"
+                    value={formData.targetWeightKg || ''}
+                    onChange={e => setFormData({ ...formData, targetWeightKg: parseFloat(e.target.value) })}
+                    placeholder="e.g. 70"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-[#17211B] block mb-1">Age</label>
+                  <input
+                    type="number"
+                    value={formData.age || ''}
+                    onChange={e => setFormData({ ...formData, age: parseInt(e.target.value) })}
+                    placeholder="e.g. 30"
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68]"
                   />
                 </div>
@@ -151,7 +177,7 @@ export const OnboardingWizard: React.FC = () => {
             <div className="space-y-4 animate-in fade-in duration-150">
               <div>
                 <h4 className="font-black text-lg text-[#17211B]">What is your primary focus?</h4>
-                <p className="text-xs text-[#6B756C]">We�ll adapt calories and protein to fit your lifestyle.</p>
+                <p className="text-xs text-[#6B756C]">We will adapt calories and protein to fit your lifestyle.</p>
               </div>
 
               <div className="space-y-2">
@@ -258,17 +284,17 @@ export const OnboardingWizard: React.FC = () => {
             <div className="space-y-4 animate-in fade-in duration-150">
               <div>
                 <h4 className="font-black text-lg text-[#17211B]">Weekly Grocery Budget</h4>
-                <p className="text-xs text-[#6B756C]">We�ll prioritize ingredients that keep groceries affordable.</p>
+                <p className="text-xs text-[#6B756C]">Select target budget for 1 person's weekly meals.</p>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                {(['R500', 'R750', 'R1000', 'R1500'] as BudgetTier[]).map(tier => (
+                {(['R450', 'R600', 'R750', 'R1000+'] as BudgetTier[]).map(tier => (
                   <button
                     key={tier}
                     onClick={() => setFormData({ ...formData, weeklyBudget: tier })}
-                    className={`py-3 px-4 rounded-2xl border font-bold text-xs transition ${
+                    className={`py-3.5 px-3 rounded-2xl border text-xs font-black text-center transition ${
                       formData.weeklyBudget === tier
-                        ? 'bg-[#3FAE68] text-white border-[#3FAE68]'
+                        ? 'bg-[#17211B] text-white border-[#17211B]'
                         : 'bg-white text-[#17211B] border-[#E8EDE9] hover:border-[#17211B]'
                     }`}
                   >
@@ -295,18 +321,18 @@ export const OnboardingWizard: React.FC = () => {
           <button
             onClick={handleBack}
             disabled={step === 1}
-            className="px-4 py-2.5 rounded-xl text-xs font-bold text-[#6B756C] hover:text-[#17211B] disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1"
+            className="px-4 py-2.5 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#6B756C] hover:text-[#17211B] disabled:opacity-30 disabled:hover:text-[#6B756C] flex items-center gap-1 transition"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back</span>
           </button>
 
           <button
             onClick={handleNext}
-            className="px-5 py-2.5 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] text-xs font-black flex items-center gap-1.5 shadow-sm transition active:scale-95"
+            className="px-6 py-2.5 rounded-xl bg-[#3FAE68] text-white font-bold text-xs hover:bg-[#349859] flex items-center gap-1.5 shadow-sm transition active:scale-95"
           >
             <span>{step === totalSteps ? 'Generate Plan' : 'Continue'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

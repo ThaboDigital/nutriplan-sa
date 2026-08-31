@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { PlannedMeal } from '../../types';
 import { useApp } from '../../context/AppContext';
 import { Clock, Flame, Dumbbell, Shuffle, CheckCircle2, ArrowRight } from 'lucide-react';

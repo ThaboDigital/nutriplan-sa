@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Droplets, Plus, RotateCcw, Settings2 } from 'lucide-react';
 import { formatWater } from '../../utils/formatters';

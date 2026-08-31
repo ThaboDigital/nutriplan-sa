@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { X, CheckCircle2, TrendingDown, UserCheck, ArrowRight, Award } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -16,7 +16,7 @@ export const WeeklyReviewModal: React.FC = () => {
     });
     regenerateEntireWeek();
     setIsWeeklyReviewOpen(false);
-    showToast('Next week�s customized plan is ready!', 'success');
+    showToast('Next week's customized plan is ready!', 'success');
   };
 
   return (
@@ -99,7 +99,7 @@ export const WeeklyReviewModal: React.FC = () => {
             onClick={handleBuildNextPlan}
             className="w-full py-3 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] font-black text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-98"
           >
-            <span>Build Next Week�s Plan</span>
+            <span>Build Next Week's Plan</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

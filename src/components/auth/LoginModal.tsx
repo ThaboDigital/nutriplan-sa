@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { authService, AuthUser } from '../../services/authService';
-import { X, Mail, Lock, User, Sparkles, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -62,12 +62,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
     }
   };
 
-  const handleDemoAutofill = () => {
-    setEmail('thabo@nutriplan.co.za');
-    setPassword('NutriPlan2026!');
-    setName('Thabo');
-  };
-
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
       <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-[#E8EDE9]">
@@ -97,41 +91,43 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex border-b border-[#E8EDE9] bg-[#F8F9FA] text-xs font-bold">
+        <div className="flex border-b border-[#E8EDE9] bg-[#FFFDF8]">
           <button
+            type="button"
             onClick={() => { setMode('login'); setErrorMsg(null); setSuccessMsg(null); }}
-            className={`flex-1 py-3 text-center transition ${
+            className={`flex-1 py-3 text-xs font-bold text-center border-b-2 transition ${
               mode === 'login'
-                ? 'bg-white text-[#17211B] border-b-2 border-[#3FAE68]'
-                : 'text-[#6B756C] hover:text-[#17211B]'
+                ? 'border-[#3FAE68] text-[#17211B]'
+                : 'border-transparent text-[#6B756C] hover:text-[#17211B]'
             }`}
           >
             Sign In
           </button>
           <button
+            type="button"
             onClick={() => { setMode('register'); setErrorMsg(null); setSuccessMsg(null); }}
-            className={`flex-1 py-3 text-center transition ${
+            className={`flex-1 py-3 text-xs font-bold text-center border-b-2 transition ${
               mode === 'register'
-                ? 'bg-white text-[#17211B] border-b-2 border-[#3FAE68]'
-                : 'text-[#6B756C] hover:text-[#17211B]'
+                ? 'border-[#3FAE68] text-[#17211B]'
+                : 'border-transparent text-[#6B756C] hover:text-[#17211B]'
             }`}
           >
-            Register
+            Create Account
           </button>
         </div>
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {errorMsg && (
-            <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="p-3 rounded-2xl bg-green-50 border border-green-200 text-green-800 text-xs flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-[#3FAE68]" />
+            <div className="p-3 rounded-2xl bg-green-50 border border-green-200 text-green-700 text-xs flex items-start gap-2 animate-in fade-in">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{successMsg}</span>
             </div>
           )}
@@ -140,14 +136,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
             <div>
               <label className="text-xs font-bold text-[#17211B] block mb-1">Your Name</label>
               <div className="relative">
-                <User className="w-4 h-4 text-[#6B756C] absolute left-3 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-[#6B756C] absolute left-3.5 top-3" />
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Thabo Khumalo"
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E8EDE9] text-xs text-[#17211B] outline-none focus:border-[#3FAE68]"
+                  placeholder="Enter your name"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E8EDE9] text-xs text-[#17211B] outline-none focus:border-[#3FAE68]"
                 />
               </div>
             </div>
@@ -156,14 +152,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
           <div>
             <label className="text-xs font-bold text-[#17211B] block mb-1">Email Address</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-[#6B756C] absolute left-3 top-1/2 -translate-y-1/2" />
+              <Mail className="w-4 h-4 text-[#6B756C] absolute left-3.5 top-3" />
               <input
                 type="email"
                 required
-                placeholder="thabo@example.co.za"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E8EDE9] text-xs text-[#17211B] outline-none focus:border-[#3FAE68]"
+                placeholder="name@example.com"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E8EDE9] text-xs text-[#17211B] outline-none focus:border-[#3FAE68]"
               />
             </div>
           </div>
@@ -176,35 +172,34 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
                   <button
                     type="button"
                     onClick={() => { setMode('forgot'); setErrorMsg(null); }}
-                    className="text-[10px] text-[#3FAE68] font-bold hover:underline"
+                    className="text-[11px] font-semibold text-[#3FAE68] hover:underline"
                   >
-                    Forgot?
+                    Forgot password?
                   </button>
                 )}
               </div>
               <div className="relative">
-                <Lock className="w-4 h-4 text-[#6B756C] absolute left-3 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-[#6B756C] absolute left-3.5 top-3" />
                 <input
                   type="password"
                   required
-                  placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[#E8EDE9] text-xs text-[#17211B] outline-none focus:border-[#3FAE68]"
+                  placeholder="••••••••"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E8EDE9] text-xs text-[#17211B] outline-none focus:border-[#3FAE68]"
                 />
               </div>
             </div>
           )}
 
-          {/* Submit CTA */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] disabled:opacity-50 text-xs font-black flex items-center justify-center gap-2 shadow-sm transition active:scale-98 mt-2"
+            className="w-full py-3 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] disabled:opacity-50 font-black text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-98 mt-2"
           >
             <span>
               {loading
-                ? 'Processing...'
+                ? 'Connecting to Supabase...'
                 : mode === 'login'
                 ? 'Sign In to Account'
                 : mode === 'register'
@@ -213,18 +208,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
             </span>
             <ArrowRight className="w-4 h-4" />
           </button>
-
-          {/* Quick Demo Autofill helper */}
-          <div className="pt-3 border-t border-[#F0F2F0] text-center">
-            <button
-              type="button"
-              onClick={handleDemoAutofill}
-              className="text-[11px] font-bold text-[#6B756C] hover:text-[#17211B] inline-flex items-center gap-1"
-            >
-              <CheckCircle2 className="w-3 h-3 text-[#3FAE68]" />
-              <span>Autofill demo credentials (Thabo)</span>
-            </button>
-          </div>
         </form>
       </div>
     </div>

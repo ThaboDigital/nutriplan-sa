@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Flame, Droplets, Utensils, CheckCircle2 } from 'lucide-react';
 import { formatWater } from '../../utils/formatters';
@@ -22,7 +22,7 @@ export const ProgressRings: React.FC = () => {
     <div className="bg-white rounded-3xl p-5 border border-[#E8EDE9] subtle-shadow">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-bold text-sm text-[#17211B]">Today�s Overview</h3>
+          <h3 className="font-bold text-sm text-[#17211B]">Today's Overview</h3>
           <p className="text-[11px] text-[#6B756C]">Consistent small choices compound</p>
         </div>
         <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#3FAE68]">

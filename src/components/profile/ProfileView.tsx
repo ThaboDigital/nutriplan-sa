@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { User, Shield, Sliders, Bell, RotateCcw, Droplets, Target, AlertCircle, Trash2 } from 'lucide-react';
 import { formatCalories } from '../../utils/formatters';
@@ -52,7 +52,7 @@ export const ProfileView: React.FC = () => {
           <div>
             <h2 className="text-lg font-black text-[#17211B]">{userProfile.name}</h2>
             <p className="text-xs text-[#6B756C]">
-              {userProfile.age} yrs � {userProfile.heightCm} cm � South Africa
+              {userProfile.age} yrs ' {userProfile.heightCm} cm ' South Africa
             </p>
             <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#2C854E] mt-1">
               Goal: {userProfile.mainGoal.replace('_', ' ')}

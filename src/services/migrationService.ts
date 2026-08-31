@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient';
+﻿import { supabase, isSupabaseConfigured } from './supabaseClient';
 import { UserProfile, DayPlan, ShoppingItem, HabitItem, PantryItem } from '../types';
 
 export interface MigrationSummary {
