@@ -177,7 +177,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       mealReminders: true,
       shoppingAlerts: true,
       movementReminders: true,
+      sleepReminders: true,
+      sleepTime: '22:00',
+      progressReview: true,
+      motivationAlerts: true,
       quietHoursEnabled: true,
+      quietHoursStart: '22:00',
+      quietHoursEnd: '06:30',
     };
   });
 
@@ -215,39 +221,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }, 3500);
   };
 
-  // Auth Listener
+  // Auth Listener & Cloud Sync
   useEffect(() => {
     authService.getCurrentUser().then((user) => {
       setAuthUser(user);
     });
 
-    const unsubscribe = authService.onAuthStateChange(async (user) => {
+    const sub = authService.onAuthStateChange(async (user) => {
       setAuthUser(user);
       if (user) {
         try {
-          const cloudProfile = await dataSyncService.fetchProfile(user.id);
-          if (cloudProfile) {
-            setUserProfile(cloudProfile);
+          const cloudData = await dataSyncService.loadAllUserData(user.id);
+          if (cloudData.profile) {
+            setUserProfile(cloudData.profile);
           }
-          const cloudMeals = await dataSyncService.fetchMealPlan(user.id);
-          if (cloudMeals && cloudMeals.length > 0) {
-            setWeeklyPlan(cloudMeals);
+          if (cloudData.weeklyPlan && cloudData.weeklyPlan.length > 0) {
+            setWeeklyPlan(cloudData.weeklyPlan);
           }
-          const cloudWater = await dataSyncService.fetchTodayWater(user.id);
-          if (cloudWater !== null) {
-            setTodayWaterMl(cloudWater);
+          if (cloudData.todayWaterMl !== null) {
+            setTodayWaterMl(cloudData.todayWaterMl);
           }
-          const cloudHabits = await dataSyncService.fetchHabits(user.id);
-          if (cloudHabits && cloudHabits.length > 0) {
-            setHabits(cloudHabits);
+          if (cloudData.habits && cloudData.habits.length > 0) {
+            setHabits(cloudData.habits);
           }
-          const cloudPantry = await dataSyncService.fetchPantry(user.id);
-          if (cloudPantry) {
-            setPantryItems(cloudPantry);
+          if (cloudData.pantryItems) {
+            setPantryItems(cloudData.pantryItems);
           }
-          const cloudShopping = await dataSyncService.fetchShoppingList(user.id);
-          if (cloudShopping && cloudShopping.length > 0) {
-            setShoppingList(cloudShopping);
+          if (cloudData.shoppingList && cloudData.shoppingList.length > 0) {
+            setShoppingList(cloudData.shoppingList);
+          }
+          if (cloudData.notificationPreferences) {
+            setNotificationPreferences(cloudData.notificationPreferences);
           }
         } catch (e) {
           console.warn('Initial cloud sync notice:', e);
@@ -255,10 +259,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (sub && typeof sub.unsubscribe === 'function') {
+        sub.unsubscribe();
+      }
+    };
   }, []);
 
-  // Save to LocalStorage
+  // Save to LocalStorage & Cloud
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(userProfile));
     if (authUser?.id) {
@@ -269,37 +277,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.PLAN, JSON.stringify(weeklyPlan));
     if (authUser?.id) {
-      dataSyncService.syncMealPlan(authUser.id, weeklyPlan);
+      dataSyncService.syncEntireMealPlan(authUser.id, weeklyPlan);
     }
   }, [weeklyPlan, authUser]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.WATER, JSON.stringify(todayWaterMl));
     if (authUser?.id) {
-      dataSyncService.syncWaterLog(authUser.id, todayWaterMl);
+      dataSyncService.syncWater(authUser.id, todayWaterMl, (userProfile.dailyWaterTargetLiters || 2.0) * 1000);
     }
-  }, [todayWaterMl, authUser]);
+  }, [todayWaterMl, authUser, userProfile.dailyWaterTargetLiters]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.HABITS, JSON.stringify(habits));
-    if (authUser?.id) {
-      dataSyncService.syncHabits(authUser.id, habits);
-    }
-  }, [habits, authUser]);
+  }, [habits]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.PANTRY, JSON.stringify(pantryItems));
-    if (authUser?.id) {
-      dataSyncService.syncPantry(authUser.id, pantryItems);
-    }
-  }, [pantryItems, authUser]);
+  }, [pantryItems]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.SHOPPING, JSON.stringify(shoppingList));
-    if (authUser?.id) {
-      dataSyncService.syncShoppingList(authUser.id, shoppingList);
-    }
-  }, [shoppingList, authUser]);
+  }, [shoppingList]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.NOTIFS, JSON.stringify(notifications));
@@ -307,10 +306,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.NOTIF_PREFS, JSON.stringify(notificationPreferences));
-    if (authUser?.id) {
-      dataSyncService.syncNotificationPreferences(authUser.id, notificationPreferences);
-    }
-  }, [notificationPreferences, authUser]);
+  }, [notificationPreferences]);
 
   // Actions
   const updateUserProfile = (updates: Partial<UserProfile>) => {
@@ -343,17 +339,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const toggleShoppingItem = (id: string) => {
-    setShoppingList((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, isChecked: !item.isChecked } : item))
-    );
+    setShoppingList((prev) => {
+      const updated = prev.map((item) => (item.id === id ? { ...item, isChecked: !item.isChecked } : item));
+      const target = updated.find((i) => i.id === id);
+      if (target && authUser?.id) {
+        dataSyncService.syncShoppingItem(authUser.id, target, 'upsert');
+      }
+      return updated;
+    });
   };
 
   const toggleAlreadyHaveItem = (id: string) => {
-    setShoppingList((prev) =>
-      prev.map((item) =>
+    setShoppingList((prev) => {
+      const updated = prev.map((item) =>
         item.id === id ? { ...item, isAlreadyHave: !item.isAlreadyHave } : item
-      )
-    );
+      );
+      const target = updated.find((i) => i.id === id);
+      if (target && authUser?.id) {
+        dataSyncService.syncShoppingItem(authUser.id, target, 'upsert');
+      }
+      return updated;
+    });
   };
 
   const addCustomShoppingItem = (
@@ -371,14 +377,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isChecked: false,
       isAlreadyHave: false,
       estimatedCostZAR: 25,
-      day: 'General',
+      associatedRecipeTitles: [],
     };
     setShoppingList((prev) => [newItem, ...prev]);
+    if (authUser?.id) {
+      dataSyncService.syncShoppingItem(authUser.id, newItem, 'upsert');
+    }
     showToast(`Added ${name} to shopping list`);
   };
 
   const removeShoppingItem = (id: string) => {
+    const target = shoppingList.find((i) => i.id === id);
     setShoppingList((prev) => prev.filter((item) => item.id !== id));
+    if (target && authUser?.id) {
+      dataSyncService.syncShoppingItem(authUser.id, target, 'delete');
+    }
   };
 
   const toggleHabit = (id: string) => {
@@ -389,6 +402,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           const nextStreak = nextState ? habit.currentStreak + 1 : Math.max(0, habit.currentStreak - 1);
           if (nextState) {
             showToast(`Completed: ${habit.title}! Streak: ${nextStreak} days`, 'success');
+          }
+          if (authUser?.id) {
+            dataSyncService.syncHabitToggle(authUser.id, id, nextState);
           }
           return {
             ...habit,
@@ -409,11 +425,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isCommon: false,
     };
     setPantryItems((prev) => [newItem, ...prev]);
+    if (authUser?.id) {
+      dataSyncService.syncPantryItem(authUser.id, newItem, 'add');
+    }
     showToast(`Added ${name} to your pantry`);
   };
 
   const removePantryItem = (id: string) => {
+    const target = pantryItems.find((p) => p.id === id);
     setPantryItems((prev) => prev.filter((p) => p.id !== id));
+    if (target && authUser?.id) {
+      dataSyncService.syncPantryItem(authUser.id, target, 'remove');
+    }
   };
 
   const markNotificationRead = (id: string) => {
@@ -442,14 +465,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const markMealEaten = (mealId: string) => {
-    setWeeklyPlan((prev) =>
-      prev.map((day) => ({
+    setWeeklyPlan((prev) => {
+      const updated = prev.map((day) => ({
         ...day,
-        meals: day.meals.map((meal) =>
-          meal.id === mealId ? { ...meal, isEaten: !meal.isEaten } : meal
-        ),
-      }))
-    );
+        meals: day.meals.map((meal) => {
+          if (meal.id === mealId) {
+            const nextEaten = !meal.isEaten;
+            if (authUser?.id) {
+              dataSyncService.syncMealEaten(authUser.id, mealId, nextEaten);
+            }
+            return { ...meal, isEaten: nextEaten, eatenAt: nextEaten ? new Date().toISOString() : undefined };
+          }
+          return meal;
+        }),
+      }));
+      return updated;
+    });
     showToast('Meal status updated');
   };
 

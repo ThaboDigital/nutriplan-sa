@@ -1,5 +1,4 @@
-﻿import { UserProfile, DayPlan, HabitItem, AppNotification, Milestone, PantryItem } from '../types';
-import { SA_RECIPES } from './saFoodDatabase';
+﻿import { UserProfile, HabitItem, AppNotification, Milestone, PantryItem } from '../types';
 
 export const DEFAULT_USER_PROFILE: UserProfile = {
   id: 'guest_user',
@@ -100,7 +99,7 @@ export const DEFAULT_NOTIFICATIONS: AppNotification[] = [
     id: 'notif_welcome',
     title: 'Welcome to NutriPlan SA',
     message: 'Take the 1-minute Health Questionnaire to set your real age, weight, and meal goals.',
-    category: 'General',
+    category: 'Meals',
     timestamp: 'Just now',
     isRead: false,
   }
@@ -111,28 +110,28 @@ export const INITIAL_MILESTONES: Milestone[] = [
     id: 'mile_1',
     title: 'First Day Completed',
     description: 'Logged your meals and met daily nutrition targets',
-    isUnlocked: false,
-    category: 'consistency',
+    icon: 'Award',
+    isAchieved: false,
   },
   {
     id: 'mile_2',
     title: 'Hydration Hero',
     description: 'Hit 2.0L water goal for 3 consecutive days',
-    isUnlocked: false,
-    category: 'water',
+    icon: 'Droplets',
+    isAchieved: false,
   },
   {
     id: 'mile_3',
     title: 'Budget Master',
     description: 'Completed a week of wholesome cooking within grocery budget',
-    isUnlocked: false,
-    category: 'budget',
+    icon: 'ShoppingBag',
+    isAchieved: false,
   },
   {
     id: 'mile_4',
     title: '1 kg Closer to Target',
     description: 'Healthy, steady progress towards your personal weight goal',
-    isUnlocked: false,
-    category: 'weight',
+    icon: 'TrendingDown',
+    isAchieved: false,
   },
 ];
