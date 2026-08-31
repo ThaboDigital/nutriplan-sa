@@ -12,6 +12,8 @@ export const Header: React.FC = () => {
     setIsPantryOpen,
     setActiveTab,
     shoppingList,
+    authUser,
+    openAuthModal
   } = useApp();
 
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
@@ -89,6 +91,22 @@ export const Header: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Mobile Guest Mode Status Pill */}
+      {!authUser && (
+        <div className="max-w-md mx-auto mt-2 pt-2 border-t border-[#E8EDE9]/60 flex items-center justify-between text-[11px]">
+          <span className="font-bold text-[#2C854E] flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#3FAE68] animate-pulse" />
+            Guest Mode (Local Storage)
+          </span>
+          <button
+            onClick={() => openAuthModal('register')}
+            className="font-black text-[#17211B] bg-white border border-[#3FAE68]/30 px-2.5 py-0.5 rounded-full shadow-2xs hover:bg-[#EAF7EF] transition"
+          >
+            Register to backup & sync →
+          </button>
+        </div>
+      )}
 
       {/* Notifications Drawer Modal */}
       {showNotificationsModal && (
