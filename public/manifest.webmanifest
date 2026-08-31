@@ -1,0 +1,19 @@
+{
+  "short_name": "NutriPlan",
+  "name": "NutriPlan SA — Healthy Eating & Meal Planning",
+  "description": "Mobile-first healthy eating, habit tracking, and meal planning tailored for South Africa",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFFDF8",
+  "theme_color": "#17211B",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["health", "food", "lifestyle"]
+}
