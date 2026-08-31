@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { authService, AuthUser } from '../../services/authService';
 import { X, Mail, Lock, User, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 
@@ -6,10 +6,15 @@ interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (user: AuthUser) => void;
+  initialMode?: 'login' | 'register' | 'forgot';
 }
 
-export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSuccess }) => {
-  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
+export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSuccess, initialMode = 'login' }) => {
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>(initialMode);
+
+  useEffect(() => {
+    if (initialMode) setMode(initialMode);
+  }, [initialMode, isOpen]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');

@@ -12,7 +12,9 @@ export const ShoppingListView: React.FC = () => {
     addCustomShoppingItem,
     removeShoppingItem,
     userProfile,
-    showToast
+    showToast,
+    authUser,
+    openAuthModal
   } = useApp();
 
   const [newItemName, setNewItemName] = useState('');
@@ -89,6 +91,24 @@ export const ShoppingListView: React.FC = () => {
             <Share2 className="w-4 h-4" />
             <span>Copy / Share List to WhatsApp</span>
           </button>
+
+          {/* Soft Registration Prompt for Guests */}
+          {!authUser && (
+            <div className="mt-4 p-4 rounded-2xl bg-[#EAF7EF] border border-[#3FAE68]/20 space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-black text-[#2C854E]">
+                <span>Take Your Shopping List Anywhere</span>
+              </div>
+              <p className="text-[11px] text-[#2C854E]/80 leading-relaxed">
+                Save your ingredient list to access it on your mobile device while shopping.
+              </p>
+              <button
+                onClick={() => openAuthModal('register')}
+                className="w-full py-2 rounded-xl bg-[#3FAE68] text-white hover:bg-[#349859] font-bold text-xs shadow-xs transition active:scale-95 text-center mt-1"
+              >
+                Create Account to Sync
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Quick Add Custom Item Form */}

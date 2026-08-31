@@ -1,4 +1,4 @@
-﻿import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 import {
   UserProfile,
   DayPlan,
@@ -427,6 +427,40 @@ export const dataSyncService = {
       await supabase.from('planned_meals').upsert(mealsToUpsert);
     } catch (e) {
       console.warn('Failed to sync entire meal plan to cloud:', e);
+    }
+  },
+
+  async migrateLocalDataToCloud(userId: string, data: {
+    profile: UserProfile;
+    weeklyPlan: DayPlan[];
+    todayWaterMl: number;
+    habits: HabitItem[];
+    pantryItems: PantryItem[];
+    shoppingList: ShoppingItem[];
+    notificationPreferences: NotificationPreferences;
+  }): Promise<void> {
+    if (!isSupabaseConfigured || !userId) return;
+    try {
+      if (data.profile) await this.syncProfile(userId, data.profile);
+      if (data.weeklyPlan && data.weeklyPlan.length > 0) await this.syncEntireMealPlan(userId, data.weeklyPlan);
+      if (data.todayWaterMl !== undefined) await this.syncWater(userId, data.todayWaterMl, (data.profile?.dailyWaterTargetLiters || 2.0) * 1000);
+      if (data.habits) {
+        for (const h of data.habits) {
+          if (h.isCompletedToday) await this.syncHabitToggle(userId, h.id, true);
+        }
+      }
+      if (data.pantryItems) {
+        for (const p of data.pantryItems) {
+          await this.syncPantryItem(userId, p, 'add');
+        }
+      }
+      if (data.shoppingList) {
+        for (const s of data.shoppingList) {
+          await this.syncShoppingItem(userId, s, 'upsert');
+        }
+      }
+    } catch (e) {
+      console.warn('Failed migrating local data to cloud:', e);
     }
   }
 };

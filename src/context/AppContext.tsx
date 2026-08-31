@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import {
   UserProfile,
   DayPlan,
@@ -77,6 +77,11 @@ interface AppContextType {
   setSwapModalTargetMeal: (meal: PlannedMeal | null) => void;
   showOnboardingWizard: boolean;
   setShowOnboardingWizard: (show: boolean) => void;
+  isLoginOpen: boolean;
+  setIsLoginOpen: (open: boolean) => void;
+  loginInitialMode: 'login' | 'register' | 'forgot';
+  setLoginInitialMode: (mode: 'login' | 'register' | 'forgot') => void;
+  openAuthModal: (mode?: 'login' | 'register' | 'forgot') => void;
 
   // Actions
   swapMeal: (targetMealId: string, newRecipe: Recipe) => void;
@@ -209,6 +214,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [cookingRecipe, setCookingRecipe] = useState<Recipe | null>(null);
   const [swapModalTargetMeal, setSwapModalTargetMeal] = useState<PlannedMeal | null>(null);
   const [showOnboardingWizard, setShowOnboardingWizard] = useState<boolean>(() => !userProfile.onboardingCompleted);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [loginInitialMode, setLoginInitialMode] = useState<'login' | 'register' | 'forgot'>('login');
+
+  const openAuthModal = (mode: 'login' | 'register' | 'forgot' = 'login') => {
+    setLoginInitialMode(mode);
+    setIsLoginOpen(true);
+  };
 
   // Toasts
   const [toasts, setToasts] = useState<ToastState[]>([]);
@@ -234,6 +246,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           const cloudData = await dataSyncService.loadAllUserData(user.id);
           if (cloudData.profile) {
             setUserProfile(cloudData.profile);
+          } else {
+            // First time user registered after building local plan -> auto-migrate to cloud!
+            await dataSyncService.migrateLocalDataToCloud(user.id, {
+              profile: userProfile,
+              weeklyPlan,
+              todayWaterMl,
+              habits,
+              pantryItems,
+              shoppingList,
+              notificationPreferences
+            });
           }
           if (cloudData.weeklyPlan && cloudData.weeklyPlan.length > 0) {
             setWeeklyPlan(cloudData.weeklyPlan);
@@ -571,6 +594,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setSwapModalTargetMeal,
         showOnboardingWizard,
         setShowOnboardingWizard,
+        isLoginOpen,
+        setIsLoginOpen,
+        loginInitialMode,
+        setLoginInitialMode,
+        openAuthModal,
         swapMeal,
         markMealEaten,
         regenerateMeal,

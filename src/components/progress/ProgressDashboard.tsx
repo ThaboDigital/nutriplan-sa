@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Trophy, TrendingDown, Droplets, Calendar, Award, AlertCircle } from 'lucide-react';
+import { Trophy, TrendingDown, Droplets, Calendar, Award, Lock, ArrowRight } from 'lucide-react';
 import { formatWater } from '../../utils/formatters';
 
 export const ProgressDashboard: React.FC = () => {
-  const { userProfile, milestones, setIsWeeklyReviewOpen } = useApp();
+  const { userProfile, milestones, setIsWeeklyReviewOpen, authUser, openAuthModal } = useApp();
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
 
-  // Realistic mock data points for Thabo (started 92kg, target 82kg, currently 89.5kg)
+  // Realistic mock data points
   const weightData7d = [
     { day: 'Mon', weight: 90.1, date: '25 Aug' },
     { day: 'Tue', weight: 90.0, date: '26 Aug' },
@@ -37,7 +37,7 @@ export const ProgressDashboard: React.FC = () => {
       </div>
 
       {/* Primary Metric: Weight & Waist Trend */}
-      <div className="bg-white rounded-3xl p-5 border border-[#E8EDE9] subtle-shadow">
+      <div className="bg-white rounded-3xl p-5 border border-[#E8EDE9] subtle-shadow relative overflow-hidden">
         <div className="flex items-center justify-between mb-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B756C]">Current Weight</span>
@@ -50,7 +50,7 @@ export const ProgressDashboard: React.FC = () => {
               </span>
             </div>
             <p className="text-[11px] text-[#6B756C] mt-0.5">
-              Target: <strong className="text-[#17211B]">{userProfile.targetWeightKg} kg</strong> (7.5 kg to go)
+              Target: <strong className="text-[#17211B]">{userProfile.targetWeightKg} kg</strong>
             </p>
           </div>
 
@@ -73,10 +73,9 @@ export const ProgressDashboard: React.FC = () => {
         </div>
 
         {/* Visual Trend Chart (SVG Sparkline) */}
-        <div className="py-2">
+        <div className="py-2 relative">
           <div className="h-28 w-full flex items-end justify-between gap-2 pt-4 px-1">
             {weightData7d.map((pt, idx) => {
-              // Scale between 89.0 and 90.5
               const heightPct = Math.max(15, Math.min(95, ((pt.weight - 89.0) / 1.5) * 100));
               return (
                 <div key={idx} className="flex-1 flex flex-col items-center gap-1 group">
@@ -91,6 +90,26 @@ export const ProgressDashboard: React.FC = () => {
               );
             })}
           </div>
+
+          {/* Soft Registration Gate for Guest Users */}
+          {!authUser && (
+            <div className="absolute inset-0 -m-2 bg-white/70 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-4 text-center z-10 animate-in fade-in">
+              <div className="w-8 h-8 rounded-full bg-[#17211B] text-[#3FAE68] flex items-center justify-center mb-1.5 shadow-xs">
+                <Lock className="w-4 h-4" />
+              </div>
+              <h4 className="font-black text-xs text-[#17211B]">Track Your Long-Term Transformation</h4>
+              <p className="text-[11px] text-[#6B756C] max-w-xs mt-1 leading-snug">
+                You are currently logging daily health metrics in Guest Mode. Create a free account to save your 7-day weight curve, macro averages, and historical trends.
+              </p>
+              <button
+                onClick={() => openAuthModal('register')}
+                className="mt-3 px-4 py-2 rounded-xl bg-[#3FAE68] text-white hover:bg-[#349859] font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition"
+              >
+                <span>Create Free Account</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Non-scale victories summary */}

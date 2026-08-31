@@ -176,14 +176,16 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           </div>
         ) : (
           <div className="p-3 rounded-2xl bg-[#EAF7EF]/60 border border-[#3FAE68]/20 space-y-2 text-center">
-            <span className="text-xs font-bold text-[#17211B] block">Demo Guest Mode</span>
-            <p className="text-[10px] text-[#6B756C]">Sign in to sync your meal plan across mobile & desktop.</p>
+            <span className="text-[11px] font-extrabold text-[#2C854E] px-2.5 py-1 rounded-full bg-white border border-[#3FAE68]/30 inline-block shadow-2xs">
+              Guest Mode — Register to backup & sync
+            </span>
+            <p className="text-[10px] text-[#6B756C]">Save your personalized meal plan to the cloud.</p>
             <button
               onClick={onOpenLogin}
               className="w-full py-2 rounded-xl bg-[#3FAE68] text-white font-bold text-xs hover:bg-[#349859] transition flex items-center justify-center gap-1.5 shadow-sm"
             >
               <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In / Register</span>
+              <span>Create Account / Sign In</span>
             </button>
           </div>
         )}

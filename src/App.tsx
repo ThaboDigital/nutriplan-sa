@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
@@ -28,10 +28,9 @@ import { OnboardingWizard } from './components/onboarding/OnboardingWizard';
 import { Smartphone, Monitor } from 'lucide-react';
 
 const AppContent: React.FC = () => {
-  const { activeTab, setIsFoodLogOpen, showToast } = useApp();
+  const { activeTab, setIsFoodLogOpen, showToast, isLoginOpen, setIsLoginOpen, loginInitialMode, openAuthModal } = useApp();
   const [devicePreviewMode, setDevicePreviewMode] = useState<'desktop' | 'mobile_frame'>('desktop');
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [migrationSummary, setMigrationSummary] = useState<MigrationSummary | null>(null);
   const [isMigrationOpen, setIsMigrationOpen] = useState(false);
 
@@ -187,6 +186,7 @@ const AppContent: React.FC = () => {
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         onSuccess={handleAuthSuccess}
+        initialMode={loginInitialMode}
       />
 
       {migrationSummary && authUser && (

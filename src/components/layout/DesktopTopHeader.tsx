@@ -43,20 +43,22 @@ export const DesktopTopHeader: React.FC<DesktopTopHeaderProps> = ({
 
       {/* Right Actions */}
       <div className="flex items-center gap-3">
-        {/* Cloud Status */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F8F9FA] border border-[#E8EDE9] text-[11px] font-bold text-[#6B756C]">
-          {isSupabaseConfigured ? (
-            <>
-              <Cloud className="w-3.5 h-3.5 text-[#3FAE68]" />
-              <span className="text-[#17211B]">Cloud Connected</span>
-            </>
-          ) : (
-            <>
-              <CloudOff className="w-3.5 h-3.5 text-[#F2A65A]" />
-              <span>Offline / Local Cache</span>
-            </>
-          )}
-        </div>
+        {/* Cloud / Guest Status */}
+        {authUser ? (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EAF7EF] border border-[#3FAE68]/30 text-[11px] font-bold text-[#2C854E]">
+            <Cloud className="w-3.5 h-3.5 text-[#3FAE68]" />
+            <span>Cloud Synced</span>
+          </div>
+        ) : (
+          <button
+            onClick={onOpenLogin}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EAF7EF] border border-[#3FAE68]/40 text-[11px] font-extrabold text-[#2C854E] hover:bg-[#d6f0df] transition shadow-2xs"
+            title="Register to backup and sync"
+          >
+            <CloudOff className="w-3.5 h-3.5 text-[#3FAE68]" />
+            <span>Guest Mode — Register to backup & sync</span>
+          </button>
+        )}
 
         {/* Quick Food Log button */}
         <button
