@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProgressRings } from './ProgressRings';
 import { WaterWidget } from './WaterWidget';
@@ -40,12 +40,51 @@ export const HomeDashboard: React.FC = () => {
             </p>
           </div>
 
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowOnboardingWizard(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#17211B] text-white text-xs font-bold shadow-xs active:scale-95 transition hover:bg-black"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#3FAE68]" />
+              <span>Personalize My Plan</span>
+            </button>
+
+            <button
+              onClick={() => setIsCoachOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-xs active:scale-95 transition hover:bg-[#d5eedf]"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#3FAE68]" />
+              <span>AI Coach</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Welcome & Health Questionnaire Hero Card */}
+      <div className="bg-gradient-to-r from-[#17211B] via-[#1E2E25] to-[#25392D] rounded-3xl p-5 sm:p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl border border-[#3FAE68]/30 relative overflow-hidden">
+        <div className="space-y-1.5 z-10">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#3FAE68] text-white text-[10px] font-black uppercase tracking-wider">
+              Health Questionnaire
+            </span>
+            <span className="text-xs text-white/70">Customized for South African Foods</span>
+          </div>
+          <h2 className="text-lg sm:text-xl font-black text-white">
+            Set Your Age, Weight & Goal Preferences
+          </h2>
+          <p className="text-xs sm:text-sm text-white/80 max-w-xl leading-relaxed">
+            Take our 1-minute questionnaire to set your personal weight targets, meal timings, affordable grocery budget (in ZAR), and smart starch swaps.
+          </p>
+        </div>
+
+        <div className="z-10 w-full md:w-auto shrink-0 flex items-center gap-2">
           <button
-            onClick={() => setIsCoachOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-xs active:scale-95 transition hover:bg-[#d5eedf]"
+            onClick={() => setShowOnboardingWizard(true)}
+            className="w-full md:w-auto px-6 py-3 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition active:scale-95"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#3FAE68]" />
-            <span>AI Coach</span>
+            <Sparkles className="w-4 h-4" />
+            <span>Start Questionnaire</span>
+            <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>

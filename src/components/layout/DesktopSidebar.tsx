@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Home,
@@ -10,7 +10,8 @@ import {
   Sparkles,
   User,
   LogOut,
-  LogIn
+  LogIn,
+  ClipboardList
 } from 'lucide-react';
 
 interface DesktopSidebarProps {
@@ -29,6 +30,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
     setActiveTab,
     setIsCoachOpen,
     setIsPantryOpen,
+    setShowOnboardingWizard,
     shoppingList,
     userProfile
   } = useApp();
@@ -92,6 +94,20 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           <span className="text-[10px] font-extrabold text-[#6B756C] uppercase tracking-wider px-3 block mb-2">
             Quick Tools
           </span>
+
+          {/* Health Questionnaire */}
+          <button
+            onClick={() => setShowOnboardingWizard(true)}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-[#17211B] text-white hover:bg-black font-bold text-xs transition active:scale-98 shadow-xs"
+          >
+            <div className="flex items-center gap-2.5">
+              <ClipboardList className="w-4 h-4 text-[#3FAE68]" />
+              <span>Personalize Plan</span>
+            </div>
+            <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md bg-[#3FAE68] text-white">
+              Quiz
+            </span>
+          </button>
 
           {/* AI Coach */}
           <button
