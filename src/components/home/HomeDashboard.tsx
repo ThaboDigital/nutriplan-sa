@@ -60,34 +60,36 @@ export const HomeDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Welcome & Health Questionnaire Hero Card */}
-      <div className="bg-gradient-to-r from-[#17211B] via-[#1E2E25] to-[#25392D] rounded-3xl p-5 sm:p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl border border-[#3FAE68]/30 relative overflow-hidden">
-        <div className="space-y-1.5 z-10">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-[#3FAE68] text-white text-[10px] font-black uppercase tracking-wider">
-              Health Questionnaire
-            </span>
-            <span className="text-xs text-white/70">Customized for South African Foods</span>
+      {/* Welcome & Health Questionnaire Hero Card (Only shown for new visitors who have not completed onboarding yet) */}
+      {!userProfile.onboardingCompleted && (
+        <div className="bg-gradient-to-r from-[#17211B] via-[#1E2E25] to-[#25392D] rounded-3xl p-5 sm:p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl border border-[#3FAE68]/30 relative overflow-hidden animate-in fade-in">
+          <div className="space-y-1.5 z-10">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#3FAE68] text-white text-[10px] font-black uppercase tracking-wider">
+                Health Questionnaire
+              </span>
+              <span className="text-xs text-white/70">Customized for South African Foods</span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-black text-white">
+              Set Your Age, Weight & Goal Preferences
+            </h2>
+            <p className="text-xs sm:text-sm text-white/80 max-w-xl leading-relaxed">
+              Take our 1-minute questionnaire to set your personal weight targets, meal timings, affordable grocery budget (in ZAR), and smart starch swaps.
+            </p>
           </div>
-          <h2 className="text-lg sm:text-xl font-black text-white">
-            Set Your Age, Weight & Goal Preferences
-          </h2>
-          <p className="text-xs sm:text-sm text-white/80 max-w-xl leading-relaxed">
-            Take our 1-minute questionnaire to set your personal weight targets, meal timings, affordable grocery budget (in ZAR), and smart starch swaps.
-          </p>
-        </div>
 
-        <div className="z-10 w-full md:w-auto shrink-0 flex items-center gap-2">
-          <button
-            onClick={() => setShowOnboardingWizard(true)}
-            className="w-full md:w-auto px-6 py-3 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition active:scale-95"
-          >
-            <ClipboardList className="w-4 h-4" />
-            <span>Start Questionnaire</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="z-10 w-full md:w-auto shrink-0 flex items-center gap-2">
+            <button
+              onClick={() => setShowOnboardingWizard(true)}
+              className="w-full md:w-auto px-6 py-3 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition active:scale-95"
+            >
+              <ClipboardList className="w-4 h-4" />
+              <span>Start Questionnaire</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Responsive Grid: Mobile 1 column, Desktop 3 columns */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
