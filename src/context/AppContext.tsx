@@ -91,6 +91,10 @@ interface AppContextType {
   regenerateSingleDay: (dayOfWeek: string) => void;
   resetToDemo: () => void;
   
+  // PWA Install Prompt
+  isInstallable: boolean;
+  promptInstallApp: () => Promise<void>;
+
   // Toast notifications
   toasts: ToastState[];
   showToast: (message: string, type?: 'success' | 'info' | 'warning') => void;
@@ -216,6 +220,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [showOnboardingWizard, setShowOnboardingWizard] = useState<boolean>(() => !userProfile.onboardingCompleted);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [loginInitialMode, setLoginInitialMode] = useState<'login' | 'register' | 'forgot'>('login');
+
+  // PWA Install Prompt Handling
+  const [isInstallable, setIsInstallable] = useState(false);
+  const deferredPromptRef = useRef<any>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      deferredPromptRef.current = e;
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    window.addEventListener('appinstalled', () => {
+      setIsInstallable(false);
+      deferredPromptRef.current = null;
+      showToast('NutriPlan SA installed on your device!', 'success');
+    });
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const promptInstallApp = async () => {
+    if (deferredPromptRef.current) {
+      deferredPromptRef.current.prompt();
+      const { outcome } = await deferredPromptRef.current.userChoice;
+      if (outcome === 'accepted') {
+        setIsInstallable(false);
+      }
+      deferredPromptRef.current = null;
+    } else {
+      showToast('To install: tap Share (iOS) or Menu (Android) and choose "Add to Home Screen".', 'info');
+    }
+  };
 
   const openAuthModal = (mode: 'login' | 'register' | 'forgot' = 'login') => {
     setLoginInitialMode(mode);
@@ -605,6 +646,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         regenerateEntireWeek,
         regenerateSingleDay,
         resetToDemo,
+        isInstallable,
+        promptInstallApp,
         toasts,
         showToast,
       }}

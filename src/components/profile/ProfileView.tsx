@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { User, Shield, Sliders, Bell, RotateCcw, Droplets, Target, AlertCircle, Trash2 } from 'lucide-react';
+import { User, Shield, Sliders, Bell, RotateCcw, Droplets, Target, AlertCircle, Trash2, Smartphone, Download } from 'lucide-react';
 import { formatCalories } from '../../utils/formatters';
 
 export const ProfileView: React.FC = () => {
@@ -11,7 +11,9 @@ export const ProfileView: React.FC = () => {
     setShowOnboardingWizard,
     notificationPreferences,
     updateNotificationPreferences,
-    showToast
+    showToast,
+    promptInstallApp,
+    isInstallable
   } = useApp();
 
   const [isEditingWeight, setIsEditingWeight] = useState(false);
@@ -178,6 +180,27 @@ export const ProfileView: React.FC = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* PWA Mobile App Installation Card */}
+      <div className="bg-[#EAF7EF]/70 rounded-3xl p-4 border border-[#3FAE68]/20 flex items-center justify-between gap-3 shadow-2xs">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-2xl bg-[#3FAE68] text-white flex items-center justify-center shrink-0 shadow-xs">
+            <Smartphone className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <h4 className="font-extrabold text-xs text-[#17211B]">Install NutriPlan App</h4>
+            <p className="text-[11px] text-[#2C854E]">Fast offline access & home screen widget</p>
+          </div>
+        </div>
+
+        <button
+          onClick={promptInstallApp}
+          className="px-3.5 py-2 rounded-xl bg-[#17211B] text-white hover:bg-black text-xs font-bold shrink-0 flex items-center gap-1.5 transition active:scale-95 shadow-sm"
+        >
+          <Download className="w-3.5 h-3.5 text-[#3FAE68]" />
+          <span>Install</span>
+        </button>
       </div>
 
       {/* Safety & Medical Disclaimer */}

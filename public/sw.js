@@ -1,9 +1,14 @@
-﻿const CACHE_NAME = 'nutriplan-sa-v3';
+const CACHE_NAME = 'nutriplan-sa-v4';
 const STATIC_ASSETS = [
   '/',
+  '/index.html',
   '/favicon.svg',
   '/logo.png',
-  '/manifest.webmanifest'
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/icon-maskable.png',
+  '/manifest.webmanifest',
+  '/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
