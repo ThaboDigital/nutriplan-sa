@@ -19,8 +19,8 @@ export interface UserProfile {
   waistCm?: number;
   activityLevel: ActivityLevel;
   mainGoal: MainGoal;
-  mealsPerDay: 2 | 3 | 4;
-  preferredEatingTimes: string[]; // e.g. ["12:00", "19:00"]
+  mealsPerDay: 1 | 2 | 3 | 4;
+  preferredEatingTimes: string[]; // e.g. ["18:00"] or ["12:00", "19:00"]
   dietaryPreference: DietaryPreference;
   allergies: string[];
   foodsDisliked: string[];

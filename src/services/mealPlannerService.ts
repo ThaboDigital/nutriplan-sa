@@ -26,11 +26,13 @@ export function generatePersonalizedMealPlan(profile: UserProfile): DayPlan[] {
     candidateRecipes = SA_RECIPES;
   }
 
-  const mealTimes = profile.preferredEatingTimes.length > 0
+  const mealTimes = profile.preferredEatingTimes && profile.preferredEatingTimes.length > 0
     ? profile.preferredEatingTimes
-    : profile.mealsPerDay === 2
-      ? ['12:00', '19:00']
-      : ['08:00', '13:00', '19:00'];
+    : profile.mealsPerDay === 1
+      ? ['18:00']
+      : profile.mealsPerDay === 2
+        ? ['12:00', '19:00']
+        : ['08:00', '13:00', '19:00'];
 
   const now = new Date();
 
@@ -42,13 +44,22 @@ export function generatePersonalizedMealPlan(profile: UserProfile): DayPlan[] {
     const plannedMeals: PlannedMeal[] = [];
 
     for (let mIdx = 0; mIdx < profile.mealsPerDay; mIdx++) {
-      const time = mealTimes[mIdx] || (mIdx === 0 ? '12:00' : '19:00');
+      const time = mealTimes[mIdx] || (profile.mealsPerDay === 1 ? '18:00' : mIdx === 0 ? '12:00' : '19:00');
       const recipeIndex = (dIdx * 2 + mIdx) % candidateRecipes.length;
       const rec = candidateRecipes[recipeIndex];
 
-      let category: PlannedMeal['category'] = 'lunch';
-      if (mIdx === 0 && profile.mealsPerDay >= 3) category = 'breakfast';
-      else if (mIdx === profile.mealsPerDay - 1) category = 'dinner';
+      let category: PlannedMeal['category'] = 'dinner';
+      if (profile.mealsPerDay === 1) {
+        category = 'dinner';
+      } else if (mIdx === 0 && profile.mealsPerDay >= 3) {
+        category = 'breakfast';
+      } else if (mIdx === 0 && profile.mealsPerDay === 2) {
+        category = 'lunch';
+      } else if (mIdx === profile.mealsPerDay - 1) {
+        category = 'dinner';
+      } else {
+        category = 'lunch';
+      }
 
       plannedMeals.push({
         id: `plan_${day}_${mIdx}_${Date.now().toString().slice(-4)}`,

@@ -55,7 +55,9 @@ export const OnboardingWizard: React.FC = () => {
     const fullProfile = {
       ...formData,
       name: formData.name?.trim() || 'Health Champion',
-      calorieTargetKcal: 1800,
+      sex: formData.sex || 'female',
+      mealsPerDay: formData.mealsPerDay || 3,
+      calorieTargetKcal: formData.mealsPerDay === 1 ? 1750 : 1800,
       proteinTargetGrams: 110,
       carbsTargetGrams: 90,
       fatsTargetGrams: 70,
@@ -105,7 +107,7 @@ export const OnboardingWizard: React.FC = () => {
 
         {/* Step Form Content */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
-          {/* STEP 1: Personal Basics */}
+          {/* STEP 1: Personal Basics & Gender */}
           {step === 1 && (
             <div className="space-y-4 animate-in fade-in duration-150">
               <div>
@@ -122,6 +124,31 @@ export const OnboardingWizard: React.FC = () => {
                   placeholder="Enter your name"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68]"
                 />
+              </div>
+
+              {/* Gender / Biological Sex */}
+              <div>
+                <label className="text-xs font-bold text-[#17211B] block mb-1.5">Gender / Biological Sex</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'female', label: 'Female' },
+                    { id: 'male', label: 'Male' },
+                    { id: 'other', label: 'Other' },
+                  ].map(s => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, sex: s.id as any })}
+                      className={`py-2 px-3 rounded-xl border text-xs font-bold text-center transition ${
+                        formData.sex === s.id
+                          ? 'bg-[#17211B] text-white border-[#17211B] shadow-xs'
+                          : 'bg-[#F8F9FA] text-[#6B756C] border-[#E8EDE9] hover:border-[#17211B]'
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -207,39 +234,59 @@ export const OnboardingWizard: React.FC = () => {
             </div>
           )}
 
-          {/* STEP 3: Meal Structure & Timing */}
+          {/* STEP 3: Meal Structure & Timing (Including OMAD) */}
           {step === 3 && (
             <div className="space-y-4 animate-in fade-in duration-150">
               <div>
-                <h4 className="font-black text-lg text-[#17211B]">Meals per day</h4>
-                <p className="text-xs text-[#6B756C]">Choose the routine that fits your actual schedule.</p>
+                <h4 className="font-black text-lg text-[#17211B]">Meals per day & Routine</h4>
+                <p className="text-xs text-[#6B756C]">Choose the eating structure that fits your schedule.</p>
               </div>
 
-              <div className="grid grid-cols-3 gap-2.5">
-                {[2, 3, 4].map(count => (
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { count: 1, label: '1 Meal (OMAD)', desc: 'One nourishing daily feast (Fasting)' },
+                  { count: 2, label: '2 Meals (16/8)', desc: 'Lunch & dinner (Intermittent fasting)' },
+                  { count: 3, label: '3 Meals', desc: 'Standard breakfast, lunch & dinner' },
+                  { count: 4, label: '4 Meals', desc: '3 main meals + afternoon snack' },
+                ].map(item => (
                   <button
-                    key={count}
+                    key={item.count}
+                    type="button"
                     onClick={() => setFormData({
                       ...formData,
-                      mealsPerDay: count as any,
-                      preferredEatingTimes: count === 2 ? ['12:00', '19:00'] : count === 3 ? ['08:00', '13:00', '19:00'] : ['08:00', '12:00', '16:00', '19:30']
+                      mealsPerDay: item.count as any,
+                      preferredEatingTimes:
+                        item.count === 1
+                          ? ['18:00']
+                          : item.count === 2
+                          ? ['12:00', '19:00']
+                          : item.count === 3
+                          ? ['08:00', '13:00', '19:00']
+                          : ['08:00', '12:00', '16:00', '19:30']
                     })}
-                    className={`py-4 rounded-2xl border font-black text-center transition ${
-                      formData.mealsPerDay === count
-                        ? 'bg-[#17211B] text-white border-[#17211B]'
+                    className={`p-3.5 rounded-2xl border text-left transition ${
+                      formData.mealsPerDay === item.count
+                        ? 'bg-[#17211B] text-white border-[#17211B] shadow-xs'
                         : 'bg-white text-[#17211B] border-[#E8EDE9] hover:border-[#17211B]'
                     }`}
                   >
-                    <span className="text-xl block">{count}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Meals</span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black">{item.label}</span>
+                      {formData.mealsPerDay === item.count && <Check className="w-4 h-4 text-[#3FAE68]" />}
+                    </div>
+                    <span className={`text-[10px] block mt-1 leading-snug ${formData.mealsPerDay === item.count ? 'text-white/70' : 'text-[#6B756C]'}`}>
+                      {item.desc}
+                    </span>
                   </button>
                 ))}
               </div>
 
               <div className="p-3.5 rounded-2xl bg-[#FFFDF8] border border-[#F0EBE1] text-xs">
-                <span className="font-bold text-[#17211B] block">Scheduled Times:</span>
+                <span className="font-bold text-[#17211B] block">Scheduled Meal Window:</span>
                 <p className="text-[#6B756C] mt-0.5">
-                  {formData.preferredEatingTimes?.join(' and ')}
+                  {formData.mealsPerDay === 1
+                    ? '18:00 (Single nutrient-dense daily meal feast)'
+                    : formData.preferredEatingTimes?.join(' and ')}
                 </p>
               </div>
             </div>
