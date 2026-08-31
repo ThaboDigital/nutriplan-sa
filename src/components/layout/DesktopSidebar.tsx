@@ -189,6 +189,21 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
             </button>
           </div>
         )}
+
+        {/* Company Attribution */}
+        <div className="pt-1 text-center">
+          <p className="text-[11px] text-[#6B756C]">
+            A product of{' '}
+            <a
+              href="https://www.thabosystems.co.za"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#2C854E] hover:text-[#3FAE68] font-bold hover:underline transition"
+            >
+              Thabo Systems
+            </a>
+          </p>
+        </div>
       </div>
     </aside>
   );

@@ -266,6 +266,21 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
             </span>
             <ArrowRight className="w-4 h-4" />
           </button>
+
+          {/* Modal Footer Attribution */}
+          <div className="pt-3 border-t border-[#F0F2F0] text-center">
+            <p className="text-[11px] text-[#6B756C]">
+              NutriPlan SA • A Product of{' '}
+              <a
+                href="https://www.thabosystems.co.za"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2C854E] hover:text-[#3FAE68] font-bold hover:underline transition"
+              >
+                Thabo Systems
+              </a>
+            </p>
+          </div>
         </form>
       </div>
     </div>

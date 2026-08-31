@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { User, Shield, Sliders, Bell, RotateCcw, Droplets, Target, AlertCircle, Trash2 } from 'lucide-react';
 import { formatCalories } from '../../utils/formatters';
@@ -200,6 +200,24 @@ export const ProfileView: React.FC = () => {
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Reset & Start New Plan Questionnaire</span>
         </button>
+      </div>
+
+      {/* App Version & Company Attribution */}
+      <div className="pt-3 pb-2 text-center space-y-1">
+        <p className="text-[11px] text-[#6B756C]">
+          NutriPlan SA v2.4 • Built for South Africa
+        </p>
+        <p className="text-xs text-[#6B756C]">
+          A product of{' '}
+          <a
+            href="https://www.thabosystems.co.za"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#2C854E] hover:text-[#3FAE68] font-bold hover:underline transition"
+          >
+            Thabo Systems
+          </a>
+        </p>
       </div>
     </div>
   );
