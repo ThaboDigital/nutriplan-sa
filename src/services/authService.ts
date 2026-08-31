@@ -1,4 +1,4 @@
-﻿import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 export interface AuthUser {
   id: string;
@@ -86,6 +86,33 @@ export const authService = {
       },
       error: null,
     };
+  },
+
+  async signInWithGoogle(): Promise<{ error: string | null }> {
+    if (!isSupabaseConfigured) {
+      const mockUser: AuthUser = {
+        id: 'usr_google_' + Date.now(),
+        email: 'user@gmail.com',
+        name: 'Google User',
+        isGuest: false,
+      };
+      localStorage.setItem('nutriplan_auth_user', JSON.stringify(mockUser));
+      return { error: null };
+    }
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+
+    if (error) return { error: error.message };
+    return { error: null };
   },
 
   async signOut(): Promise<void> {
