@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { X, CheckCircle2, TrendingDown, UserCheck, ArrowRight, Award } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -16,7 +16,7 @@ export const WeeklyReviewModal: React.FC = () => {
     });
     regenerateEntireWeek();
     setIsWeeklyReviewOpen(false);
-    showToast('Next week's customized plan is ready!', 'success');
+    showToast("Next week's customized plan is ready!", 'success');
   };
 
   return (

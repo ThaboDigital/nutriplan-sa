@@ -1,4 +1,4 @@
-﻿import { Recipe } from '../types';
+import { Recipe } from '../types';
 
 export const SA_RECIPES: Recipe[] = [
   {
@@ -43,8 +43,8 @@ export const SA_RECIPES: Recipe[] = [
   },
   {
     id: 'rec_beef_mince_cabbage',
-    title: 'Savoury Beef Mince & Saut'ed Cabbage Bowl',
-    subtitle: 'Lean spiced beef mince saut'ed with shredded sweet green cabbage',
+    title: 'Savoury Beef Mince & Saut�ed Cabbage Bowl',
+    subtitle: 'Lean spiced beef mince saut�ed with shredded sweet green cabbage',
     description: 'An affordable, comforting South African weeknight staple transformed into a nutrient-rich lower-carb bowl without heavy starches.',
     prepTimeMinutes: 10,
     cookTimeMinutes: 15,
@@ -69,7 +69,7 @@ export const SA_RECIPES: Recipe[] = [
     instructions: [
       'Finely slice onion and shred crisp green cabbage into ribbon strands.',
       'Brown the beef mince in a wide skillet over medium-high heat, breaking up lumps.',
-      'Add chopped onion, minced garlic, and mild curry powder; saut' until aromatic (3 minutes).',
+      'Add chopped onion, minced garlic, and mild curry powder; saut� until aromatic (3 minutes).',
       'Toss in shredded cabbage and diced tomatoes; stir-fry vigorously for 5-6 minutes until cabbage softens slightly but retains a pleasant crunch.',
       'Season with sea salt, ground black pepper, and serve hot.',
     ],
@@ -106,7 +106,7 @@ export const SA_RECIPES: Recipe[] = [
     ],
     instructions: [
       'Coat chicken generously with peri-peri marinade, lemon juice, and a pinch of salt.',
-      'Toss butternut cubes with salt and light olive oil; roast or air-fry at 190'C for 18 minutes.',
+      'Toss butternut cubes with salt and light olive oil; roast or air-fry at 190�C for 18 minutes.',
       'Grill chicken in a hot griddle pan for 5 minutes per side until charred and thoroughly cooked.',
       'Steam broccoli florets for 3 minutes until vibrant emerald green.',
       'Plate the peri-peri chicken alongside roasted butternut and broccoli.',
@@ -174,7 +174,7 @@ export const SA_RECIPES: Recipe[] = [
     ],
     instructions: [
       'Gently prick boerewors and pan-sear or grill over medium coals until cooked through and nicely browned (about 10 mins). Avoid overcooking.',
-      'Saut' diced onion and garlic in a splash of olive oil; add shredded spinach and wilt down (3 mins).',
+      'Saut� diced onion and garlic in a splash of olive oil; add shredded spinach and wilt down (3 mins).',
       'Warm the chakalaka gently in a pan.',
       'Plate the sliced boerewors portion over warm braised greens and top with 2 generous tablespoons of chakalaka.',
     ],
@@ -241,7 +241,7 @@ export const SA_RECIPES: Recipe[] = [
     ],
     instructions: [
       'Brown beef cubes in a heavy pot with 1 tsp oil until deeply caramelised on all sides.',
-      'Add chopped onion, garlic, and thyme; saut' until soft.',
+      'Add chopped onion, garlic, and thyme; saut� until soft.',
       'Pour in diced tomatoes and beef stock to just cover meat. Cover and simmer gently for 25 minutes until tender.',
       'Add sliced carrots and green beans, cooking for an additional 10 minutes until vegetables are tender.',
       'Taste and season with black pepper before serving.',
@@ -307,7 +307,7 @@ export const SA_RECIPES: Recipe[] = [
       { id: 'ing_curry_spices', name: 'Garam masala, cumin, turmeric, ginger', quantity: 8, unit: 'g', category: 'Spices', estimatedCostZAR: 3 },
     ],
     instructions: [
-      'Saut' diced onion, minced garlic, and fresh grated ginger until fragrant.',
+      'Saut� diced onion, minced garlic, and fresh grated ginger until fragrant.',
       'Add cumin, coriander, and turmeric powder; stir for 30 seconds.',
       'Pour in tomatoes and lentils; bring to a gentle simmer for 15 minutes to marry flavours.',
       'Fold in fresh spinach and simmer for 3 minutes until wilted.',
@@ -344,7 +344,7 @@ export const SA_RECIPES: Recipe[] = [
       'Steam cauliflower florets for 10 minutes until fork tender, then puree with 1 tsp butter, salt, and black pepper into smooth mash.',
       'Season chicken with dried rosemary, oregano, garlic, salt, and black pepper.',
       'Pan-sear chicken in 1 tsp olive oil for 5 minutes per side until cooked through and golden.',
-      'Saut' garlic and morogo in the pan juices until tender (3 mins).',
+      'Saut� garlic and morogo in the pan juices until tender (3 mins).',
       'Plate the creamy cauliflower mash, top with wilted morogo, and place sliced grilled chicken on top.',
     ],
     isSouthAfricanClassic: true,
