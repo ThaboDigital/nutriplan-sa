@@ -1,6 +1,6 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Check, Plus, Trash2, Share2, Sparkles, CheckCircle2, Circle } from 'lucide-react';
+import { Check, Plus, Trash2, Share2, CheckCircle2, Circle } from 'lucide-react';
 import { formatZAR } from '../../utils/formatters';
 import { ShoppingItem } from '../../types';
 

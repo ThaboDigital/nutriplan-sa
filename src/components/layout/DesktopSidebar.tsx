@@ -7,7 +7,7 @@ import {
   TrendingUp,
   ShoppingBag,
   PackageOpen,
-  Sparkles,
+  UserCheck,
   User,
   LogOut,
   LogIn,
@@ -50,9 +50,11 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       <div className="space-y-6">
         {/* Brand */}
         <div className="flex items-center gap-3 px-2">
-          <div className="w-10 h-10 rounded-2xl bg-[#3FAE68] flex items-center justify-center text-white font-extrabold text-xl shadow-sm shadow-[#3FAE68]/30">
-            NP
-          </div>
+          <img
+            src="/logo.png"
+            alt="NutriPlan SA"
+            className="w-10 h-10 rounded-2xl object-cover shadow-sm border border-[#E8EDE9]"
+          />
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-extrabold text-lg text-[#17211B] tracking-tight">NutriPlan</span>
@@ -109,17 +111,17 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
             </span>
           </button>
 
-          {/* AI Coach */}
+          {/* NutriCoach */}
           <button
             onClick={() => setIsCoachOpen(true)}
             className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d5eedf] font-bold text-xs transition active:scale-98"
           >
             <div className="flex items-center gap-2.5">
-              <Sparkles className="w-4 h-4 text-[#3FAE68]" />
-              <span>NutriCoach AI</span>
+              <UserCheck className="w-4 h-4 text-[#3FAE68]" />
+              <span>NutriCoach</span>
             </div>
             <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md bg-white/80 text-[#2C854E]">
-              Ask
+              Chat
             </span>
           </button>
 

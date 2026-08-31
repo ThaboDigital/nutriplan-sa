@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Trophy, TrendingDown, Droplets, Calendar, Award, Sparkles, AlertCircle } from 'lucide-react';
+import { Trophy, TrendingDown, Droplets, Calendar, Award, AlertCircle } from 'lucide-react';
 import { formatWater } from '../../utils/formatters';
 
 export const ProgressDashboard: React.FC = () => {
@@ -31,7 +31,7 @@ export const ProgressDashboard: React.FC = () => {
           onClick={() => setIsWeeklyReviewOpen(true)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#17211B] text-white text-xs font-bold shadow-xs hover:bg-black transition active:scale-95"
         >
-          <Sparkles className="w-3.5 h-3.5 text-[#3FAE68]" />
+          <Award className="w-3.5 h-3.5 text-[#3FAE68]" />
           <span>Week in Review</span>
         </button>
       </div>

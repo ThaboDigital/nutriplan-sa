@@ -1,8 +1,8 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { MealCard } from '../home/MealCard';
 import { ShoppingListView } from '../shopping/ShoppingListView';
-import { Calendar, RotateCw, ShoppingBag, Sparkles, ArrowRight } from 'lucide-react';
+import { Calendar, RotateCw, ShoppingBag, UserCheck, ArrowRight } from 'lucide-react';
 import { formatCalories, formatProtein, formatZAR } from '../../utils/formatters';
 
 export const MealPlanView: React.FC = () => {
@@ -146,7 +146,7 @@ export const MealPlanView: React.FC = () => {
                 onClick={() => setIsCoachOpen(true)}
                 className="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#17211B] text-white hover:bg-black text-xs font-bold transition active:scale-95 shadow-sm"
               >
-                <Sparkles className="w-4 h-4 text-[#3FAE68]" />
+                <UserCheck className="w-4 h-4 text-[#3FAE68]" />
                 <span>Ask NutriCoach to Adjust Plan</span>
               </button>
             </div>

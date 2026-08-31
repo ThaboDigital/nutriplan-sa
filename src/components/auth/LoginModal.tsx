@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { authService, AuthUser } from '../../services/authService';
 import { X, Mail, Lock, User, Sparkles, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 
@@ -74,9 +74,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
         {/* Header */}
         <div className="p-5 bg-[#17211B] text-white flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#3FAE68] flex items-center justify-center font-black text-white">
-              NP
-            </div>
+            <img
+              src="/logo.png"
+              alt="NutriPlan SA"
+              className="w-8 h-8 rounded-xl object-cover border border-white/20"
+            />
             <div>
               <h3 className="font-extrabold text-sm">
                 {mode === 'login' && 'Sign in to NutriPlan SA'}
@@ -219,7 +221,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
               onClick={handleDemoAutofill}
               className="text-[11px] font-bold text-[#6B756C] hover:text-[#17211B] inline-flex items-center gap-1"
             >
-              <Sparkles className="w-3 h-3 text-[#F2A65A]" />
+              <CheckCircle2 className="w-3 h-3 text-[#3FAE68]" />
               <span>Autofill demo credentials (Thabo)</span>
             </button>
           </div>

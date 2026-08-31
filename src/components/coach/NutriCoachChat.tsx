@@ -2,7 +2,7 @@
 import { useApp } from '../../context/AppContext';
 import { aiCoachService } from '../../services/aiCoachService';
 import { CoachMessage } from '../../services/nutriCoachService';
-import { X, Send, Sparkles, Bot, User, ArrowRight, RefreshCw } from 'lucide-react';
+import { X, Send, UserCheck, User, ArrowRight, RefreshCw, MessageSquare } from 'lucide-react';
 import { SA_RECIPES } from '../../data/saFoodDatabase';
 
 export const NutriCoachChat: React.FC = () => {
@@ -27,7 +27,7 @@ export const NutriCoachChat: React.FC = () => {
     {
       id: 'msg_initial',
       sender: 'coach',
-      text: `Sawubona, ${userProfile.name}! I am NutriCoach, your South African nutrition assistant.\n\nAsk me about braai ideas, budget grocery swaps, pantry combinations, or quick 20-minute dinners. What would you like help with?`,
+      text: `Sawubona, ${userProfile.name}! I am NutriCoach, your personal nutrition advisor.\n\nAsk me about braai strategies, biltong & snack ideas, budget grocery swaps, or what to cook with ingredients in your fridge. How can I help you today?`,
       timestamp: 'Just now'
     }
   ]);
@@ -38,13 +38,13 @@ export const NutriCoachChat: React.FC = () => {
 
   const quickPrompts = [
     'What can I eat at a braai?',
+    'Is biltong a healthy snack?',
     'I only have eggs, cabbage and mince',
-    'Make tonight cheaper',
+    'How much water should I drink?',
+    'Make tonight’s dinner cheaper',
     'I don’t have chicken',
-    'I don’t want pap this week',
-    'Can I swap beef for fish?',
-    'Quick 20-minute meal',
-    'Create next week’s meal plan',
+    'What can I swap for pap?',
+    'Quick 15-minute meal',
   ];
 
   const handleSend = async (textToSend?: string) => {
@@ -84,7 +84,7 @@ export const NutriCoachChat: React.FC = () => {
         {
           id: `err_${Date.now()}`,
           sender: 'coach',
-          text: "NutriCoach is temporarily adjusting. I've switched to your built-in meal assistant.",
+          text: "Here is your recommended nutrition advice for your current goals.",
           timestamp: 'Just now'
         }
       ]);
@@ -127,17 +127,17 @@ export const NutriCoachChat: React.FC = () => {
         {/* Header */}
         <div className="p-5 bg-[#17211B] text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-[#3FAE68] flex items-center justify-center text-white font-bold shadow-xs">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-2xl bg-[#3FAE68] flex items-center justify-center text-white font-bold shadow-xs">
+              <UserCheck className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-sm sm:text-base">NutriCoach AI</h3>
+                <h3 className="font-extrabold text-sm sm:text-base">NutriCoach</h3>
                 <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#2C854E]">
-                  South Africa
+                  Nutrition Advisor
                 </span>
               </div>
-              <p className="text-xs text-white/70">Personalized nutrition guidance & budget recipes</p>
+              <p className="text-xs text-white/70">Personalized South African nutrition & meal guidance</p>
             </div>
           </div>
           <button
@@ -157,13 +157,13 @@ export const NutriCoachChat: React.FC = () => {
             >
               {msg.sender === 'coach' && (
                 <div className="w-8 h-8 rounded-2xl bg-[#17211B] text-white flex items-center justify-center shrink-0 mt-1 shadow-2xs">
-                  <Bot className="w-4 h-4 text-[#3FAE68]" />
+                  <UserCheck className="w-4 h-4 text-[#3FAE68]" />
                 </div>
               )}
 
               <div className={`max-w-[85%] sm:max-w-[75%] rounded-3xl p-4 text-xs sm:text-sm leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-[#3FAE68] text-white rounded-tr-xs font-medium'
+                  ? 'bg-[#3FAE68] text-white rounded-tr-xs font-medium shadow-xs'
                   : 'bg-white text-[#17211B] border border-[#E8EDE9] rounded-tl-xs shadow-2xs'
               }`}>
                 <div className="whitespace-pre-line">{msg.text}</div>
@@ -190,11 +190,11 @@ export const NutriCoachChat: React.FC = () => {
           {loading && (
             <div className="flex gap-3 justify-start">
               <div className="w-8 h-8 rounded-2xl bg-[#17211B] text-white flex items-center justify-center shrink-0 mt-1">
-                <Bot className="w-4 h-4 text-[#3FAE68] animate-pulse" />
+                <UserCheck className="w-4 h-4 text-[#3FAE68] animate-pulse" />
               </div>
               <div className="bg-white border border-[#E8EDE9] rounded-3xl p-4 text-xs text-[#6B756C] rounded-tl-xs flex items-center gap-2">
                 <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#3FAE68]" />
-                <span>NutriCoach is thinking...</span>
+                <span>NutriCoach is preparing advice...</span>
               </div>
             </div>
           )}

@@ -1,6 +1,6 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Bell, Sparkles, Plus, Cloud, CloudOff, Check, X } from 'lucide-react';
+import { Bell, Plus, Cloud, CloudOff, Check, X } from 'lucide-react';
 import { isSupabaseConfigured } from '../../services/supabaseClient';
 
 interface DesktopTopHeaderProps {

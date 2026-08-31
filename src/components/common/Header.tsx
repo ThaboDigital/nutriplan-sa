@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Sparkles, Bell, ShoppingBag, PackageOpen, Check, X } from 'lucide-react';
+import { UserCheck, Bell, ShoppingBag, PackageOpen, Check, X } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const {
@@ -23,9 +23,11 @@ export const Header: React.FC = () => {
       <div className="max-w-md mx-auto flex items-center justify-between">
         {/* Brand & Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-[#3FAE68] flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-[#3FAE68]/30">
-            NP
-          </div>
+          <img
+            src="/logo.png"
+            alt="NutriPlan SA"
+            className="w-9 h-9 rounded-xl object-cover shadow-xs border border-[#E8EDE9]"
+          />
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-extrabold text-base tracking-tight text-[#17211B]">NutriPlan</span>
@@ -44,11 +46,11 @@ export const Header: React.FC = () => {
           {/* NutriCoach Quick Trigger */}
           <button
             onClick={() => setIsCoachOpen(true)}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d6f0df] transition active:scale-95 text-xs font-semibold"
-            title="Ask NutriCoach AI"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d6f0df] transition active:scale-95 text-xs font-bold"
+            title="NutriCoach Advisor"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#3FAE68]" />
-            <span>Coach</span>
+            <UserCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
+            <span>NutriCoach</span>
           </button>
 
           {/* Pantry */}

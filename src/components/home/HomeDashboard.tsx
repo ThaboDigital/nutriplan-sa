@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { ProgressRings } from './ProgressRings';
 import { WaterWidget } from './WaterWidget';
 import { MealCard } from './MealCard';
-import { Sparkles, Calendar, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, AlertCircle } from 'lucide-react';
+import { UserCheck, ClipboardList, Calendar, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, AlertCircle } from 'lucide-react';
 import { formatZAR } from '../../utils/formatters';
 
 export const HomeDashboard: React.FC = () => {
@@ -45,7 +45,7 @@ export const HomeDashboard: React.FC = () => {
               onClick={() => setShowOnboardingWizard(true)}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#17211B] text-white text-xs font-bold shadow-xs active:scale-95 transition hover:bg-black"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#3FAE68]" />
+              <ClipboardList className="w-3.5 h-3.5 text-[#3FAE68]" />
               <span>Personalize My Plan</span>
             </button>
 
@@ -53,8 +53,8 @@ export const HomeDashboard: React.FC = () => {
               onClick={() => setIsCoachOpen(true)}
               className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-xs active:scale-95 transition hover:bg-[#d5eedf]"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#3FAE68]" />
-              <span>AI Coach</span>
+              <UserCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
+              <span>NutriCoach</span>
             </button>
           </div>
         </div>
@@ -82,7 +82,7 @@ export const HomeDashboard: React.FC = () => {
             onClick={() => setShowOnboardingWizard(true)}
             className="w-full md:w-auto px-6 py-3 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition active:scale-95"
           >
-            <Sparkles className="w-4 h-4" />
+            <ClipboardList className="w-4 h-4" />
             <span>Start Questionnaire</span>
             <ArrowRight className="w-4 h-4" />
           </button>

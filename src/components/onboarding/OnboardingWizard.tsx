@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserProfile, MainGoal, DietaryPreference, BudgetTier } from '../../types';
 import { generatePersonalizedMealPlan } from '../../services/mealPlannerService';
-import { X, ArrowRight, ArrowLeft, Check, Sparkles } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, Check, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const OnboardingWizard: React.FC = () => {
@@ -279,7 +279,7 @@ export const OnboardingWizard: React.FC = () => {
 
               <div className="p-4 rounded-2xl bg-[#EAF7EF] border border-[#3FAE68]/20 space-y-2 mt-4">
                 <div className="flex items-center gap-1.5 text-xs font-black text-[#2C854E]">
-                  <Sparkles className="w-4 h-4 text-[#3FAE68]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#3FAE68]" />
                   <span>Your personalized plan is ready!</span>
                 </div>
                 <p className="text-xs text-[#2C854E]/80 leading-relaxed">

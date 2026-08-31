@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, CheckCircle2, TrendingDown, Sparkles, ArrowRight, Award } from 'lucide-react';
+import { X, CheckCircle2, TrendingDown, UserCheck, ArrowRight, Award } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const WeeklyReviewModal: React.FC = () => {
@@ -81,11 +81,11 @@ export const WeeklyReviewModal: React.FC = () => {
             </div>
           </div>
 
-          {/* AI Smart Learning Recommendation */}
+          {/* NutriCoach Recommendation */}
           <div className="p-4 rounded-2xl bg-[#17211B] text-white space-y-2">
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#3FAE68]">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Smart Adaptation for Next Week</span>
+              <UserCheck className="w-3.5 h-3.5" />
+              <span>NutriCoach Adaptation for Next Week</span>
             </div>
             <p className="text-xs text-white/80 leading-relaxed">
               "You consistently favored the <strong>Chicken Salad</strong> and <strong>Beef Mince & Cabbage</strong> for quick prep. Next week's plan retains these favorites while introducing budget-friendly <strong>Gem Squash & Tuna</strong>."

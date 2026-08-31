@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, Plus, Trash2, Sparkles, PackageOpen } from 'lucide-react';
+import { X, Plus, Trash2, Utensils, PackageOpen } from 'lucide-react';
 
 export const PantryModal: React.FC = () => {
   const { isPantryOpen, setIsPantryOpen, pantryItems, addPantryItem, removePantryItem, setIsCoachOpen } = useApp();
@@ -112,8 +112,8 @@ export const PantryModal: React.FC = () => {
             onClick={handleGenerateMealsFromPantry}
             className="w-full py-3 rounded-2xl bg-[#17211B] text-white hover:bg-black font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-98"
           >
-            <Sparkles className="w-4 h-4 text-[#3FAE68]" />
-            <span>Generate Meals with My Pantry Items</span>
+            <Utensils className="w-4 h-4 text-[#3FAE68]" />
+            <span>Find Meals with My Pantry Items</span>
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { User, Shield, Sliders, Bell, RotateCcw, Droplets, Target, Sparkles, AlertCircle, Trash2 } from 'lucide-react';
+import { User, Shield, Sliders, Bell, RotateCcw, Droplets, Target, AlertCircle, Trash2 } from 'lucide-react';
 import { formatCalories } from '../../utils/formatters';
 
 export const ProfileView: React.FC = () => {
