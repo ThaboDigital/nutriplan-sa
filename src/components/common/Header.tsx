@@ -21,34 +21,34 @@ export const Header: React.FC = () => {
   const uncheckedShoppingCount = shoppingList.filter(i => !i.isChecked && !i.isAlreadyHave).length;
 
   return (
-    <header className="sticky top-0 z-30 bg-[#FFFDF8]/90 backdrop-blur-md border-b border-[#E8EDE9] px-4 py-3">
-      <div className="max-w-md mx-auto flex items-center justify-between">
-        {/* Brand & Logo */}
-        <div className="flex items-center gap-2.5">
+    <header className="sticky top-0 z-30 bg-[#FFFDF8]/90 backdrop-blur-md border-b border-[#E8EDE9] px-4 py-2.5">
+      <div className="max-w-md mx-auto flex items-center justify-between gap-2">
+        {/* Brand & Logo (Left) */}
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <img
             src="/logo.png"
             alt="NutriPlan SA"
-            className="w-9 h-9 rounded-xl object-cover shadow-xs border border-[#E8EDE9]"
+            className="w-8 h-8 rounded-xl object-cover shadow-xs border border-[#E8EDE9] shrink-0"
           />
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-base tracking-tight text-[#17211B]">NutriPlan</span>
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#EAF7EF] text-[#3FAE68]">
+              <span className="font-extrabold text-base tracking-tight text-[#17211B] truncate">NutriPlan</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#EAF7EF] text-[#3FAE68] shrink-0">
                 SA
               </span>
             </div>
-            <p className="text-[11px] text-[#6B756C] font-medium leading-none">
+            <p className="text-[11px] text-[#6B756C] font-medium leading-none truncate">
               Healthy & Affordable
             </p>
           </div>
         </div>
 
-        {/* Action icons */}
-        <div className="flex items-center gap-1.5">
-          {/* NutriCoach Quick Trigger */}
+        {/* Action icons (Right) */}
+        <div className="flex items-center gap-1 shrink-0">
+          {/* NutriCoach (Tablet/Desktop helper only, hidden on small mobile) */}
           <button
             onClick={() => setIsCoachOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d6f0df] transition active:scale-95 text-xs font-bold"
+            className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d6f0df] transition active:scale-95 text-xs font-bold"
             title="NutriCoach Advisor"
           >
             <UserCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
@@ -72,7 +72,7 @@ export const Header: React.FC = () => {
           >
             <ShoppingBag className="w-5 h-5" />
             {uncheckedShoppingCount > 0 && (
-              <span className="absolute 1 top-1 right-1 w-4 h-4 rounded-full bg-[#F2A65A] text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#F2A65A] text-white text-[10px] font-bold flex items-center justify-center">
                 {uncheckedShoppingCount > 9 ? '9+' : uncheckedShoppingCount}
               </span>
             )}
@@ -92,18 +92,18 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Guest Mode Status Pill */}
+      {/* Streamlined Mobile Guest Mode Banner */}
       {!authUser && (
-        <div className="max-w-md mx-auto mt-2 pt-2 border-t border-[#E8EDE9]/60 flex items-center justify-between text-[11px]">
-          <span className="font-bold text-[#2C854E] flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#3FAE68] animate-pulse" />
-            Guest Mode (Local Storage)
-          </span>
+        <div className="max-w-md mx-auto mt-2 py-1.5 px-3 rounded-xl bg-[#EAF7EF]/80 border border-[#3FAE68]/20 flex items-center justify-between text-[11px] shadow-2xs">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="w-2 h-2 rounded-full bg-[#3FAE68] animate-pulse shrink-0" />
+            <span className="font-extrabold text-[#2C854E] truncate">Guest Mode (Local)</span>
+          </div>
           <button
             onClick={() => openAuthModal('register')}
-            className="font-black text-[#17211B] bg-white border border-[#3FAE68]/30 px-2.5 py-0.5 rounded-full shadow-2xs hover:bg-[#EAF7EF] transition"
+            className="font-black text-[#17211B] bg-white border border-[#3FAE68]/30 px-2 py-0.5 rounded-lg shadow-2xs hover:bg-[#EAF7EF] text-[10px] shrink-0 transition ml-2"
           >
-            Register to backup & sync →
+            Register to sync →
           </button>
         </div>
       )}

@@ -28,33 +28,33 @@ export const HomeDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto animate-in fade-in duration-200">
-      {/* Top Banner Greeting */}
+      {/* Top Banner Greeting & Quick Action Triggers */}
       <div className="pt-2">
-        <div className="flex items-start justify-between">
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="w-full">
             <h1 className="text-2xl sm:text-3xl font-black text-[#17211B] tracking-tight">
               {timeGreeting}, {userProfile.name}
             </h1>
             <p className="text-xs sm:text-sm font-medium text-[#6B756C] mt-0.5">
-              Let’s make today a healthy, energized one.
+              Let's make today a healthy, energized one.
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2.5 shrink-0 mt-1 sm:mt-0">
             <button
               onClick={() => setShowOnboardingWizard(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#17211B] text-white text-xs font-bold shadow-xs active:scale-95 transition hover:bg-black"
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#17211B] text-white text-xs font-bold shadow-xs active:scale-95 transition hover:bg-black text-center"
             >
-              <ClipboardList className="w-3.5 h-3.5 text-[#3FAE68]" />
-              <span>Personalize My Plan</span>
+              <ClipboardList className="w-4 h-4 text-[#3FAE68] shrink-0" />
+              <span className="truncate">Personalize Plan</span>
             </button>
 
             <button
               onClick={() => setIsCoachOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-xs active:scale-95 transition hover:bg-[#d5eedf]"
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-xs active:scale-95 transition hover:bg-[#d5eedf] text-center"
             >
-              <UserCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
-              <span>NutriCoach</span>
+              <UserCheck className="w-4 h-4 text-[#3FAE68] shrink-0" />
+              <span className="truncate">NutriCoach</span>
             </button>
           </div>
         </div>

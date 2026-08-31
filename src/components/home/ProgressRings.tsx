@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Flame, Droplets, Utensils, CheckCircle2 } from 'lucide-react';
 import { formatWater } from '../../utils/formatters';
@@ -30,11 +30,11 @@ export const ProgressRings: React.FC = () => {
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3.5">
         {/* Water Ring Card */}
-        <div className="flex flex-col items-center text-center p-3 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF]">
-          <div className="relative w-14 h-14 flex items-center justify-center mb-2">
-            <svg className="w-14 h-14 -rotate-90 transform" viewBox="0 0 36 36">
+        <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF] min-w-0">
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center mb-1.5">
+            <svg className="w-12 h-12 sm:w-14 sm:h-14 -rotate-90 transform" viewBox="0 0 36 36">
               <path
                 className="text-[#E8EDE9]"
                 strokeWidth="3.5"
@@ -53,18 +53,18 @@ export const ProgressRings: React.FC = () => {
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <Droplets className="w-5 h-5 text-[#3FAE68]" />
+              <Droplets className="w-4 h-4 sm:w-5 sm:h-5 text-[#3FAE68]" />
             </div>
           </div>
-          <span className="text-[10px] font-bold text-[#6B756C] uppercase tracking-wider">Water</span>
-          <span className="text-xs font-extrabold text-[#17211B] mt-0.5">{formatWater(todayWaterMl)}</span>
-          <span className="text-[10px] text-[#6B756C]">of {userProfile.dailyWaterTargetLiters}L</span>
+          <span className="text-[9px] sm:text-[10px] font-extrabold text-[#6B756C] uppercase tracking-wider truncate w-full">Water</span>
+          <span className="text-xs sm:text-sm font-black text-[#17211B] mt-0.5 truncate w-full">{formatWater(todayWaterMl)}</span>
+          <span className="text-[9px] sm:text-[10px] text-[#6B756C] truncate w-full">of {userProfile.dailyWaterTargetLiters}L</span>
         </div>
 
         {/* Meals Ring Card */}
-        <div className="flex flex-col items-center text-center p-3 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF]">
-          <div className="relative w-14 h-14 flex items-center justify-center mb-2">
-            <svg className="w-14 h-14 -rotate-90 transform" viewBox="0 0 36 36">
+        <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF] min-w-0">
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center mb-1.5">
+            <svg className="w-12 h-12 sm:w-14 sm:h-14 -rotate-90 transform" viewBox="0 0 36 36">
               <path
                 className="text-[#E8EDE9]"
                 strokeWidth="3.5"
@@ -83,18 +83,18 @@ export const ProgressRings: React.FC = () => {
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <Utensils className="w-5 h-5 text-[#F2A65A]" />
+              <Utensils className="w-4 h-4 sm:w-5 sm:h-5 text-[#F2A65A]" />
             </div>
           </div>
-          <span className="text-[10px] font-bold text-[#6B756C] uppercase tracking-wider">Meals</span>
-          <span className="text-xs font-extrabold text-[#17211B] mt-0.5">{eatenMealsCount}/{totalMealsPlanned}</span>
-          <span className="text-[10px] text-[#6B756C]">planned</span>
+          <span className="text-[9px] sm:text-[10px] font-extrabold text-[#6B756C] uppercase tracking-wider truncate w-full">Meals</span>
+          <span className="text-xs sm:text-sm font-black text-[#17211B] mt-0.5 truncate w-full">{eatenMealsCount}/{totalMealsPlanned}</span>
+          <span className="text-[9px] sm:text-[10px] text-[#6B756C] truncate w-full">planned</span>
         </div>
 
         {/* Habits Ring Card */}
-        <div className="flex flex-col items-center text-center p-3 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF]">
-          <div className="relative w-14 h-14 flex items-center justify-center mb-2">
-            <svg className="w-14 h-14 -rotate-90 transform" viewBox="0 0 36 36">
+        <div className="flex flex-col items-center text-center p-2.5 sm:p-3 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF] min-w-0">
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center mb-1.5">
+            <svg className="w-12 h-12 sm:w-14 sm:h-14 -rotate-90 transform" viewBox="0 0 36 36">
               <path
                 className="text-[#E8EDE9]"
                 strokeWidth="3.5"
@@ -113,12 +113,12 @@ export const ProgressRings: React.FC = () => {
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5 text-[#3FAE68]" />
+              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#3FAE68]" />
             </div>
           </div>
-          <span className="text-[10px] font-bold text-[#6B756C] uppercase tracking-wider">Habits</span>
-          <span className="text-xs font-extrabold text-[#17211B] mt-0.5">{completedHabitsCount}/{totalHabits}</span>
-          <span className="text-[10px] text-[#6B756C]">completed</span>
+          <span className="text-[9px] sm:text-[10px] font-extrabold text-[#6B756C] uppercase tracking-wider truncate w-full">Habits</span>
+          <span className="text-xs sm:text-sm font-black text-[#17211B] mt-0.5 truncate w-full">{completedHabitsCount}/{totalHabits}</span>
+          <span className="text-[9px] sm:text-[10px] text-[#6B756C] truncate w-full">completed</span>
         </div>
       </div>
     </div>
