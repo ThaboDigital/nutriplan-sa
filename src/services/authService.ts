@@ -89,30 +89,30 @@ export const authService = {
   },
 
   async signInWithGoogle(): Promise<{ error: string | null }> {
-    if (!isSupabaseConfigured) {
-      const mockUser: AuthUser = {
-        id: 'usr_google_' + Date.now(),
-        email: 'user@gmail.com',
-        name: 'Google User',
-        isGuest: false,
-      };
-      localStorage.setItem('nutriplan_auth_user', JSON.stringify(mockUser));
-      return { error: null };
-    }
-
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
-      },
-    });
+      });
 
-    if (error) return { error: error.message };
-    return { error: null };
+      if (error) {
+        return { error: error.message };
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      return { error: err.message || 'Failed to initialize Google Sign In.' };
+    }
   },
 
   async signOut(): Promise<void> {
