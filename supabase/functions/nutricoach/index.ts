@@ -1,9 +1,9 @@
 ﻿import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const CANDIDATE_MODELS = [
-  "gemini-2.0-flash",
-  "gemini-1.5-flash",
-  "gemini-2.5-flash"
+  "gemini-3-flash-preview",
+  "gemini-3.5-flash",
+  "gemini-3.1-flash-lite-preview"
 ];
 const IMAGEN_MODEL = "imagen-3.0-generate-002";
 
@@ -46,7 +46,7 @@ CRITICAL INSTRUCTIONS:
 1. ALWAYS answer the user's EXACT question or prompt directly in your first sentence.
 2. If the user asks for a recipe, meal idea, or food item, your VERY FIRST words must be the Recipe Name, followed by:
    - **Ingredients:** (South African supermarket items with exact portions)
-   - **Method:** (2-4 simple preparation steps)
+   - **Simple Method:** (2-4 concise preparation steps)
    - **Estimated Macros:** (~Calories, ~Protein, ~Fat, ~Net Carbs)
 3. NEVER output generic boilerplate lists or unrelated greeting summaries unless specifically asked for general advice.
 4. Deep South African Context:
@@ -56,7 +56,6 @@ CRITICAL INSTRUCTIONS:
    - Incorporate the user's target weight and diet style naturally without reciting their whole profile.
 6. Keep the response concise, practical, and formatted in clean Markdown.`;
 
-// Call Gemini API with model fallback
 async function generateGeminiText(userPrompt: string, apiKey: string): Promise<string> {
   for (const model of CANDIDATE_MODELS) {
     try {
@@ -91,7 +90,6 @@ async function generateGeminiText(userPrompt: string, apiKey: string): Promise<s
   return "";
 }
 
-// Generate food image via Imagen 3 or fallback curated image
 async function generateFoodImage(dishName: string, apiKey: string): Promise<string | null> {
   if (apiKey) {
     try {
@@ -122,7 +120,6 @@ async function generateFoodImage(dishName: string, apiKey: string): Promise<stri
     }
   }
 
-  // Curated high-res South African food imagery fallbacks
   const d = dishName.toLowerCase();
   if (d.includes("salad") || d.includes("avocado") || d.includes("avo")) {
     return "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80";
@@ -148,7 +145,6 @@ async function generateFoodImage(dishName: string, apiKey: string): Promise<stri
   return "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80";
 }
 
-// Intent-based fallback response engine if offline
 function getDirectIntentFallback(query: string, ctx: CoachContext): string {
   const q = query.toLowerCase();
   const name = ctx.userName || ctx.name || "there";
@@ -282,13 +278,11 @@ USER'S EXACT QUESTION:
       }
     }
 
-    // Direct Intent Fallback if Gemini is unreachable
     if (!replyText) {
       replyText = getDirectIntentFallback(query, ctx);
     }
 
-    // Generate or match 16:9 food preview image
-    const isFoodRelated = /recipe|cook|food|eat|dinner|lunch|breakfast|meal|chicken|mogodu|pilchard|braai|cabbage|morogo|stew|egg|salad|avocado|avo/i.test(query);
+    const isFoodRelated = /recipe|cook|food|eat|dinner|lunch|breakfast|meal|chicken|mogodu|pilchard|braai|cabbage|morogo|stew|egg|salad|avocado|avo|curry|fish|steak/i.test(query);
     let generatedImageUrl: string | null = null;
     if (isFoodRelated) {
       generatedImageUrl = await generateFoodImage(query, geminiApiKey);
