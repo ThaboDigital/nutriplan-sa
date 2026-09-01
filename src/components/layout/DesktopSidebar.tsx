@@ -11,12 +11,14 @@ import {
   User,
   LogOut,
   LogIn,
-  ClipboardList
+  ClipboardList,
+  Shield,
+  Sparkles
 } from 'lucide-react';
 
 interface DesktopSidebarProps {
   onOpenLogin: () => void;
-  authUser: { email: string; name: string } | null;
+  authUser: { email: string; name: string; role?: string } | null;
   onLogout: () => void;
 }
 
@@ -32,18 +34,21 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
     setIsPantryOpen,
     setShowOnboardingWizard,
     shoppingList,
-    userProfile
+    userProfile,
+    openUpgradeModal,
   } = useApp();
 
+  const isAdmin = authUser?.role === 'admin' || userProfile?.role === 'admin';
   const uncheckedShoppingCount = shoppingList.filter(i => !i.isChecked && !i.isAlreadyHave).length;
 
-  const mainNavItems = [
+  const mainNavItems: { id: 'home' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin'; label: string; icon: any }[] = [
     { id: 'home', label: 'Dashboard', icon: Home },
     { id: 'mealplan', label: 'Meal Plan', icon: Calendar },
     { id: 'recipes', label: 'Recipes', icon: BookOpen },
     { id: 'progress', label: 'Progress', icon: TrendingUp },
     { id: 'profile', label: 'Profile & Settings', icon: User },
-  ] as const;
+    ...(isAdmin ? [{ id: 'admin' as const, label: 'Admin Console', icon: Shield }] : []),
+  ];
 
   return (
     <aside className="w-64 bg-[#FFFDF8] border-r border-[#E8EDE9] flex flex-col justify-between p-5 h-screen sticky top-0 shrink-0 select-none">
@@ -149,6 +154,30 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
               </span>
             )}
           </button>
+
+          {/* Pro Upgrade Trigger for Free Tier */}
+          {userProfile.subscriptionTier !== 'pro' && (
+            <div
+              onClick={() => openUpgradeModal('Pro Features')}
+              className="p-3 rounded-2xl bg-gradient-to-br from-[#17211B] to-[#25392B] text-white cursor-pointer hover:shadow-md transition active:scale-98 group"
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#3FAE68] flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" />
+                  NutriPlan Pro
+                </span>
+                <span className="text-[9px] bg-[#3FAE68] text-white px-1.5 py-0.5 rounded font-black">
+                  Save 30%
+                </span>
+              </div>
+              <p className="text-[11px] font-bold text-white/90 leading-tight">
+                Unlimited Swaps & AI NutriCoach
+              </p>
+              <span className="text-[10px] text-[#3FAE68] group-hover:underline block mt-1 font-bold">
+                Upgrade from R48/mo →
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

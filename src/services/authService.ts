@@ -1,10 +1,16 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { UserRole, SubscriptionTier, SubscriptionPeriod, SubscriptionStatus } from '../types';
 
 export interface AuthUser {
   id: string;
   email: string;
   name: string;
   isGuest?: boolean;
+  role?: UserRole;
+  subscriptionTier?: SubscriptionTier;
+  subscriptionPeriod?: SubscriptionPeriod;
+  subscriptionStatus?: SubscriptionStatus;
+  cellNumber?: string;
 }
 
 export const authService = {
@@ -15,11 +21,41 @@ export const authService = {
     }
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) return null;
+
+    let role: UserRole = 'user';
+    let subscriptionTier: SubscriptionTier = 'free';
+    let subscriptionPeriod: SubscriptionPeriod = 'monthly';
+    let subscriptionStatus: SubscriptionStatus = 'inactive';
+    let cellNumber: string | undefined = undefined;
+
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, subscription_tier, subscription_period, subscription_status, cell_number')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (profile) {
+        role = (profile.role as UserRole) || 'user';
+        subscriptionTier = (profile.subscription_tier as SubscriptionTier) || 'free';
+        subscriptionPeriod = (profile.subscription_period as SubscriptionPeriod) || 'monthly';
+        subscriptionStatus = (profile.subscription_status as SubscriptionStatus) || 'inactive';
+        cellNumber = profile.cell_number || undefined;
+      }
+    } catch (e) {
+      console.warn('Profile fetch notice:', e);
+    }
+
     return {
       id: user.id,
       email: user.email || '',
       name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
       isGuest: false,
+      role,
+      subscriptionTier,
+      subscriptionPeriod,
+      subscriptionStatus,
+      cellNumber,
     };
   },
 
@@ -30,6 +66,9 @@ export const authService = {
         email,
         name,
         isGuest: false,
+        role: 'user',
+        subscriptionTier: 'free',
+        subscriptionStatus: 'inactive',
       };
       localStorage.setItem('nutriplan_auth_user', JSON.stringify(mockUser));
       return { user: mockUser, error: null };
@@ -52,6 +91,9 @@ export const authService = {
         email: data.user.email || '',
         name: data.user.user_metadata?.name || name,
         isGuest: false,
+        role: 'user',
+        subscriptionTier: 'free',
+        subscriptionStatus: 'inactive',
       },
       error: null,
     };
@@ -64,6 +106,9 @@ export const authService = {
         email,
         name: 'Thabo',
         isGuest: false,
+        role: 'admin',
+        subscriptionTier: 'pro',
+        subscriptionStatus: 'active',
       };
       localStorage.setItem('nutriplan_auth_user', JSON.stringify(mockUser));
       return { user: mockUser, error: null };
@@ -77,12 +122,41 @@ export const authService = {
     if (error) return { user: null, error: error.message };
     if (!data.user) return { user: null, error: 'Sign in failed.' };
 
+    let role: UserRole = 'user';
+    let subscriptionTier: SubscriptionTier = 'free';
+    let subscriptionPeriod: SubscriptionPeriod = 'monthly';
+    let subscriptionStatus: SubscriptionStatus = 'inactive';
+    let cellNumber: string | undefined = undefined;
+
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, subscription_tier, subscription_period, subscription_status, cell_number')
+        .eq('id', data.user.id)
+        .maybeSingle();
+
+      if (profile) {
+        role = (profile.role as UserRole) || 'user';
+        subscriptionTier = (profile.subscription_tier as SubscriptionTier) || 'free';
+        subscriptionPeriod = (profile.subscription_period as SubscriptionPeriod) || 'monthly';
+        subscriptionStatus = (profile.subscription_status as SubscriptionStatus) || 'inactive';
+        cellNumber = profile.cell_number || undefined;
+      }
+    } catch (e) {
+      console.warn('Profile fetch notice on signin:', e);
+    }
+
     return {
       user: {
         id: data.user.id,
         email: data.user.email || '',
         name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
         isGuest: false,
+        role,
+        subscriptionTier,
+        subscriptionPeriod,
+        subscriptionStatus,
+        cellNumber,
       },
       error: null,
     };

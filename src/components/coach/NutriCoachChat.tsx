@@ -1,8 +1,7 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { aiCoachService } from '../../services/aiCoachService';
-import { CoachMessage } from '../../services/nutriCoachService';
-import { X, Send, UserCheck, User, ArrowRight, RefreshCw, MessageSquare } from 'lucide-react';
+import { askNutriCoachAI, CoachMessage } from '../../services/nutriCoachService';
+import { X, Send, UserCheck, User, ArrowRight, RefreshCw, MessageSquare, Sparkles } from 'lucide-react';
 import { SA_RECIPES } from '../../data/saFoodDatabase';
 
 export const NutriCoachChat: React.FC = () => {
@@ -27,7 +26,7 @@ export const NutriCoachChat: React.FC = () => {
     {
       id: 'msg_initial',
       sender: 'coach',
-      text: `Sawubona, ${userProfile.name}! I am NutriCoach, your personal nutrition advisor.\n\nAsk me about braai strategies, biltong & snack ideas, budget grocery swaps, or what to cook with ingredients in your fridge. How can I help you today?`,
+      text: `Sawubona, ${userProfile.name}! I am NutriCoach, your AI South African nutrition advisor.\n\nAsk me about braai strategies, biltong & snack ideas, Mogodu / Maotwana budget banting, or what to cook with ingredients in your fridge. How can I help you today?`,
       timestamp: 'Just now'
     }
   ]);
@@ -39,12 +38,10 @@ export const NutriCoachChat: React.FC = () => {
   const quickPrompts = [
     'What can I eat at a braai?',
     'Is biltong a healthy snack?',
+    'How do I cook Mogodu on budget banting?',
     'I only have eggs, cabbage and mince',
-    'How much water should I drink?',
-    'Make tonight’s dinner cheaper',
-    'I don’t have chicken',
     'What can I swap for pap?',
-    'Quick 15-minute meal',
+    'Quick 15-minute high-protein meal',
   ];
 
   const handleSend = async (textToSend?: string) => {
@@ -63,17 +60,18 @@ export const NutriCoachChat: React.FC = () => {
     setLoading(true);
 
     try {
-      const resp = await aiCoachService.askCoach(query, {
-        profile: userProfile,
+      const resp = await askNutriCoachAI(
+        query,
+        userProfile,
         currentMeals,
-        pantryItems: pantryItems.map(p => p.name),
-        recentHabitsCompleted: habits.filter(h => h.isCompletedToday).length,
-      });
+        pantryItems.map(p => p.name)
+      );
 
       const botMsg: CoachMessage = {
         id: `bot_${Date.now()}`,
         sender: 'coach',
         text: resp.text,
+        imageUrl: resp.imageUrl,
         timestamp: 'Just now',
         suggestedAction: resp.action
       };
@@ -166,6 +164,22 @@ export const NutriCoachChat: React.FC = () => {
                   ? 'bg-[#3FAE68] text-white rounded-tr-xs font-medium shadow-xs'
                   : 'bg-white text-[#17211B] border border-[#E8EDE9] rounded-tl-xs shadow-2xs'
               }`}>
+                {/* 16:9 South African Food Preview Card */}
+                {msg.imageUrl && (
+                  <div className="w-full aspect-video rounded-2xl overflow-hidden mb-3 border border-[#E8EDE9] shadow-xs relative group">
+                    <img
+                      src={msg.imageUrl}
+                      alt="NutriPlan Food Visual"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-xs text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <Sparkles className="w-2.5 h-2.5 text-[#3FAE68]" />
+                      <span>NutriCoach Food Visual</span>
+                    </div>
+                  </div>
+                )}
+
                 <div className="whitespace-pre-line">{msg.text}</div>
 
                 {msg.suggestedAction && (

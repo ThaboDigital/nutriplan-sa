@@ -2,11 +2,16 @@ export type MainGoal = 'lose_weight' | 'maintain_weight' | 'gain_muscle' | 'eat_
 
 export type ActivityLevel = 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active';
 
-export type DietaryPreference = 'balanced' | 'lower_carb' | 'high_protein' | 'vegetarian' | 'pescatarian';
+export type DietaryPreference = 'balanced' | 'lower_carb' | 'high_protein' | 'vegetarian' | 'pescatarian' | 'budget_banting';
 
 export type CookingSkill = 'beginner' | 'intermediate' | 'confident';
 
 export type BudgetTier = 'R500' | 'R750' | 'R1000' | 'R1500' | 'custom';
+
+export type UserRole = 'user' | 'admin';
+export type SubscriptionTier = 'free' | 'pro';
+export type SubscriptionStatus = 'inactive' | 'active' | 'past_due' | 'cancelled' | 'trialing';
+export type SubscriptionPeriod = 'monthly' | 'annual';
 
 export interface UserProfile {
   id: string;
@@ -37,6 +42,11 @@ export interface UserProfile {
   carbsTargetGrams: number;
   fatsTargetGrams: number;
   onboardingCompleted: boolean;
+  role?: UserRole;
+  subscriptionTier?: SubscriptionTier;
+  subscriptionPeriod?: SubscriptionPeriod;
+  subscriptionStatus?: SubscriptionStatus;
+  cellNumber?: string;
 }
 
 export type MealCategory = 'breakfast' | 'lunch' | 'dinner' | 'snack';

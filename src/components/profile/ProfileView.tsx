@@ -13,8 +13,14 @@ export const ProfileView: React.FC = () => {
     updateNotificationPreferences,
     showToast,
     promptInstallApp,
-    isInstallable
+    isInstallable,
+    openUpgradeModal,
+    setActiveTab,
+    authUser,
   } = useApp();
+
+  const isAdmin = authUser?.role === 'admin' || userProfile?.role === 'admin';
+  const isPro = userProfile?.subscriptionTier === 'pro';
 
   const [isEditingWeight, setIsEditingWeight] = useState(false);
   const [tempWeight, setTempWeight] = useState(userProfile.weightKg.toString());
@@ -180,6 +186,61 @@ export const ProfileView: React.FC = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Subscription Tier Card */}
+      <div className="bg-white rounded-3xl p-5 border border-[#E8EDE9] subtle-shadow space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-black text-[#17211B] uppercase tracking-wider">
+              Subscription Status
+            </span>
+          </div>
+          <span
+            className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${
+              isPro
+                ? 'bg-[#EAF7EF] text-[#2C854E] border border-[#3FAE68]/30'
+                : 'bg-[#F4F6F4] text-[#6B756C]'
+            }`}
+          >
+            {isPro ? 'PRO ACTIVE' : 'FREE TIER'}
+          </span>
+        </div>
+
+        {isPro ? (
+          <div className="p-3.5 rounded-2xl bg-[#EAF7EF]/60 border border-[#3FAE68]/20 text-xs">
+            <p className="font-extrabold text-[#2C854E]">✨ Unlimited Pro Access Active</p>
+            <p className="text-[11px] text-[#6B756C] mt-0.5">
+              Enjoy unlimited weekly plan recalculations, 7-day macro curves, and AI NutriCoach.
+            </p>
+          </div>
+        ) : (
+          <div className="p-3.5 rounded-2xl bg-[#FFFDF8] border border-[#F0EBE1] text-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="font-bold text-[#17211B] block">Upgrade to NutriPlan Pro</span>
+                <span className="text-[10px] text-[#6B756C]">Save 30% on Annual Plan (R48/mo equivalent)</span>
+              </div>
+              <button
+                onClick={() => openUpgradeModal('Profile Upgrade')}
+                className="px-3.5 py-2 rounded-xl bg-[#3FAE68] text-white hover:bg-[#349859] font-bold text-xs shadow-xs transition active:scale-95 shrink-0"
+              >
+                Upgrade
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Admin Console Shortcut */}
+        {isAdmin && (
+          <button
+            onClick={() => setActiveTab('admin')}
+            className="w-full py-2.5 px-3 rounded-xl bg-[#17211B] text-white hover:bg-black font-bold text-xs flex items-center justify-center gap-2 transition shadow-xs"
+          >
+            <Shield className="w-3.5 h-3.5 text-[#3FAE68]" />
+            <span>Open Admin & Revenue Console</span>
+          </button>
+        )}
       </div>
 
       {/* PWA Mobile App Installation Card */}

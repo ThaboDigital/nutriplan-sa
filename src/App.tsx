@@ -25,6 +25,8 @@ import { PantryModal } from './components/pantry/PantryModal';
 import { QuickFoodLogModal } from './components/foodlog/QuickFoodLogModal';
 import { WeeklyReviewModal } from './components/progress/WeeklyReviewModal';
 import { OnboardingWizard } from './components/onboarding/OnboardingWizard';
+import { UpgradeModal } from './components/subscription/UpgradeModal';
+import { AdminDashboard } from './components/admin/AdminDashboard';
 import { Smartphone, Monitor } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -153,6 +155,7 @@ const AppContent: React.FC = () => {
               {activeTab === 'recipes' && <RecipeCatalog />}
               {activeTab === 'progress' && <ProgressDashboard />}
               {activeTab === 'profile' && <ProfileView />}
+              {activeTab === 'admin' && <AdminDashboard />}
             </main>
           </div>
 
@@ -179,6 +182,7 @@ const AppContent: React.FC = () => {
       <QuickFoodLogModal />
       <WeeklyReviewModal />
       <OnboardingWizard />
+      <UpgradeModal />
       <ToastContainer />
 
       {/* Auth & Migration Modals */}

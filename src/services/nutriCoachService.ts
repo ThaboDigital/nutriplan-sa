@@ -1,11 +1,13 @@
-﻿import { UserProfile, Recipe, PlannedMeal } from '../types';
+import { UserProfile, Recipe, PlannedMeal } from '../types';
 import { SA_RECIPES } from '../data/saFoodDatabase';
+import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 export interface CoachMessage {
   id: string;
   sender: 'user' | 'coach';
   text: string;
   timestamp: string;
+  imageUrl?: string | null;
   suggestedAction?: {
     label: string;
     type: 'swap_meal' | 'view_recipe' | 'add_pantry' | 'open_shopping' | 'create_meal_plan' | 'suggest_recipe';
@@ -275,5 +277,64 @@ For your primary goal of **${cleanGoal}** (${userProfile.weightKg} kg → target
 
 Would you like me to find a specific recipe, swap an upcoming meal, or adjust your grocery list?`,
     action: { label: 'Browse South African Recipes', type: 'open_shopping' }
+  };
+}
+
+export async function askNutriCoachAI(
+  query: string,
+  userProfile: UserProfile,
+  currentMealPlan: PlannedMeal[] = [],
+  pantryItems: string[] = []
+): Promise<{ text: string; imageUrl?: string | null; action?: CoachMessage['suggestedAction']; isLiveAI: boolean }> {
+  if (isSupabaseConfigured) {
+    try {
+      const { data, error } = await supabase.functions.invoke('nutricoach-chat', {
+        body: {
+          message: query,
+          userProfile: {
+            name: userProfile.name,
+            goal: userProfile.mainGoal,
+            currentWeightKg: userProfile.weightKg,
+            targetWeightKg: userProfile.targetWeightKg,
+            dietPreference: userProfile.dietaryPreference,
+            mealsPerDay: userProfile.mealsPerDay,
+            budget: userProfile.weeklyBudget,
+            avoidedFoods: userProfile.foodsAvoided,
+            allergies: userProfile.allergies,
+            pantry: pantryItems,
+            plannedMealsToday: currentMealPlan.map(m => m.recipe.title),
+          },
+        },
+      });
+
+      if (!error && data && (data.reply || data.text)) {
+        return {
+          text: data.reply || data.text,
+          imageUrl: data.imageUrl || null,
+          action: data.suggestedAction,
+          isLiveAI: true,
+        };
+      }
+    } catch (e) {
+      console.warn('Supabase edge function invoke notice:', e);
+    }
+  }
+
+  // Resilient South African deterministic engine fallback
+  const fallback = getNutriCoachResponse(query, userProfile, currentMealPlan, pantryItems);
+  
+  // Match recipe image if available
+  let matchedImage: string | null = null;
+  const q = query.toLowerCase();
+  const matchedRecipe = SA_RECIPES.find(r => q.includes(r.title.toLowerCase()) || r.tags.some(t => q.includes(t.toLowerCase())));
+  if (matchedRecipe) {
+    matchedImage = matchedRecipe.imageUrl;
+  }
+
+  return {
+    text: fallback.text,
+    imageUrl: matchedImage,
+    action: fallback.action,
+    isLiveAI: false,
   };
 }

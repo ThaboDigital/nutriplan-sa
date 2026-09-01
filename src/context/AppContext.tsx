@@ -57,8 +57,8 @@ interface AppContextType {
   notificationPreferences: NotificationPreferences;
   updateNotificationPreferences: (updates: Partial<NotificationPreferences>) => void;
   milestones: Milestone[];
-  activeTab: 'home' | 'mealplan' | 'recipes' | 'progress' | 'profile';
-  setActiveTab: (tab: 'home' | 'mealplan' | 'recipes' | 'progress' | 'profile') => void;
+  activeTab: 'home' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin';
+  setActiveTab: (tab: 'home' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin') => void;
   
   // Modals & Triggers
   isCoachOpen: boolean;
@@ -82,6 +82,9 @@ interface AppContextType {
   loginInitialMode: 'login' | 'register' | 'forgot';
   setLoginInitialMode: (mode: 'login' | 'register' | 'forgot') => void;
   openAuthModal: (mode?: 'login' | 'register' | 'forgot') => void;
+  isUpgradeModalOpen: boolean;
+  setIsUpgradeModalOpen: (open: boolean) => void;
+  openUpgradeModal: (reason?: string) => void;
 
   // Actions
   swapMeal: (targetMealId: string, newRecipe: Recipe) => void;
@@ -207,7 +210,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [currentDayIndex, setCurrentDayIndex] = useState<number>(0);
   const [milestones] = useState<Milestone[]>(INITIAL_MILESTONES);
-  const [activeTab, setActiveTab] = useState<'home' | 'mealplan' | 'recipes' | 'progress' | 'profile'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin'>('home');
 
   // Modals
   const [isCoachOpen, setIsCoachOpen] = useState(false);
@@ -261,6 +264,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const openAuthModal = (mode: 'login' | 'register' | 'forgot' = 'login') => {
     setLoginInitialMode(mode);
     setIsLoginOpen(true);
+  };
+
+  // Subscription & Pro Upgrade Modal
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+
+  const openUpgradeModal = (reason?: string) => {
+    if (reason) {
+      console.log('Upgrade prompted for:', reason);
+    }
+    setIsUpgradeModalOpen(true);
   };
 
   // Toasts
@@ -640,6 +653,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         loginInitialMode,
         setLoginInitialMode,
         openAuthModal,
+        isUpgradeModalOpen,
+        setIsUpgradeModalOpen,
+        openUpgradeModal,
         swapMeal,
         markMealEaten,
         regenerateMeal,

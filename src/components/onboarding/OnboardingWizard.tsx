@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserProfile, MainGoal, DietaryPreference, BudgetTier } from '../../types';
 import { generatePersonalizedMealPlan } from '../../services/mealPlannerService';
@@ -302,9 +302,10 @@ export const OnboardingWizard: React.FC = () => {
 
               <div className="space-y-2">
                 {[
-                  { id: 'lower_carb', label: 'Balanced Lower-Carb (Recommended)', desc: 'Swaps heavy pap, bread & potatoes for spinach, cauliflower & cabbage' },
-                  { id: 'balanced', label: 'Standard Balanced', desc: 'Moderate portions of wholesome grains & legumes' },
+                  { id: 'budget_banting', label: 'Mzansi Budget Banting (Recommended)', desc: 'Traditional affordable proteins (Mogodu, chicken cuts, eggs, pilchards) paired with cabbage and spinach starch swaps.' },
+                  { id: 'lower_carb', label: 'Balanced Lower-Carb', desc: 'Swaps heavy pap, bread & potatoes for spinach, cauliflower & cabbage' },
                   { id: 'high_protein', label: 'High Protein', desc: 'Focus on chicken, hake, lean mince & eggs' },
+                  { id: 'balanced', label: 'Standard Balanced', desc: 'Moderate portions of wholesome grains & legumes' },
                 ].map(d => (
                   <div
                     key={d.id}

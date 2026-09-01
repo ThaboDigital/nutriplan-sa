@@ -14,7 +14,8 @@ export const ShoppingListView: React.FC = () => {
     userProfile,
     showToast,
     authUser,
-    openAuthModal
+    openAuthModal,
+    openUpgradeModal,
   } = useApp();
 
   const [newItemName, setNewItemName] = useState('');
@@ -38,17 +39,26 @@ export const ShoppingListView: React.FC = () => {
   const totalEstimatedCost = shoppingList.reduce((acc, i) => acc + (i.isAlreadyHave ? 0 : i.estimatedCostZAR), 0);
 
   const handleShareList = () => {
+    const isPro = userProfile.subscriptionTier === 'pro' || authUser?.role === 'admin';
+    if (!isPro) {
+      openUpgradeModal('Instant Grocery List WhatsApp & PDF Export');
+      return;
+    }
+
     const lines = shoppingList
       .filter(i => !i.isAlreadyHave)
       .map(i => `• ${i.name}: ${i.quantity} ${i.unit}`)
       .join('\n');
 
-    const textToShare = `NutriPlan SA Grocery List (${userProfile.name}):\n\n${lines}\n\nEstimated Cost: ${formatZAR(totalEstimatedCost)}`;
+    const textToShare = `🛒 NutriPlan SA Grocery List (${userProfile.name}):\n\n${lines}\n\nEstimated Cost: ${formatZAR(totalEstimatedCost)}\n\nGenerated with NutriPlan SA`;
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(textToShare);
-      showToast('Shopping list copied to clipboard!', 'success');
+      showToast('Shopping list copied! Ready to paste into WhatsApp.', 'success');
     }
+
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(textToShare)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   const handleAddItem = (e: React.FormEvent) => {

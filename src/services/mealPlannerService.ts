@@ -15,12 +15,32 @@ export function generatePersonalizedMealPlan(profile: UserProfile): DayPlan[] {
     if (hasAllergen) return false;
 
     // Check dietary preference
+    if (profile.dietaryPreference === 'budget_banting') {
+      // Prioritize traditional, budget, low-carb dishes (Mogodu, Maotwana, Malana, Pilchards, Eggs, Morogo)
+      if (r.tags.includes('Traditional') || (r.tags.includes('Budget') && r.nutrition.carbsG <= 20) || r.estimatedCostZAR <= 35) {
+        return true;
+      }
+      return r.tags.includes('Low Carb');
+    }
+
     if (profile.dietaryPreference === 'lower_carb') {
       // Prioritize low-carb / balanced
       if (r.tags.includes('Low Carb') || r.nutrition.carbsG <= 25) return true;
+      return false;
     }
+
+    if (profile.dietaryPreference === 'high_protein') {
+      if (r.nutrition.proteinG >= 30 || r.tags.includes('High Protein')) return true;
+      return false;
+    }
+
     return true;
   });
+
+  // For budget tiers (R450 / R600 / R500), sort by most cost-efficient meals
+  if (profile.dietaryPreference === 'budget_banting' || profile.weeklyBudget === 'R500') {
+    candidateRecipes = [...candidateRecipes].sort((a, b) => a.estimatedCostZAR - b.estimatedCostZAR);
+  }
 
   if (candidateRecipes.length < 4) {
     candidateRecipes = SA_RECIPES;

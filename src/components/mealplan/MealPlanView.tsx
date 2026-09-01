@@ -15,7 +15,18 @@ export const MealPlanView: React.FC = () => {
     regenerateSingleDay,
     shoppingList,
     setIsCoachOpen,
+    authUser,
+    openUpgradeModal,
   } = useApp();
+
+  const handleRegenerateEntireWeek = () => {
+    const isPro = userProfile.subscriptionTier === 'pro' || authUser?.role === 'admin';
+    if (!isPro) {
+      openUpgradeModal('Weekly Plan Recalculation');
+      return;
+    }
+    regenerateEntireWeek();
+  };
 
   const [activeSubTab, setActiveSubTab] = useState<'calendar' | 'shopping'>('calendar');
 
@@ -135,7 +146,7 @@ export const MealPlanView: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
-                onClick={regenerateEntireWeek}
+                onClick={handleRegenerateEntireWeek}
                 className="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#FFFDF8] border border-[#E8EDE9] hover:border-[#17211B] text-xs font-bold text-[#17211B] transition active:scale-95"
               >
                 <RotateCw className="w-4 h-4 text-[#3FAE68]" />
