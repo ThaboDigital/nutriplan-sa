@@ -264,18 +264,123 @@ Would you like to open your pantry inventory or view recipes?`,
     };
   }
 
-  // 18. CONTEXTUAL INTELLIGENT FALLBACK
-  const cleanGoal = userProfile.mainGoal.replace('_', ' ');
+  // 18. SALAD / AVOCADO SPECIFIC INTENT
+  if (q.includes('salad') || q.includes('avocado') || q.includes('avo')) {
+    const avoRecipe = SA_RECIPES.find(r => r.id === 'rec_chicken_avo_salad') || {
+      id: 'rec_avo_salad',
+      title: 'Mzansi Fresh Avocado & Greens Salad',
+      subtitle: 'Crisp greens, cucumber ribbons, cherry tomatoes, and sliced avocado with lemon dressing',
+    };
+    return {
+      text: `**Mzansi Fresh Avocado & Greens Salad**
+
+• **Ingredients:**
+  - 1 ripe avocado (sliced)
+  - 2 cups crisp mixed greens (cos lettuce & baby spinach)
+  - 1/2 English cucumber, shaved into ribbons
+  - 6 sweet cherry tomatoes (halved)
+  - 1 tbsp cold-pressed olive oil or avocado oil
+  - Fresh lemon juice, pinch of sea salt & black pepper
+
+• **Simple Method:**
+  1. In a bowl, toss crisp greens, cucumber ribbons, and cherry tomatoes with olive oil and lemon juice.
+  2. Arrange sliced avocado on top.
+  3. Season with coarse sea salt and cracked black pepper.
+
+• **Estimated Macros:**
+  ~220 kcal | 3g Protein | 20g Healthy Fats | 4g Net Carbs. Excellent for fat adaptation and keeping insulin low toward your ${userProfile.targetWeightKg || 80}kg goal!`,
+      action: { label: 'View Full Avocado Salad Recipe', type: 'view_recipe', payload: avoRecipe }
+    };
+  }
+
+  // 19. MOGODU / TRIPE INTENT
+  if (q.includes('mogodu') || q.includes('tripe')) {
+    const mogoduRec = SA_RECIPES.find(r => r.id === 'rec_mala_mogodu');
+    return {
+      text: `**Mala Mogodu (Slow-Stewed Traditional Beef Tripe) with Morogo**
+
+• **Ingredients:**
+  - 200g cleaned beef tripe & intestines (Mogodu)
+  - 1 diced brown onion & 2 crushed garlic cloves
+  - 100g steamed morogo / wild spinach
+  - 1 tsp curry powder, bay leaf, sea salt & black pepper
+
+• **Simple Method:**
+  1. Simmer cleaned mogodu in seasoned water with bay leaf for 40 minutes until tender.
+  2. Sauté onion and curry powder in a pan; stir into the rich broth.
+  3. Fold in fresh morogo in the final 5 minutes of cooking.
+
+• **Estimated Macros:**
+  ~310 kcal | 36g Protein | 18g Fat | 2g Net Carbs. High protein, high collagen, zero sugar!`,
+      action: mogoduRec ? { label: 'View Mala Mogodu Recipe', type: 'view_recipe', payload: mogoduRec } : undefined
+    };
+  }
+
+  // 20. CHICKEN FEET / MAOTWANA INTENT
+  if (q.includes('feet') || q.includes('maotwana')) {
+    const feetRec = SA_RECIPES.find(r => r.id === 'rec_maotwana_chicken_feet');
+    return {
+      text: `**Maotwana (Spiced Simmered Chicken Feet) over Braised Cabbage**
+
+• **Ingredients:**
+  - 200g cleaned chicken feet (Maotwana)
+  - 1/2 tin chopped tomatoes & braai onions
+  - 150g shredded green cabbage
+  - 1 tsp paprika, cayenne pepper & sea salt
+
+• **Simple Method:**
+  1. Boil chicken feet in water with salt for 20 minutes until tender.
+  2. Add tomato, onion, and spices; simmer until sauce thickens and glazes the chicken cuts.
+  3. Serve over shredded steamed cabbage instead of pap.
+
+• **Estimated Macros:**
+  ~280 kcal | 28g Protein | 18g Fat | 3g Net Carbs. Unbeatable weekly budget savings!`,
+      action: feetRec ? { label: 'View Maotwana Recipe', type: 'view_recipe', payload: feetRec } : undefined
+    };
+  }
+
+  // 21. PILCHARDS INTENT
+  if (q.includes('pilchard') || q.includes('lucky star')) {
+    const pilchardRec = SA_RECIPES.find(r => r.id === 'rec_pilchards_cabbage_stew');
+    return {
+      text: `**Spiced Pilchards in Tomato & Chilli with Braised Cabbage**
+
+• **Ingredients:**
+  - 1 tin (200g) Lucky Star pilchards in tomato/chilli sauce
+  - 180g finely shredded cabbage
+  - 1 small onion & 1 clove garlic, chopped
+  - 1 tsp oil & black pepper
+
+• **Simple Method:**
+  1. Sauté chopped onion and garlic in 1 tsp oil until translucent.
+  2. Add shredded cabbage with 2 tbsp water; steam covered for 5 minutes.
+  3. Pour in pilchards with sauce; simmer gently for 4 minutes.
+
+• **Estimated Macros:**
+  ~350 kcal | 34g Protein | 16g Fat | 7g Net Carbs. High in complete protein and heart-healthy Omega-3!`,
+      action: pilchardRec ? { label: 'View Pilchards Recipe', type: 'view_recipe', payload: pilchardRec } : undefined
+    };
+  }
+
+  // 22. STARCH SWAP INTENT
+  if (q.includes('pap') || q.includes('starch') || q.includes('swap')) {
+    return {
+      text: `**Best South African Starch Swaps for Weight Loss:**
+
+• **Swap Stiff White Pap for:** Braised cabbage with onions (~4g carbs vs 55g carbs in pap).
+• **Swap White Bread for:** Lettuce wraps or 2 boiled eggs + half sliced avocado.
+• **Swap White Rice for:** Cauliflower mash or sautéed morogo/spinach.
+• **Why it works:** Keeps insulin low and accelerates fat burning toward your target weight (${userProfile.targetWeightKg || 80}kg).`
+    };
+  }
+
+  // 23. CONTEXTUAL DIRECT ANSWER
   return {
-    text: `Regarding your question about **"${query}"**:
+    text: `**South African Nutrition Guidance for ${userProfile.name}:**
 
-For your primary goal of **${cleanGoal}** (${userProfile.weightKg} kg → target ${userProfile.targetWeightKg || 80} kg):
-
-1. **Nutritional Focus:** Prioritize a palm-sized lean protein source (chicken, hake, lean mince, eggs) alongside nutrient-dense vegetables (spinach/morogo, cabbage, gem squash).
-2. **Portion Control:** Keep refined carbohydrates moderate to maintain stable insulin levels.
-3. **Daily Routine:** Stick to your target of **${userProfile.mealsPerDay} meals/day** and drink **${userProfile.dailyWaterTargetLiters || 2.0}L of water** daily.
-
-Would you like me to find a specific recipe, swap an upcoming meal, or adjust your grocery list?`,
+• **Direct Recommendation for "${query}":** Prioritize clean, high-protein local staples (grilled chicken, eggs, pilchards, lean mince) paired with fibrous greens (morogo, cabbage).
+• **Macro Balance:** Keep starches minimal to maintain steady energy and burn fat toward your ${userProfile.targetWeightKg || 80}kg target.
+• **Hydration:** Aim for ${userProfile.dailyWaterTargetLiters || 2.0}L daily, with pure unsweetened Rooibos tea counting 100%.`,
     action: { label: 'Browse South African Recipes', type: 'open_shopping' }
   };
 }
@@ -291,6 +396,7 @@ export async function askNutriCoachAI(
       const { data, error } = await supabase.functions.invoke('nutricoach-chat', {
         body: {
           message: query,
+          query: query,
           userProfile: {
             name: userProfile.name,
             goal: userProfile.mainGoal,
@@ -307,16 +413,20 @@ export async function askNutriCoachAI(
         },
       });
 
+      if (error) {
+        console.error('Edge Function Error:', error);
+      }
+
       if (!error && data && (data.reply || data.text)) {
         return {
           text: data.reply || data.text,
           imageUrl: data.imageUrl || null,
           action: data.suggestedAction,
-          isLiveAI: true,
+          isLiveAI: data.isLiveAI !== false,
         };
       }
     } catch (e) {
-      console.warn('Supabase edge function invoke notice:', e);
+      console.error('Edge Function Invocation Exception:', e);
     }
   }
 
@@ -329,6 +439,14 @@ export async function askNutriCoachAI(
   const matchedRecipe = SA_RECIPES.find(r => q.includes(r.title.toLowerCase()) || r.tags.some(t => q.includes(t.toLowerCase())));
   if (matchedRecipe) {
     matchedImage = matchedRecipe.imageUrl;
+  } else if (q.includes('salad') || q.includes('avocado') || q.includes('avo')) {
+    matchedImage = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80';
+  } else if (q.includes('mogodu') || q.includes('tripe')) {
+    matchedImage = 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80';
+  } else if (q.includes('feet') || q.includes('maotwana')) {
+    matchedImage = 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=1200&q=80';
+  } else if (q.includes('pilchard')) {
+    matchedImage = 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1200&q=80';
   }
 
   return {
