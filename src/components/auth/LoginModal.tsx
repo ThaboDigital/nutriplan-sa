@@ -267,8 +267,34 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
             <ArrowRight className="w-4 h-4" />
           </button>
 
-          {/* Modal Footer Attribution */}
-          <div className="pt-3 border-t border-[#F0F2F0] text-center">
+          {/* Modal Footer Legal & Attribution */}
+          <div className="pt-3 border-t border-[#F0F2F0] text-center space-y-1.5">
+            <div className="flex items-center justify-center gap-2 text-[10px] text-[#6B756C]">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  window.history.pushState({}, '', '/privacy');
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                }}
+                className="text-[#2C854E] hover:underline"
+              >
+                Privacy Policy
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  window.history.pushState({}, '', '/terms');
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                }}
+                className="text-[#2C854E] hover:underline"
+              >
+                Terms of Service
+              </button>
+            </div>
+
             <p className="text-[11px] text-[#6B756C]">
               NutriPlan SA • A Product of{' '}
               <a

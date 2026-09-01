@@ -286,8 +286,30 @@ export const ProfileView: React.FC = () => {
         </button>
       </div>
 
-      {/* App Version & Company Attribution */}
-      <div className="pt-3 pb-2 text-center space-y-1">
+      {/* App Version, Legal Links & Company Attribution */}
+      <div className="pt-3 pb-2 text-center space-y-2">
+        <div className="flex items-center justify-center gap-3 text-xs text-[#6B756C]">
+          <button
+            onClick={() => {
+              window.history.pushState({}, '', '/privacy');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+            }}
+            className="text-[#2C854E] hover:underline font-bold"
+          >
+            Privacy Policy
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => {
+              window.history.pushState({}, '', '/terms');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+            }}
+            className="text-[#2C854E] hover:underline font-bold"
+          >
+            Terms of Service
+          </button>
+        </div>
+
         <p className="text-[11px] text-[#6B756C]">
           NutriPlan SA v2.4 • Built for South Africa
         </p>

@@ -27,6 +27,8 @@ import { WeeklyReviewModal } from './components/progress/WeeklyReviewModal';
 import { OnboardingWizard } from './components/onboarding/OnboardingWizard';
 import { UpgradeModal } from './components/subscription/UpgradeModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { TermsOfService } from './pages/TermsOfService';
 import { Smartphone, Monitor } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -35,6 +37,35 @@ const AppContent: React.FC = () => {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [migrationSummary, setMigrationSummary] = useState<MigrationSummary | null>(null);
   const [isMigrationOpen, setIsMigrationOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState<string>(() => {
+    const p = window.location.pathname.toLowerCase();
+    const h = window.location.hash.toLowerCase();
+    if (p.includes('privacy') || h.includes('privacy')) return '/privacy';
+    if (p.includes('terms') || h.includes('terms')) return '/terms';
+    return '/';
+  });
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const p = window.location.pathname.toLowerCase();
+      const h = window.location.hash.toLowerCase();
+      if (p.includes('privacy') || h.includes('privacy')) {
+        setCurrentPath('/privacy');
+      } else if (p.includes('terms') || h.includes('terms')) {
+        setCurrentPath('/terms');
+      } else {
+        setCurrentPath('/');
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
+  }, []);
 
   useEffect(() => {
     // Listen to Auth State
@@ -64,6 +95,29 @@ const AppContent: React.FC = () => {
     setAuthUser(user);
     showToast(`Welcome, ${user.name}! Cloud sync active.`, 'success');
   };
+
+  // Dedicated Public Legal Routes (Unauthenticated / Google Play compliant)
+  if (currentPath === '/privacy') {
+    return (
+      <PrivacyPolicy
+        onBack={() => {
+          window.history.pushState({}, '', '/');
+          setCurrentPath('/');
+        }}
+      />
+    );
+  }
+
+  if (currentPath === '/terms') {
+    return (
+      <TermsOfService
+        onBack={() => {
+          window.history.pushState({}, '', '/');
+          setCurrentPath('/');
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F4F6F4] text-[#182018] flex flex-col antialiased">
