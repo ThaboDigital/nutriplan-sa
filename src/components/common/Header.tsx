@@ -23,25 +23,18 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 bg-[#FFFDF8]/90 backdrop-blur-md border-b border-[#E8EDE9] px-4 py-2.5">
       <div className="max-w-md mx-auto flex items-center justify-between gap-2">
-        {/* Brand & Logo (Left) */}
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+        {/* Brand Logo (Left) */}
+        <button
+          onClick={() => setActiveTab('home')}
+          className="flex items-center shrink-0 active:scale-95 transition focus:outline-none"
+          title="NutriPlan SA Home"
+        >
           <img
             src="/logo.png"
             alt="NutriPlan SA"
-            className="w-8 h-8 rounded-xl object-cover shadow-xs border border-[#E8EDE9] shrink-0"
+            className="w-8 h-8 rounded-xl object-cover shadow-xs border border-[#E8EDE9]"
           />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-base tracking-tight text-[#17211B] truncate">NutriPlan</span>
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#EAF7EF] text-[#3FAE68] shrink-0">
-                SA
-              </span>
-            </div>
-            <p className="text-[11px] text-[#6B756C] font-medium leading-none truncate">
-              Healthy & Affordable
-            </p>
-          </div>
-        </div>
+        </button>
 
         {/* Action icons (Right) */}
         <div className="flex items-center gap-1.5 shrink-0">
