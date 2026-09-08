@@ -44,15 +44,15 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Action icons (Right) */}
-        <div className="flex items-center gap-1 shrink-0">
-          {/* NutriCoach (Tablet/Desktop helper only, hidden on small mobile) */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {/* NutriCoach (Prominent AI Assistant launcher on both Mobile & Desktop) */}
           <button
             onClick={() => setIsCoachOpen(true)}
-            className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d6f0df] transition active:scale-95 text-xs font-bold"
-            title="NutriCoach Advisor"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d6f0df] transition active:scale-95 text-xs font-black border border-[#3FAE68]/30 shadow-2xs"
+            title="NutriCoach AI Advisor"
           >
             <UserCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
-            <span>NutriCoach</span>
+            <span className="text-[11px] sm:text-xs">AI Coach</span>
           </button>
 
           {/* Pantry */}

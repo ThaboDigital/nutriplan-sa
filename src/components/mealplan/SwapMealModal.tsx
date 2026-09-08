@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { SA_RECIPES } from '../../data/saFoodDatabase';
-import { Recipe } from '../../types';
-import { X, Search, Check, Flame, Dumbbell, Clock } from 'lucide-react';
-import { formatCalories } from '../../utils/formatters';
+import { X, Search, Flame, Dumbbell, Clock } from 'lucide-react';
+import { formatZAR } from '../../utils/formatters';
 
 export const SwapMealModal: React.FC = () => {
   const { swapModalTargetMeal, setSwapModalTargetMeal, swapMeal, userProfile } = useApp();
@@ -90,14 +89,21 @@ export const SwapMealModal: React.FC = () => {
               />
 
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-xs text-[#17211B] group-hover:text-[#3FAE68] transition truncate">
-                  {recipe.title}
-                </h4>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <h4 className="font-bold text-xs text-[#17211B] group-hover:text-[#3FAE68] transition truncate">
+                    {recipe.title}
+                  </h4>
+                  {recipe.isSouthAfricanClassic && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-[#FFF2E0] text-[#D97706] text-[9px] font-bold shrink-0">
+                      🇿🇦 SA Classic
+                    </span>
+                  )}
+                </div>
                 <p className="text-[10px] text-[#6B756C] line-clamp-1 mt-0.5">
                   {recipe.description}
                 </p>
 
-                <div className="flex items-center gap-3 mt-1.5 text-[10px] font-semibold text-[#6B756C]">
+                <div className="flex items-center gap-3 mt-1.5 text-[10px] font-semibold text-[#6B756C] flex-wrap">
                   {userProfile.trackCalories && (
                     <span className="flex items-center gap-0.5 text-[#17211B]">
                       <Flame className="w-2.5 h-2.5 text-[#F2A65A]" />
@@ -112,6 +118,11 @@ export const SwapMealModal: React.FC = () => {
                     <Clock className="w-2.5 h-2.5" />
                     {recipe.prepTimeMinutes + recipe.cookTimeMinutes}m
                   </span>
+                  {recipe.estimatedCostZAR > 0 && (
+                    <span className="text-[#17211B] font-bold">
+                      {formatZAR(recipe.estimatedCostZAR)}
+                    </span>
+                  )}
                 </div>
               </div>
 

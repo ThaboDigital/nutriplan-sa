@@ -150,7 +150,7 @@ export const RecipeDetailModal: React.FC = () => {
               {recipe.substitutions.map((sub, sIdx) => (
                 <div key={sIdx} className="text-xs text-[#6B756C] space-y-0.5">
                   <div>
-                    <span className="line-through text-[#6B756C]">{sub.original}</span> ?{' '}
+                    <span className="line-through text-[#6B756C]">{sub.original}</span> →{' '}
                     <strong className="text-[#17211B]">{sub.replacement}</strong>
                   </div>
                   <p className="text-[11px] italic text-[#6B756C]">{sub.note}</p>

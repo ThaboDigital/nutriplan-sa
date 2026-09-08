@@ -3,8 +3,17 @@ import { useApp } from '../../context/AppContext';
 import { ProgressRings } from './ProgressRings';
 import { WaterWidget } from './WaterWidget';
 import { MealCard } from './MealCard';
-import { UserCheck, ClipboardList, Calendar, ArrowRight, CheckCircle2, Circle, UtensilsCrossed, AlertCircle } from 'lucide-react';
-import { formatZAR } from '../../utils/formatters';
+import {
+  UserCheck,
+  ClipboardList,
+  ArrowRight,
+  CheckCircle2,
+  Circle,
+  UtensilsCrossed,
+  AlertCircle,
+  Plus,
+  BookOpen
+} from 'lucide-react';
 
 export const HomeDashboard: React.FC = () => {
   const {
@@ -14,47 +23,63 @@ export const HomeDashboard: React.FC = () => {
     toggleHabit,
     setIsCoachOpen,
     setActiveTab,
-    setShowOnboardingWizard
+    setShowOnboardingWizard,
+    openFoodLogForMeal,
   } = useApp();
 
   const currentDay = weeklyPlan[0]; // Monday
   const todayMeals = currentDay ? currentDay.meals : [];
 
-  // Greeting based on time of day
+  // Dynamic greeting based on time of day
   const hour = new Date().getHours();
   let timeGreeting = 'Good morning';
   if (hour >= 12 && hour < 17) timeGreeting = 'Good afternoon';
   else if (hour >= 17) timeGreeting = 'Good evening';
 
   return (
-    <div className="space-y-6 pb-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto animate-in fade-in duration-200">
+    <div className="space-y-6 pb-24 px-3.5 sm:px-6 md:px-8 max-w-7xl mx-auto animate-in fade-in duration-200">
       {/* Top Banner Greeting & Quick Action Triggers */}
       <div className="pt-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="w-full">
-            <h1 className="text-2xl sm:text-3xl font-black text-[#17211B] tracking-tight">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#3FAE68] animate-pulse" />
+              <span className="text-xs font-black uppercase tracking-wider text-[#2C854E]">
+                Today's Overview
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#17211B] tracking-tight mt-0.5">
               {timeGreeting}, {userProfile.name}
             </h1>
             <p className="text-xs sm:text-sm font-medium text-[#6B756C] mt-0.5">
-              Let's make today a healthy, energized one.
+              How are you doing today? Here is your personalized daily balance.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2.5 shrink-0 mt-1 sm:mt-0">
+          {/* Top Quick Actions */}
+          <div className="flex items-center gap-2 shrink-0">
             <button
-              onClick={() => setShowOnboardingWizard(true)}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#17211B] text-white text-xs font-bold shadow-xs active:scale-95 transition hover:bg-black text-center"
+              onClick={() => openFoodLogForMeal()}
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] text-xs font-black shadow-xs active:scale-95 transition"
             >
-              <ClipboardList className="w-4 h-4 text-[#3FAE68] shrink-0" />
-              <span className="truncate">Personalize Plan</span>
+              <Plus className="w-4 h-4" />
+              <span>Log Food</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('diary')}
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8EDE9] hover:border-[#17211B] text-[#17211B] text-xs font-bold shadow-2xs active:scale-95 transition"
+            >
+              <BookOpen className="w-4 h-4 text-[#3FAE68]" />
+              <span>Diary</span>
             </button>
 
             <button
               onClick={() => setIsCoachOpen(true)}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-xs active:scale-95 transition hover:bg-[#d5eedf] text-center"
+              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-2xs active:scale-95 transition hover:bg-[#d5eedf]"
             >
-              <UserCheck className="w-4 h-4 text-[#3FAE68] shrink-0" />
-              <span className="truncate">NutriCoach</span>
+              <UserCheck className="w-4 h-4 text-[#3FAE68]" />
+              <span>AI Coach</span>
             </button>
           </div>
         </div>

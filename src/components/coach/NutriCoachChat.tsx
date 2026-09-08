@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { askNutriCoachAI, CoachMessage } from '../../services/nutriCoachService';
-import { X, Send, UserCheck, User, ArrowRight, RefreshCw, MessageSquare, Sparkles } from 'lucide-react';
+import { X, Send, UserCheck, User, ArrowRight, RefreshCw, Sparkles } from 'lucide-react';
 import { SA_RECIPES } from '../../data/saFoodDatabase';
 
 export const NutriCoachChat: React.FC = () => {
@@ -11,7 +11,6 @@ export const NutriCoachChat: React.FC = () => {
     userProfile,
     weeklyPlan,
     pantryItems,
-    habits,
     setSelectedRecipeForDetail,
     setIsPantryOpen,
     setActiveTab,
@@ -76,7 +75,7 @@ export const NutriCoachChat: React.FC = () => {
         suggestedAction: resp.action
       };
       setMessages(prev => [...prev, botMsg]);
-    } catch (e: any) {
+    } catch {
       setMessages(prev => [
         ...prev,
         {

@@ -9,7 +9,12 @@ import {
   Recipe,
   PantryItem,
   NotificationPreferences,
-  PlannedMeal
+  PlannedMeal,
+  NavTab,
+  FoodItem,
+  FoodLogEntry,
+  DailyDiarySummary,
+  MealCategory,
 } from '../types';
 import {
   DEFAULT_USER_PROFILE,
@@ -21,6 +26,7 @@ import {
 import { generateShoppingListFromMealPlan } from '../services/shoppingListService';
 import { generatePersonalizedMealPlan, swapMealInPlan } from '../services/mealPlannerService';
 import { SA_RECIPES } from '../data/saFoodDatabase';
+import { SA_FOODS_DATABASE } from '../data/saFoodsList';
 import { authService, AuthUser } from '../services/authService';
 import { dataSyncService } from '../services/dataSyncService';
 
@@ -57,8 +63,21 @@ interface AppContextType {
   notificationPreferences: NotificationPreferences;
   updateNotificationPreferences: (updates: Partial<NotificationPreferences>) => void;
   milestones: Milestone[];
-  activeTab: 'home' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin';
-  setActiveTab: (tab: 'home' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin') => void;
+  activeTab: NavTab;
+  setActiveTab: (tab: NavTab) => void;
+
+  // Food Diary & Logging (First-Class Feature)
+  foodLog: FoodLogEntry[];
+  recentFoods: FoodItem[];
+  favouriteFoodIds: string[];
+  selectedDiaryDate: string;
+  setSelectedDiaryDate: (date: string) => void;
+  foodLogModalInitialMeal: MealCategory;
+  openFoodLogForMeal: (mealCategory?: MealCategory) => void;
+  logFoodItem: (entry: Omit<FoodLogEntry, 'id' | 'loggedAt'>) => void;
+  removeFoodLogEntry: (id: string) => void;
+  toggleFavouriteFood: (foodId: string) => void;
+  getDiarySummary: (dateStr?: string) => DailyDiarySummary;
   
   // Modals & Triggers
   isCoachOpen: boolean;
@@ -114,7 +133,80 @@ const STORAGE_KEYS = {
   SHOPPING: 'nutriplan_shopping_v2',
   NOTIFS: 'nutriplan_notifs_v2',
   NOTIF_PREFS: 'nutriplan_notif_prefs_v2',
+  FOOD_LOG: 'nutriplan_food_log_v2',
+  RECENT_FOODS: 'nutriplan_recent_foods_v2',
+  FAVOURITE_FOODS: 'nutriplan_fav_foods_v2',
 };
+
+const getTodayDateStr = () => new Date().toISOString().split('T')[0];
+
+const DEFAULT_FOOD_LOG: FoodLogEntry[] = [
+  {
+    id: 'flog_init_1',
+    date: getTodayDateStr(),
+    mealType: 'breakfast',
+    foodName: 'Large Free-Range Egg (Boiled)',
+    servingQuantity: 2,
+    servingUnit: 'large egg (55g)',
+    calories: 148,
+    proteinG: 12.6,
+    carbsG: 0.8,
+    fatG: 10.2,
+    loggedAt: new Date().toISOString(),
+  },
+  {
+    id: 'flog_init_2',
+    date: getTodayDateStr(),
+    mealType: 'breakfast',
+    foodName: 'Ripe South African Avocado (Half)',
+    servingQuantity: 1,
+    servingUnit: 'half avocado (80g)',
+    calories: 135,
+    proteinG: 1.6,
+    carbsG: 4.8,
+    fatG: 12.8,
+    loggedAt: new Date().toISOString(),
+  },
+  {
+    id: 'flog_init_3',
+    date: getTodayDateStr(),
+    mealType: 'breakfast',
+    foodName: 'Pure Rooibos Herbal Tea (Unsweetened)',
+    servingQuantity: 1,
+    servingUnit: 'large mug (300ml)',
+    calories: 2,
+    proteinG: 0,
+    carbsG: 0.3,
+    fatG: 0,
+    loggedAt: new Date().toISOString(),
+  },
+  {
+    id: 'flog_init_4',
+    date: getTodayDateStr(),
+    mealType: 'lunch',
+    foodName: 'Grilled Chicken Breast Fillet',
+    servingQuantity: 1,
+    servingUnit: '150g cooked fillet',
+    calories: 247,
+    proteinG: 46.5,
+    carbsG: 0,
+    fatG: 5.4,
+    loggedAt: new Date().toISOString(),
+  },
+  {
+    id: 'flog_init_5',
+    date: getTodayDateStr(),
+    mealType: 'lunch',
+    foodName: 'Morogo / Wild Spinach (Braised)',
+    servingQuantity: 1,
+    servingUnit: '1 cup cooked (150g)',
+    calories: 62,
+    proteinG: 4.8,
+    carbsG: 5.2,
+    fatG: 2.5,
+    loggedAt: new Date().toISOString(),
+  },
+];
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
@@ -138,6 +230,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     return generatePersonalizedMealPlan(DEFAULT_USER_PROFILE);
   });
+
+  // Food Diary State
+  const [foodLog, setFoodLog] = useState<FoodLogEntry[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.FOOD_LOG);
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return DEFAULT_FOOD_LOG;
+  });
+
+  const [recentFoods, setRecentFoods] = useState<FoodItem[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.RECENT_FOODS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return SA_FOODS_DATABASE.slice(0, 8);
+  });
+
+  const [favouriteFoodIds, setFavouriteFoodIds] = useState<string[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.FAVOURITE_FOODS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return ['food_chicken_breast_grilled', 'food_egg_large_boiled', 'food_avocado_half', 'food_rooibos_tea_black'];
+  });
+
+  const [selectedDiaryDate, setSelectedDiaryDate] = useState<string>(getTodayDateStr());
+  const [foodLogModalInitialMeal, setFoodLogModalInitialMeal] = useState<MealCategory>('lunch');
 
   // Water
   const [todayWaterMl, setTodayWaterMl] = useState<number>(() => {
@@ -210,7 +330,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [currentDayIndex, setCurrentDayIndex] = useState<number>(0);
   const [milestones] = useState<Milestone[]>(INITIAL_MILESTONES);
-  const [activeTab, setActiveTab] = useState<'home' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin'>('home');
+  const [activeTab, setActiveTab] = useState<NavTab>('home');
 
   // Modals
   const [isCoachOpen, setIsCoachOpen] = useState(false);
@@ -384,6 +504,90 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.NOTIF_PREFS, JSON.stringify(notificationPreferences));
   }, [notificationPreferences]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.FOOD_LOG, JSON.stringify(foodLog));
+  }, [foodLog]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.RECENT_FOODS, JSON.stringify(recentFoods));
+  }, [recentFoods]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.FAVOURITE_FOODS, JSON.stringify(favouriteFoodIds));
+  }, [favouriteFoodIds]);
+
+  // Food Diary Actions
+  const openFoodLogForMeal = (mealCategory?: MealCategory) => {
+    if (mealCategory) {
+      setFoodLogModalInitialMeal(mealCategory);
+    } else {
+      const h = new Date().getHours();
+      if (h < 11) setFoodLogModalInitialMeal('breakfast');
+      else if (h < 15) setFoodLogModalInitialMeal('lunch');
+      else if (h < 21) setFoodLogModalInitialMeal('dinner');
+      else setFoodLogModalInitialMeal('snack');
+    }
+    setIsFoodLogOpen(true);
+  };
+
+  const logFoodItem = (entry: Omit<FoodLogEntry, 'id' | 'loggedAt'>) => {
+    const newEntry: FoodLogEntry = {
+      ...entry,
+      id: `flog_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      loggedAt: new Date().toISOString(),
+    };
+
+    setFoodLog((prev) => [newEntry, ...prev]);
+
+    // Also update recent foods list
+    const matchingSAFood = SA_FOODS_DATABASE.find(f => f.name.toLowerCase() === entry.foodName.toLowerCase());
+    if (matchingSAFood) {
+      setRecentFoods((prev) => [matchingSAFood, ...prev.filter(f => f.id !== matchingSAFood.id)].slice(0, 15));
+    }
+
+    showToast(`Logged ${entry.foodName} (${entry.calories} kcal) to ${entry.mealType}`, 'success');
+  };
+
+  const removeFoodLogEntry = (id: string) => {
+    setFoodLog((prev) => prev.filter(e => e.id !== id));
+    showToast('Entry removed from food diary', 'info');
+  };
+
+  const toggleFavouriteFood = (foodId: string) => {
+    setFavouriteFoodIds((prev) => {
+      const isFav = prev.includes(foodId);
+      const next = isFav ? prev.filter(id => id !== foodId) : [...prev, foodId];
+      showToast(isFav ? 'Removed from favourite foods' : 'Added to favourite foods', 'info');
+      return next;
+    });
+  };
+
+  const getDiarySummary = (dateStr: string = selectedDiaryDate): DailyDiarySummary => {
+    const entries = foodLog.filter(e => e.date === dateStr);
+    const caloriesConsumed = entries.reduce((sum, e) => sum + e.calories, 0);
+    const proteinConsumedG = Math.round(entries.reduce((sum, e) => sum + e.proteinG, 0));
+    const carbsConsumedG = Math.round(entries.reduce((sum, e) => sum + e.carbsG, 0));
+    const fatConsumedG = Math.round(entries.reduce((sum, e) => sum + e.fatG, 0));
+
+    const calorieTarget = userProfile.calorieTargetKcal || 1800;
+    const proteinTargetG = userProfile.proteinTargetGrams || 110;
+    const carbsTargetG = userProfile.carbsTargetGrams || 90;
+    const fatTargetG = userProfile.fatsTargetGrams || 70;
+
+    return {
+      date: dateStr,
+      caloriesConsumed,
+      calorieTarget,
+      caloriesRemaining: Math.max(0, calorieTarget - caloriesConsumed),
+      proteinConsumedG,
+      proteinTargetG,
+      carbsConsumedG,
+      carbsTargetG,
+      fatConsumedG,
+      fatTargetG,
+    };
+  };
 
   // Actions
   const updateUserProfile = (updates: Partial<UserProfile>) => {
@@ -595,6 +799,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTodayWaterMl(0);
     setHabits(DEFAULT_HABITS);
     setPantryItems(DEFAULT_PANTRY);
+    setFoodLog(DEFAULT_FOOD_LOG);
+    setRecentFoods(SA_FOODS_DATABASE.slice(0, 8));
+    setFavouriteFoodIds(['food_chicken_breast_grilled', 'food_egg_large_boiled', 'food_avocado_half', 'food_rooibos_tea_black']);
+    setSelectedDiaryDate(getTodayDateStr());
     setShoppingList(generateShoppingListFromMealPlan(newPlan));
     setNotifications(DEFAULT_NOTIFICATIONS);
     setShowOnboardingWizard(true);
@@ -632,6 +840,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         milestones,
         activeTab,
         setActiveTab,
+        foodLog,
+        recentFoods,
+        favouriteFoodIds,
+        selectedDiaryDate,
+        setSelectedDiaryDate,
+        foodLogModalInitialMeal,
+        openFoodLogForMeal,
+        logFoodItem,
+        removeFoodLogEntry,
+        toggleFavouriteFood,
+        getDiarySummary,
         isCoachOpen,
         setIsCoachOpen,
         isPantryOpen,

@@ -1,7 +1,7 @@
-﻿import React from 'react';
+import React from 'react';
 import { PlannedMeal } from '../../types';
 import { useApp } from '../../context/AppContext';
-import { Clock, Flame, Dumbbell, Shuffle, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Clock, Flame, Dumbbell, Shuffle, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 import { formatZAR } from '../../utils/formatters';
 
 interface MealCardProps {
@@ -23,15 +23,20 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
     <div className={`bg-white rounded-3xl p-4 border transition-all subtle-shadow ${
       meal.isEaten ? 'border-[#3FAE68]/40 bg-[#FBFDFB]' : 'border-[#E8EDE9]'
     }`}>
-      {/* Top row: Time badge and Eaten toggle */}
+      {/* Top row: Time badge, category, SA tag, and Eaten toggle */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="px-2.5 py-1 rounded-xl bg-[#17211B] text-white text-xs font-black tracking-wide">
             {meal.time}
           </span>
           <span className="text-xs font-semibold text-[#6B756C] capitalize">
             {meal.category}
           </span>
+          {recipe.isSouthAfricanClassic && (
+            <span className="px-2 py-0.5 rounded-full bg-[#FFF2E0] text-[#D97706] text-[10px] font-bold">
+              🇿🇦 SA Classic
+            </span>
+          )}
         </div>
 
         <button
@@ -92,6 +97,11 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
               <Clock className="w-3 h-3 text-[#6B756C]" />
               {recipe.prepTimeMinutes + recipe.cookTimeMinutes}m
             </span>
+            {recipe.estimatedCostZAR > 0 && (
+              <span className="text-[#17211B] font-bold">
+                {formatZAR(recipe.estimatedCostZAR)}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -99,7 +109,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
       {/* Smart Why this meal pill */}
       {meal.whyThisMeal && (
         <div className="mt-3 px-3 py-1.5 rounded-xl bg-[#FFFDF8] border border-[#F0EBE1] text-[11px] text-[#6B756C] flex items-center gap-1.5">
-          <span className="text-[#3FAE68] font-bold text-xs">??</span>
+          <Sparkles className="w-3.5 h-3.5 text-[#3FAE68] shrink-0" />
           <span className="italic">{meal.whyThisMeal}</span>
         </div>
       )}

@@ -22,7 +22,8 @@ import { CookingModeModal } from './components/recipes/CookingModeModal';
 import { SwapMealModal } from './components/mealplan/SwapMealModal';
 import { NutriCoachChat } from './components/coach/NutriCoachChat';
 import { PantryModal } from './components/pantry/PantryModal';
-import { QuickFoodLogModal } from './components/foodlog/QuickFoodLogModal';
+import { FoodDiaryView } from './components/diary/FoodDiaryView';
+import { FoodLogModal } from './components/diary/FoodLogModal';
 import { WeeklyReviewModal } from './components/progress/WeeklyReviewModal';
 import { OnboardingWizard } from './components/onboarding/OnboardingWizard';
 import { UpgradeModal } from './components/subscription/UpgradeModal';
@@ -32,7 +33,7 @@ import { TermsOfService } from './pages/TermsOfService';
 import { Smartphone, Monitor } from 'lucide-react';
 
 const AppContent: React.FC = () => {
-  const { activeTab, setIsFoodLogOpen, showToast, isLoginOpen, setIsLoginOpen, loginInitialMode, openAuthModal } = useApp();
+  const { activeTab, setIsFoodLogOpen, showToast, isLoginOpen, setIsLoginOpen, loginInitialMode } = useApp();
   const [devicePreviewMode, setDevicePreviewMode] = useState<'desktop' | 'mobile_frame'>('desktop');
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
   const [migrationSummary, setMigrationSummary] = useState<MigrationSummary | null>(null);
@@ -160,6 +161,7 @@ const AppContent: React.FC = () => {
             <Header />
             <main className="flex-1 overflow-y-auto">
               {activeTab === 'home' && <HomeDashboard />}
+              {activeTab === 'diary' && <FoodDiaryView />}
               {activeTab === 'mealplan' && <MealPlanView />}
               {activeTab === 'recipes' && <RecipeCatalog />}
               {activeTab === 'progress' && <ProgressDashboard />}
@@ -205,6 +207,7 @@ const AppContent: React.FC = () => {
             {/* Viewport Router / Active Tab View */}
             <main className="flex-1 w-full p-2 sm:p-4 md:p-6 overflow-y-auto">
               {activeTab === 'home' && <HomeDashboard />}
+              {activeTab === 'diary' && <FoodDiaryView />}
               {activeTab === 'mealplan' && <MealPlanView />}
               {activeTab === 'recipes' && <RecipeCatalog />}
               {activeTab === 'progress' && <ProgressDashboard />}
@@ -233,7 +236,7 @@ const AppContent: React.FC = () => {
       <SwapMealModal />
       <NutriCoachChat />
       <PantryModal />
-      <QuickFoodLogModal />
+      <FoodLogModal />
       <WeeklyReviewModal />
       <OnboardingWizard />
       <UpgradeModal />

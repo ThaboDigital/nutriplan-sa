@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Home,
+  UtensilsCrossed,
   Calendar,
   BookOpen,
   TrendingUp,
@@ -15,6 +16,7 @@ import {
   Shield,
   Sparkles
 } from 'lucide-react';
+import { NavTab } from '../../types';
 
 interface DesktopSidebarProps {
   onOpenLogin: () => void;
@@ -41,8 +43,9 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   const isAdmin = authUser?.role === 'admin' || userProfile?.role === 'admin';
   const uncheckedShoppingCount = shoppingList.filter(i => !i.isChecked && !i.isAlreadyHave).length;
 
-  const mainNavItems: { id: 'home' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin'; label: string; icon: any }[] = [
+  const mainNavItems: { id: NavTab; label: string; icon: any }[] = [
     { id: 'home', label: 'Dashboard', icon: Home },
+    { id: 'diary', label: 'Food Diary', icon: UtensilsCrossed },
     { id: 'mealplan', label: 'Meal Plan', icon: Calendar },
     { id: 'recipes', label: 'Recipes', icon: BookOpen },
     { id: 'progress', label: 'Progress', icon: TrendingUp },

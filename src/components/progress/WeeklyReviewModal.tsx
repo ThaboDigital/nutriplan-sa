@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, CheckCircle2, TrendingDown, UserCheck, ArrowRight, Award } from 'lucide-react';
+import { X, CheckCircle2, UserCheck, ArrowRight, Award } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const WeeklyReviewModal: React.FC = () => {
@@ -75,7 +75,7 @@ export const WeeklyReviewModal: React.FC = () => {
               <div>
                 <strong className="text-[#17211B] block">Weight Trend</strong>
                 <p className="text-[#6B756C] text-[11px] leading-relaxed">
-                  Down 0.6 kg this week (89.5 kg). Healthy, steady loss without severe starvation.
+                  Down 0.6 kg this week ({userProfile.weightKg} kg). Healthy, steady loss without severe starvation.
                 </p>
               </div>
             </div>

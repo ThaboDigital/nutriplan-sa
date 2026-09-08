@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { MealCard } from '../home/MealCard';
 import { ShoppingListView } from '../shopping/ShoppingListView';
-import { Calendar, RotateCw, ShoppingBag, UserCheck, ArrowRight } from 'lucide-react';
+import { RotateCw, ShoppingBag, UserCheck } from 'lucide-react';
 import { formatCalories, formatProtein, formatZAR } from '../../utils/formatters';
 
 export const MealPlanView: React.FC = () => {

@@ -192,3 +192,48 @@ export interface PantryItem {
   category: string;
   isCommon: boolean;
 }
+
+export type NavTab = 'home' | 'diary' | 'mealplan' | 'recipes' | 'progress' | 'profile' | 'admin';
+
+export interface FoodItem {
+  id: string;
+  name: string;
+  servingSize: string; // e.g. "100g", "1 large egg", "1 medium avocado", "1 fillet (180g)"
+  servingWeightGrams: number;
+  calories: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  fiberG?: number;
+  category: 'Meat & Poultry' | 'Fish & Seafood' | 'Eggs & Dairy' | 'Vegetables & Greens' | 'Legumes & Grains' | 'Healthy Fats & Nuts' | 'Traditional SA' | 'Beverages' | 'Snacks';
+  isSouthAfricanClassic?: boolean;
+}
+
+export interface FoodLogEntry {
+  id: string;
+  date: string; // YYYY-MM-DD
+  mealType: MealCategory;
+  foodName: string;
+  servingQuantity: number; // e.g. 1, 1.5, 2
+  servingUnit: string; // e.g. "serving", "100g", "egg"
+  calories: number;
+  proteinG: number;
+  carbsG: number;
+  fatG: number;
+  loggedAt: string;
+  isRecipe?: boolean;
+  recipeId?: string;
+}
+
+export interface DailyDiarySummary {
+  date: string;
+  caloriesConsumed: number;
+  calorieTarget: number;
+  caloriesRemaining: number;
+  proteinConsumedG: number;
+  proteinTargetG: number;
+  carbsConsumedG: number;
+  carbsTargetG: number;
+  fatConsumedG: number;
+  fatTargetG: number;
+}
