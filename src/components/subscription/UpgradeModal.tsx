@@ -10,7 +10,6 @@ export const UpgradeModal: React.FC = () => {
     setIsUpgradeModalOpen,
     authUser,
     userProfile,
-    updateUserProfile,
     showToast,
     openAuthModal,
   } = useApp();
@@ -19,7 +18,7 @@ export const UpgradeModal: React.FC = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
   const [loading, setLoading] = useState(false);
 
-  // Check if client is already logged in (via Context, localStorage, or userProfile)
+  // Check if client is already logged in (via Context or localStorage)
   const activeUser: AuthUser | null = useMemo(() => {
     if (authUser && !authUser.isGuest && authUser.email) return authUser;
 
@@ -27,21 +26,14 @@ export const UpgradeModal: React.FC = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.email && !parsed.isGuest) return parsed;
-      } catch (e) {}
-    }
-
-    if (userProfile && (userProfile as any).email) {
-      return {
-        id: userProfile.id || 'usr_client',
-        email: (userProfile as any).email,
-        name: userProfile.name || 'Subscriber',
-        isGuest: false,
-      };
+        if (parsed && parsed.email && !parsed.isGuest) return parsed as AuthUser;
+      } catch (e) {
+        console.error('Error parsing saved auth user', e);
+      }
     }
 
     return null;
-  }, [authUser, userProfile]);
+  }, [authUser]);
 
   if (!isUpgradeModalOpen) return null;
 
@@ -67,17 +59,6 @@ export const UpgradeModal: React.FC = () => {
       showToast(err.message || 'Payment initiation failed. Please try again.', 'warning');
       setLoading(false);
     }
-  };
-
-  // Demo direct activation bypass for instant testing
-  const handleInstantDemoUpgrade = () => {
-    updateUserProfile({
-      subscriptionTier: 'pro',
-      subscriptionPeriod: billingPeriod,
-      subscriptionStatus: 'active',
-    });
-    showToast(`🎉 Upgraded to NutriPlan Pro (${billingPeriod})!`, 'success');
-    setIsUpgradeModalOpen(false);
   };
 
   return (
@@ -287,18 +268,11 @@ export const UpgradeModal: React.FC = () => {
             <ArrowRight className="w-4 h-4" />
           </button>
 
-          <div className="flex items-center justify-between pt-1 text-[10px] text-[#6B756C]">
-            <span className="flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
+          <div className="flex items-center justify-center pt-1 text-[10px] text-[#6B756C]">
+            <span className="flex items-center gap-1.5 text-center">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#3FAE68] shrink-0" />
               Secured by PayFast South Africa (Visa, Mastercard, Capitec Pay, Instant EFT)
             </span>
-            <button
-              type="button"
-              onClick={handleInstantDemoUpgrade}
-              className="text-[#2C854E] hover:underline font-bold"
-            >
-              [Test Mode: Activate Pro]
-            </button>
           </div>
         </div>
       </div>

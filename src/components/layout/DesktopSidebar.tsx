@@ -54,29 +54,29 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   ];
 
   return (
-    <aside className="w-64 bg-[#FFFDF8] border-r border-[#E8EDE9] flex flex-col justify-between p-5 h-screen sticky top-0 shrink-0 select-none">
-      <div className="space-y-6">
+    <aside className="w-64 bg-[#FFFDF8] border-r border-[#E8EDE9] flex flex-col justify-between p-3.5 sm:p-4 h-screen sticky top-0 shrink-0 select-none overflow-y-auto overscroll-contain">
+      <div className="space-y-4">
         {/* Brand */}
-        <div className="flex items-center gap-3 px-2">
+        <div className="flex items-center gap-2.5 px-1.5 pt-0.5">
           <img
             src="/logo.png"
             alt="NutriPlan SA"
-            className="w-10 h-10 rounded-2xl object-cover shadow-sm border border-[#E8EDE9]"
+            className="w-9 h-9 rounded-2xl object-cover shadow-xs border border-[#E8EDE9]"
           />
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-lg text-[#17211B] tracking-tight">NutriPlan</span>
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#3FAE68]">
+              <span className="font-extrabold text-base text-[#17211B] tracking-tight">NutriPlan</span>
+              <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#EAF7EF] text-[#3FAE68]">
                 SA
               </span>
             </div>
-            <p className="text-xs text-[#6B756C] font-medium">South Africa</p>
+            <p className="text-[11px] text-[#6B756C] font-medium">South Africa</p>
           </div>
         </div>
 
         {/* Primary Navigation */}
-        <nav className="space-y-1.5">
-          <span className="text-[10px] font-extrabold text-[#6B756C] uppercase tracking-wider px-3 block mb-2">
+        <nav className="space-y-1">
+          <span className="text-[10px] font-extrabold text-[#6B756C] uppercase tracking-wider px-2.5 block mb-1.5">
             Main Menu
           </span>
           {mainNavItems.map(item => {
@@ -86,9 +86,9 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl font-bold text-xs transition-all ${
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-bold text-xs transition-all ${
                   isActive
-                    ? 'bg-[#17211B] text-white shadow-sm'
+                    ? 'bg-[#17211B] text-white shadow-xs'
                     : 'text-[#6B756C] hover:bg-[#EAF7EF]/50 hover:text-[#17211B]'
                 }`}
               >
@@ -100,18 +100,18 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         </nav>
 
         {/* Action Tools */}
-        <div className="space-y-1.5 pt-2 border-t border-[#F0F2F0]">
-          <span className="text-[10px] font-extrabold text-[#6B756C] uppercase tracking-wider px-3 block mb-2">
+        <div className="space-y-1 pt-2 border-t border-[#F0F2F0]">
+          <span className="text-[10px] font-extrabold text-[#6B756C] uppercase tracking-wider px-2.5 block mb-1.5">
             Quick Tools
           </span>
 
           {/* Health Questionnaire */}
           <button
             onClick={() => setShowOnboardingWizard(true)}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-[#17211B] text-white hover:bg-black font-bold text-xs transition active:scale-98 shadow-xs"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#17211B] text-white hover:bg-black font-bold text-xs transition active:scale-98 shadow-xs"
           >
-            <div className="flex items-center gap-2.5">
-              <ClipboardList className="w-4 h-4 text-[#3FAE68]" />
+            <div className="flex items-center gap-2">
+              <ClipboardList className="w-3.5 h-3.5 text-[#3FAE68]" />
               <span>Personalize Plan</span>
             </div>
             <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md bg-[#3FAE68] text-white">
@@ -122,10 +122,10 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           {/* NutriCoach */}
           <button
             onClick={() => setIsCoachOpen(true)}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d5eedf] font-bold text-xs transition active:scale-98"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d5eedf] font-bold text-xs transition active:scale-98"
           >
-            <div className="flex items-center gap-2.5">
-              <UserCheck className="w-4 h-4 text-[#3FAE68]" />
+            <div className="flex items-center gap-2">
+              <UserCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
               <span>NutriCoach</span>
             </div>
             <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md bg-white/80 text-[#2C854E]">
@@ -136,23 +136,23 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           {/* My Pantry */}
           <button
             onClick={() => setIsPantryOpen(true)}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-[#6B756C] hover:bg-black/5 hover:text-[#17211B] font-bold text-xs transition"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#6B756C] hover:bg-black/5 hover:text-[#17211B] font-bold text-xs transition"
           >
-            <PackageOpen className="w-4 h-4" />
+            <PackageOpen className="w-3.5 h-3.5" />
             <span>My Pantry</span>
           </button>
 
           {/* Shopping Bag */}
           <button
             onClick={() => setActiveTab('mealplan')}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-[#6B756C] hover:bg-black/5 hover:text-[#17211B] font-bold text-xs transition"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[#6B756C] hover:bg-black/5 hover:text-[#17211B] font-bold text-xs transition"
           >
-            <div className="flex items-center gap-3">
-              <ShoppingBag className="w-4 h-4" />
+            <div className="flex items-center gap-2.5">
+              <ShoppingBag className="w-3.5 h-3.5" />
               <span>Shopping List</span>
             </div>
             {uncheckedShoppingCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-[#F2A65A] text-white text-[10px] font-bold">
+              <span className="px-1.5 py-0.5 rounded-full bg-[#F2A65A] text-white text-[10px] font-bold">
                 {uncheckedShoppingCount}
               </span>
             )}
@@ -162,22 +162,22 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           {userProfile.subscriptionTier !== 'pro' && (
             <div
               onClick={() => openUpgradeModal('Pro Features')}
-              className="p-3 rounded-2xl bg-gradient-to-br from-[#17211B] to-[#25392B] text-white cursor-pointer hover:shadow-md transition active:scale-98 group"
+              className="p-2.5 rounded-2xl bg-gradient-to-br from-[#17211B] to-[#25392B] text-white cursor-pointer hover:shadow-md transition active:scale-98 group mt-1"
             >
-              <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center justify-between mb-0.5">
                 <span className="text-[10px] font-black uppercase tracking-wider text-[#3FAE68] flex items-center gap-1">
                   <Sparkles className="w-3 h-3" />
                   NutriPlan Pro
                 </span>
                 <span className="text-[9px] bg-[#3FAE68] text-white px-1.5 py-0.5 rounded font-black">
-                  Save 30%
+                  Save 32%
                 </span>
               </div>
               <p className="text-[11px] font-bold text-white/90 leading-tight">
                 Unlimited Swaps & AI NutriCoach
               </p>
-              <span className="text-[10px] text-[#3FAE68] group-hover:underline block mt-1 font-bold">
-                Upgrade from R48/mo →
+              <span className="text-[10px] text-[#3FAE68] group-hover:underline block mt-0.5 font-bold">
+                From R49/mo (R33/mo annual) →
               </span>
             </div>
           )}
@@ -185,11 +185,11 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       </div>
 
       {/* User / Auth Footer */}
-      <div className="pt-4 border-t border-[#E8EDE9] space-y-3">
+      <div className="pt-3 border-t border-[#E8EDE9] space-y-2 mt-3 shrink-0">
         {authUser ? (
-          <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#F8F9FA] border border-[#E8EDE9]">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#17211B] text-white flex items-center justify-center text-xs font-black shrink-0">
+          <div className="flex items-center justify-between p-2 rounded-xl bg-[#F8F9FA] border border-[#E8EDE9]">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-[#17211B] text-white flex items-center justify-center text-xs font-black shrink-0">
                 {authUser.name.charAt(0)}
               </div>
               <div className="min-w-0">
@@ -207,14 +207,14 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
             </button>
           </div>
         ) : (
-          <div className="p-3 rounded-2xl bg-[#EAF7EF]/60 border border-[#3FAE68]/20 space-y-2 text-center">
-            <span className="text-[11px] font-extrabold text-[#2C854E] px-2.5 py-1 rounded-full bg-white border border-[#3FAE68]/30 inline-block shadow-2xs">
+          <div className="p-2.5 rounded-2xl bg-[#EAF7EF]/60 border border-[#3FAE68]/20 space-y-1.5 text-center">
+            <span className="text-[10px] font-extrabold text-[#2C854E] px-2 py-0.5 rounded-full bg-white border border-[#3FAE68]/30 inline-block shadow-2xs">
               Guest Mode — Register to backup & sync
             </span>
-            <p className="text-[10px] text-[#6B756C]">Save your personalized meal plan to the cloud.</p>
+            <p className="text-[10px] text-[#6B756C]">Save your personalized meal plan to cloud.</p>
             <button
               onClick={onOpenLogin}
-              className="w-full py-2 rounded-xl bg-[#3FAE68] text-white font-bold text-xs hover:bg-[#349859] transition flex items-center justify-center gap-1.5 shadow-sm"
+              className="w-full py-2.5 px-3 rounded-xl bg-[#3FAE68] text-white font-bold text-xs hover:bg-[#349859] transition flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Create Account / Sign In</span>
@@ -223,8 +223,8 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         )}
 
         {/* Company Attribution */}
-        <div className="pt-1 text-center">
-          <p className="text-[11px] text-[#6B756C]">
+        <div className="text-center">
+          <p className="text-[10px] text-[#6B756C]">
             A product of{' '}
             <a
               href="https://www.thabosystems.co.za"
