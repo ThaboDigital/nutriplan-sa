@@ -1,4 +1,4 @@
-﻿import { AuthUser } from './authService';
+import { AuthUser } from './authService';
 
 export interface PayFastSubscriptionParams {
   tier: 'monthly' | 'annual';
@@ -26,8 +26,10 @@ export const PAYFAST_PLANS = {
 
 export const payfastService = {
   getMerchantCredentials() {
-    const isProd = import.meta.env.VITE_PAYFAST_ENV === 'production' || import.meta.env.PROD;
-    const merchantId = import.meta.env.VITE_PAYFAST_MERCHANT_ID || '10000100'; // Default Sandbox Merchant ID
+    const customMerchantId = import.meta.env.VITE_PAYFAST_MERCHANT_ID;
+    const isRealMerchant = !!(customMerchantId && customMerchantId !== '10000100');
+    const isProd = (import.meta.env.VITE_PAYFAST_ENV === 'production') || (import.meta.env.PROD && isRealMerchant);
+    const merchantId = customMerchantId || '10000100'; // Default Sandbox Merchant ID
     const merchantKey = import.meta.env.VITE_PAYFAST_MERCHANT_KEY || '46f0cd694581a'; // Default Sandbox Key
     const processUrl = isProd
       ? 'https://www.payfast.co.za/eng/process'
@@ -49,7 +51,7 @@ export const payfastService = {
   generatePayload({ tier, user, returnUrl, cancelUrl }: PayFastSubscriptionParams) {
     const { merchantId, merchantKey } = this.getMerchantCredentials();
     const plan = PAYFAST_PLANS[tier];
-    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://nutriplan-sa.vercel.app';
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://nutriplan.thabosystems.co.za';
 
     const finalReturnUrl = returnUrl || `${origin}/?payment=success&tier=${tier}`;
     const finalCancelUrl = cancelUrl || `${origin}/?payment=cancelled`;
