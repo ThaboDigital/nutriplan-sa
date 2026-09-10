@@ -30,7 +30,7 @@ import { UpgradeModal } from './components/subscription/UpgradeModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
-import { Smartphone, Monitor, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const {
@@ -45,7 +45,6 @@ const AppContent: React.FC = () => {
     updateUserProfile,
     logout,
   } = useApp();
-  const [devicePreviewMode, setDevicePreviewMode] = useState<'desktop' | 'mobile_frame'>('desktop');
   const [migrationSummary, setMigrationSummary] = useState<MigrationSummary | null>(null);
   const [isMigrationOpen, setIsMigrationOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState<string>(() => {
@@ -137,119 +136,59 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F4F6F4] text-[#182018] flex flex-col antialiased">
-      {/* Viewport Mode Switcher Bar (Desktop / Development Helper) */}
-      <div className="hidden lg:flex w-full bg-[#17211B] text-white px-6 py-2 items-center justify-between text-xs z-50 shadow-sm">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#3FAE68] animate-pulse" />
-          <span className="font-extrabold tracking-wide">NutriPlan SA</span>
-          <span className="text-white/60 text-[11px]">| Phase 2 Responsive Web & Supabase Architecture</span>
+      {/* Production Responsive Layout (Mobile on phones, Sidebar on tablets/desktop) */}
+      <div className="flex-1 flex flex-col md:flex-row w-full min-h-screen">
+        {/* Desktop Left Sidebar (Visible on md/lg/xl) */}
+        <div className="hidden md:block shrink-0">
+          <DesktopSidebar
+            onOpenLogin={() => setIsLoginOpen(true)}
+            authUser={authUser}
+            onLogout={handleLogout}
+          />
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-white/60 text-[11px] mr-1">Preview Layout:</span>
-          <button
-            onClick={() => setDevicePreviewMode('desktop')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition ${
-              devicePreviewMode === 'desktop' ? 'bg-[#3FAE68] text-white' : 'bg-white/10 text-white/70 hover:text-white'
-            }`}
-          >
-            <Monitor className="w-3.5 h-3.5" />
-            <span>Responsive Desktop</span>
-          </button>
-
-          <button
-            onClick={() => setDevicePreviewMode('mobile_frame')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition ${
-              devicePreviewMode === 'mobile_frame' ? 'bg-[#3FAE68] text-white' : 'bg-white/10 text-white/70 hover:text-white'
-            }`}
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>Mobile Device (390px)</span>
-          </button>
+        {/* Mobile Top Header (Visible only on mobile < md) */}
+        <div className="block md:hidden sticky top-0 z-30 w-full">
+          <Header />
         </div>
-      </div>
 
-      {/* RENDER MODE 1: Simulated 390px Mobile Phone Frame (For testing phone screen on wide monitor) */}
-      {devicePreviewMode === 'mobile_frame' ? (
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="w-full max-w-[430px] rounded-[44px] border-[10px] border-[#17211B] shadow-2xl bg-[#FFFDF8] h-[880px] flex flex-col overflow-hidden relative">
-            <Header />
-            <main className="flex-1 overflow-y-auto pb-safe">
-              {activeTab === 'home' && <HomeDashboard />}
-              {activeTab === 'diary' && <FoodDiaryView />}
-              {activeTab === 'mealplan' && <MealPlanView />}
-              {activeTab === 'recipes' && <RecipeCatalog />}
-              {activeTab === 'progress' && <ProgressDashboard />}
-              {activeTab === 'profile' && <ProfileView />}
-            </main>
-            <BottomNav />
-            {(activeTab === 'home' || activeTab === 'diary') && (
-              <button
-                onClick={() => setIsFoodLogOpen(true)}
-                className="absolute bottom-20 right-4 z-30 h-11 px-4 rounded-full bg-[#17211B]/95 backdrop-blur-md text-white shadow-xl flex items-center gap-1.5 active:scale-95 transition border border-white/10"
-                title="Quick Food Log"
-              >
-                <Plus className="w-4 h-4 text-[#3FAE68]" />
-                <span className="text-xs font-black">Log Food</span>
-              </button>
-            )}
-          </div>
-        </div>
-      ) : (
-        /* RENDER MODE 2: Production Responsive Web (Mobile on phones, Sidebar on tablets/desktop) */
-        <div className="flex-1 flex flex-col md:flex-row w-full min-h-screen">
-          {/* Desktop Left Sidebar (Visible on md/lg/xl) */}
-          <div className="hidden md:block shrink-0">
-            <DesktopSidebar
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 bg-[#FFFDF8]">
+          {/* Desktop Top Header Bar */}
+          <div className="hidden md:block">
+            <DesktopTopHeader
               onOpenLogin={() => setIsLoginOpen(true)}
               authUser={authUser}
-              onLogout={handleLogout}
             />
           </div>
 
-          {/* Mobile Top Header (Visible only on mobile < md) */}
-          <div className="block md:hidden sticky top-0 z-30 w-full">
-            <Header />
-          </div>
-
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col min-w-0 bg-[#FFFDF8]">
-            {/* Desktop Top Header Bar */}
-            <div className="hidden md:block">
-              <DesktopTopHeader
-                onOpenLogin={() => setIsLoginOpen(true)}
-                authUser={authUser}
-              />
-            </div>
-
-            {/* Viewport Router / Active Tab View */}
-            <main className="flex-1 w-full p-0 md:p-6 overflow-y-auto pb-safe md:pb-0">
-              {activeTab === 'home' && <HomeDashboard />}
-              {activeTab === 'diary' && <FoodDiaryView />}
-              {activeTab === 'mealplan' && <MealPlanView />}
-              {activeTab === 'recipes' && <RecipeCatalog />}
-              {activeTab === 'progress' && <ProgressDashboard />}
-              {activeTab === 'profile' && <ProfileView />}
-              {activeTab === 'admin' && <AdminDashboard />}
-            </main>
-          </div>
-
-          {/* Mobile Bottom Navigation (Visible only on mobile < md) */}
-          <div className="block md:hidden">
-            <BottomNav />
-            {(activeTab === 'home' || activeTab === 'diary') && (
-              <button
-                onClick={() => setIsFoodLogOpen(true)}
-                className="fixed bottom-20 right-4 z-30 h-11 px-4 rounded-full bg-[#17211B]/95 backdrop-blur-md text-white shadow-xl flex items-center gap-1.5 active:scale-95 transition border border-white/10"
-                title="Quick Food Log"
-              >
-                <Plus className="w-4 h-4 text-[#3FAE68]" />
-                <span className="text-xs font-black">Log Food</span>
-              </button>
-            )}
-          </div>
+          {/* Viewport Router / Active Tab View */}
+          <main className="flex-1 w-full p-0 md:p-6 overflow-y-auto pb-safe md:pb-0">
+            {activeTab === 'home' && <HomeDashboard />}
+            {activeTab === 'diary' && <FoodDiaryView />}
+            {activeTab === 'mealplan' && <MealPlanView />}
+            {activeTab === 'recipes' && <RecipeCatalog />}
+            {activeTab === 'progress' && <ProgressDashboard />}
+            {activeTab === 'profile' && <ProfileView />}
+            {activeTab === 'admin' && <AdminDashboard />}
+          </main>
         </div>
-      )}
+
+        {/* Mobile Bottom Navigation (Visible only on mobile < md) */}
+        <div className="block md:hidden">
+          <BottomNav />
+          {(activeTab === 'home' || activeTab === 'diary') && (
+            <button
+              onClick={() => setIsFoodLogOpen(true)}
+              className="fixed bottom-20 right-4 z-30 h-11 px-4 rounded-full bg-[#17211B]/95 backdrop-blur-md text-white shadow-xl flex items-center gap-1.5 active:scale-95 transition border border-white/10"
+              title="Quick Food Log"
+            >
+              <Plus className="w-4 h-4 text-[#3FAE68]" />
+              <span className="text-xs font-black">Log Food</span>
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Global Modals & Overlays */}
       <RecipeDetailModal />
