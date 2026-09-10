@@ -4,6 +4,7 @@ import { supabase, isSupabaseConfigured } from '../../services/supabaseClient';
 import { SA_RECIPES } from '../../data/saFoodDatabase';
 import { Recipe } from '../../types';
 import { formatZAR, formatCalories } from '../../utils/formatters';
+import { resendEmailService } from '../../services/resendEmailService';
 import {
   Shield,
   Users,
@@ -20,7 +21,11 @@ import {
   ShieldCheck,
   RefreshCw,
   Sparkles,
-  Smartphone
+  Smartphone,
+  Mail,
+  Send,
+  Key,
+  Check
 } from 'lucide-react';
 
 interface SubscriberRow {
@@ -44,17 +49,96 @@ export const AdminDashboard: React.FC = () => {
   const [subscribers, setSubscribers] = useState<SubscriberRow[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [userSearch, setUserSearch] = useState('');
-  const [activeAdminTab, setActiveAdminTab] = useState<'subscribers' | 'database'>('subscribers');
+  const [activeAdminTab, setActiveAdminTab] = useState<'subscribers' | 'database' | 'emails'>('subscribers');
 
+  // Food Database Editable State
   // Food Database Editable State
   const [recipesList, setRecipesList] = useState<Recipe[]>(SA_RECIPES);
   const [editingRecipeId, setEditingRecipeId] = useState<string | null>(null);
   const [foodSearch, setFoodSearch] = useState('');
   const [editFormData, setEditFormData] = useState<Partial<Recipe>>({});
 
+  // Resend Email Center State
+  const [resendApiKeyInput, setResendApiKeyInput] = useState(() => resendEmailService.getStoredApiKey());
+  const [resendSenderInput, setResendSenderInput] = useState(() => resendEmailService.getStoredSender());
+  const [testEmailAddress, setTestEmailAddress] = useState(authUser?.email || 'thabodigitalza@gmail.com');
+  const [testTier, setTestTier] = useState<'monthly' | 'annual'>('monthly');
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
+  const [emailLogs, setEmailLogs] = useState<any[]>([]);
+  const [loadingEmailLogs, setLoadingEmailLogs] = useState(false);
+
   useEffect(() => {
     loadSubscribers();
   }, []);
+
+  const loadEmailLogs = async () => {
+    setLoadingEmailLogs(true);
+    try {
+      if (isSupabaseConfigured) {
+        const { data } = await supabase
+          .from('email_logs')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(25);
+        if (data) {
+          setEmailLogs(data);
+        }
+      }
+    } catch (e) {
+      console.warn('Error loading email logs:', e);
+    } finally {
+      setLoadingEmailLogs(false);
+    }
+  };
+
+  const handleSaveResendSettings = () => {
+    resendEmailService.setStoredApiKey(resendApiKeyInput);
+    resendEmailService.setStoredSender(resendSenderInput);
+    showToast('Resend email settings saved!', 'success');
+  };
+
+  const handleSendWelcomeEmail = async (sub: SubscriberRow) => {
+    showToast(`Sending Pro welcome email to ${sub.email}...`, 'info');
+    const res = await resendEmailService.sendSubscriptionWelcomeEmail({
+      to: sub.email,
+      name: sub.name,
+      tier: sub.subscription_period || 'monthly',
+      amount: sub.subscription_period === 'annual' ? 399 : 49,
+      resendApiKey: resendApiKeyInput || undefined,
+      customSender: resendSenderInput || undefined,
+    });
+
+    if (res.success) {
+      showToast(res.message, 'success');
+      loadEmailLogs();
+    } else {
+      showToast(res.message, 'warning');
+    }
+  };
+
+  const handleSendTestEmail = async () => {
+    if (!testEmailAddress) {
+      showToast('Please enter an email address for testing.', 'warning');
+      return;
+    }
+    setSendingTestEmail(true);
+    const res = await resendEmailService.sendSubscriptionWelcomeEmail({
+      to: testEmailAddress,
+      name: 'Thabo',
+      tier: testTier,
+      amount: testTier === 'annual' ? 399 : 49,
+      resendApiKey: resendApiKeyInput || undefined,
+      customSender: resendSenderInput || undefined,
+    });
+    setSendingTestEmail(false);
+
+    if (res.success) {
+      showToast(res.message, 'success');
+      loadEmailLogs();
+    } else {
+      showToast(res.message, 'warning');
+    }
+  };
 
   const loadSubscribers = async () => {
     setLoadingUsers(true);
@@ -62,14 +146,14 @@ export const AdminDashboard: React.FC = () => {
       if (isSupabaseConfigured) {
         const { data, error } = await supabase
           .from('profiles')
-          .select('id, name, created_at, role, subscription_tier, subscription_period, subscription_status, cell_number')
+          .select('id, name, email, created_at, role, subscription_tier, subscription_period, subscription_status, cell_number')
           .order('created_at', { ascending: false });
 
         if (data && data.length > 0) {
           const rows: SubscriberRow[] = data.map(d => ({
             id: d.id,
             name: d.name || 'User',
-            email: 'user_' + d.id.slice(0, 5) + '@nutriplans.co.za',
+            email: d.email || ('user_' + d.id.slice(0, 5) + '@nutriplans.co.za'),
             cell_number: d.cell_number || '082 123 4567',
             role: d.role || 'user',
             subscription_tier: d.subscription_tier || 'free',
@@ -227,6 +311,21 @@ export const AdminDashboard: React.FC = () => {
             <Database className="w-3.5 h-3.5" />
             <span>Food Database ({recipesList.length})</span>
           </button>
+
+          <button
+            onClick={() => {
+              setActiveAdminTab('emails');
+              loadEmailLogs();
+            }}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+              activeAdminTab === 'emails'
+                ? 'bg-[#17211B] text-white'
+                : 'text-[#6B756C] hover:text-[#17211B]'
+            }`}
+          >
+            <Mail className="w-3.5 h-3.5" />
+            <span>Email Center (Resend)</span>
+          </button>
         </div>
       </div>
 
@@ -340,10 +439,19 @@ export const AdminDashboard: React.FC = () => {
                         <span className="capitalize">{sub.subscription_status}</span>
                       </span>
                     </td>
-                    <td className="py-3 px-3 text-right">
+                    <td className="py-3 px-3 text-right space-x-1.5 whitespace-nowrap">
+                      <button
+                        onClick={() => handleSendWelcomeEmail(sub)}
+                        className="px-2.5 py-1 rounded-xl text-xs font-bold bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d6f0df] transition inline-flex items-center gap-1 shadow-2xs active:scale-95"
+                        title="Send Pro Welcome Email via Resend"
+                      >
+                        <Mail className="w-3 h-3" />
+                        <span>Email</span>
+                      </button>
+
                       <button
                         onClick={() => handleTogglePro(sub)}
-                        className={`px-3 py-1 rounded-xl text-xs font-bold transition ${
+                        className={`px-3 py-1 rounded-xl text-xs font-bold transition active:scale-95 ${
                           sub.subscription_tier === 'pro'
                             ? 'bg-red-50 text-red-600 hover:bg-red-100'
                             : 'bg-[#3FAE68] text-white hover:bg-[#349859]'
@@ -538,6 +646,214 @@ export const AdminDashboard: React.FC = () => {
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: Resend Email Center & Subscription Automation */}
+      {activeAdminTab === 'emails' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Card 1: Resend Configuration */}
+            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8EDE9] shadow-2xs space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#EAF7EF] text-[#2C854E] flex items-center justify-center">
+                    <Key className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-sm text-[#17211B]">Resend API Configuration</h3>
+                    <p className="text-[11px] text-[#6B756C]">Automated subscription & client receipt delivery</p>
+                  </div>
+                </div>
+
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold flex items-center gap-1 ${
+                  resendApiKeyInput ? 'bg-[#EAF7EF] text-[#2C854E]' : 'bg-amber-50 text-amber-700'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${resendApiKeyInput ? 'bg-[#3FAE68]' : 'bg-amber-500'}`} />
+                  {resendApiKeyInput ? 'Key Configured' : 'Key Needed'}
+                </span>
+              </div>
+
+              <div className="space-y-3 pt-1">
+                <div>
+                  <label className="block text-[11px] font-bold text-[#17211B] mb-1">
+                    Resend API Key (starts with <code>re_...</code>)
+                  </label>
+                  <input
+                    type="password"
+                    value={resendApiKeyInput}
+                    onChange={e => setResendApiKeyInput(e.target.value)}
+                    placeholder="re_xxxxxxxxxxxxxxxxxxxx"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E8EDE9] text-xs font-mono text-[#17211B] outline-none focus:border-[#3FAE68] bg-[#F8FBF9]"
+                  />
+                  <p className="text-[10px] text-[#6B756C] mt-1">
+                    Create your free API key at <a href="https://resend.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-[#2C854E] font-bold hover:underline">resend.com/api-keys</a>.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#17211B] mb-1">
+                    From Sender Email Address
+                  </label>
+                  <input
+                    type="text"
+                    value={resendSenderInput}
+                    onChange={e => setResendSenderInput(e.target.value)}
+                    placeholder="NutriPlan SA <notifications@thabosystems.co.za>"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68] bg-[#F8FBF9]"
+                  />
+                  <p className="text-[10px] text-[#6B756C] mt-1">
+                    If your domain is pending verification in Resend, emails automatically route through <code>NutriPlan SA &lt;onboarding@resend.dev&gt;</code>.
+                  </p>
+                </div>
+
+                <button
+                  onClick={handleSaveResendSettings}
+                  className="w-full py-2.5 rounded-xl bg-[#17211B] text-white hover:bg-black font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
+                >
+                  <Save className="w-3.5 h-3.5 text-[#3FAE68]" />
+                  <span>Save Email Configuration</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Card 2: Send Test Subscription Email */}
+            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8EDE9] shadow-2xs space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-[#EAF7EF] text-[#2C854E] flex items-center justify-center">
+                    <Send className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-sm text-[#17211B]">Test Subscription Email</h3>
+                    <p className="text-[11px] text-[#6B756C]">Send a real test email to check delivery & styling</p>
+                  </div>
+                </div>
+
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-lg bg-[#F8FBF9] text-[#2C854E] border border-[#EAF7EF]">
+                  Live Test
+                </span>
+              </div>
+
+              <div className="space-y-3 pt-1">
+                <div>
+                  <label className="block text-[11px] font-bold text-[#17211B] mb-1">
+                    Recipient Test Email
+                  </label>
+                  <input
+                    type="email"
+                    value={testEmailAddress}
+                    onChange={e => setTestEmailAddress(e.target.value)}
+                    placeholder="thabodigitalza@gmail.com"
+                    className="w-full px-3 py-2 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68] bg-[#F8FBF9]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-[#17211B] mb-1">
+                    Plan Preview Tier
+                  </label>
+                  <select
+                    value={testTier}
+                    onChange={e => setTestTier(e.target.value as 'monthly' | 'annual')}
+                    className="w-full px-3 py-2 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#17211B] outline-none focus:border-[#3FAE68] bg-[#F8FBF9]"
+                  >
+                    <option value="monthly">NutriPlan Pro Monthly (R49.00 / month)</option>
+                    <option value="annual">NutriPlan Pro Annual (R399.00 / year - Save 32%)</option>
+                  </select>
+                </div>
+
+                <button
+                  onClick={handleSendTestEmail}
+                  disabled={sendingTestEmail}
+                  className="w-full py-2.5 rounded-xl bg-[#3FAE68] text-white hover:bg-[#349859] font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm active:scale-98 disabled:opacity-50"
+                >
+                  {sendingTestEmail ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Sending via Resend...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Send Test Pro Welcome Email</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Live Delivery Logs */}
+          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E8EDE9] shadow-2xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-extrabold text-[#17211B]">Client Subscription Email Logs</h3>
+                <p className="text-[11px] text-[#6B756C]">Real-time transactional dispatch history via Resend</p>
+              </div>
+
+              <button
+                onClick={loadEmailLogs}
+                disabled={loadingEmailLogs}
+                className="px-3 py-1.5 rounded-xl bg-[#F8FBF9] hover:bg-[#EAF7EF] text-[#2C854E] text-xs font-bold transition flex items-center gap-1 border border-[#EAF7EF]"
+              >
+                <RefreshCw className={`w-3 h-3 ${loadingEmailLogs ? 'animate-spin' : ''}`} />
+                <span>Refresh Logs</span>
+              </button>
+            </div>
+
+            {emailLogs.length === 0 ? (
+              <div className="py-8 text-center bg-[#F8FBF9] rounded-2xl border border-dashed border-[#E8EDE9] text-xs text-[#6B756C]">
+                <Mail className="w-6 h-6 text-[#3FAE68] mx-auto mb-2 opacity-50" />
+                <p className="font-bold">No emails recorded yet</p>
+                <p className="text-[11px] mt-0.5">When users upgrade or you click "Send Email" above, dispatch logs appear here.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-[#E8EDE9] text-[#6B756C] font-bold uppercase text-[10px] tracking-wider">
+                      <th className="pb-3 px-3">Recipient</th>
+                      <th className="pb-3 px-3">Type</th>
+                      <th className="pb-3 px-3">Plan Tier</th>
+                      <th className="pb-3 px-3">Amount</th>
+                      <th className="pb-3 px-3">Status</th>
+                      <th className="pb-3 px-3 text-right">Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#F0F2F0]">
+                    {emailLogs.map(log => (
+                      <tr key={log.id} className="hover:bg-[#F8FBF9] transition">
+                        <td className="py-2.5 px-3 font-extrabold text-[#17211B]">
+                          {log.recipient_email}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className="capitalize font-semibold text-[#17211B]">
+                            {log.email_type.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 uppercase text-[10px] font-bold text-[#2C854E]">
+                          {log.tier || 'monthly'}
+                        </td>
+                        <td className="py-2.5 px-3 font-bold text-[#17211B]">
+                          {formatZAR(Number(log.amount_zar) || 49)}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#2C854E]">
+                            <CheckCircle2 className="w-3 h-3 text-[#3FAE68]" />
+                            <span>Sent</span>
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-3 text-right text-[10px] text-[#6B756C]">
+                          {new Date(log.created_at).toLocaleString('en-ZA')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       )}

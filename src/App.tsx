@@ -10,6 +10,8 @@ import { LoginModal } from './components/auth/LoginModal';
 import { DataMigrationModal } from './components/auth/DataMigrationModal';
 import { authService, AuthUser } from './services/authService';
 import { migrationService, MigrationSummary } from './services/migrationService';
+import { supabase } from './services/supabaseClient';
+import { resendEmailService } from './services/resendEmailService';
 
 import { HomeDashboard } from './components/home/HomeDashboard';
 import { MealPlanView } from './components/mealplan/MealPlanView';
@@ -97,6 +99,62 @@ const AppContent: React.FC = () => {
 
     return () => unsubscribe();
   }, [setAuthUser, updateUserProfile]);
+
+  // Handle PayFast Payment Return & Subscription Welcome Email
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentStatus = params.get('payment');
+    const tier = (params.get('tier') as 'monthly' | 'annual') || 'monthly';
+
+    if (paymentStatus === 'success') {
+      const activeUser = authUser || (() => {
+        const saved = localStorage.getItem('nutriplan_auth_user');
+        return saved ? JSON.parse(saved) : null;
+      })();
+
+      if (activeUser?.id) {
+        // 1. Activate Pro in Supabase
+        supabase.from('profiles').update({
+          subscription_tier: 'pro',
+          subscription_period: tier,
+          subscription_status: 'active',
+          updated_at: new Date().toISOString(),
+        }).eq('id', activeUser.id).then(() => {
+          updateUserProfile({ subscriptionTier: 'pro' });
+          const updatedAuth = {
+            ...activeUser,
+            subscriptionTier: 'pro' as const,
+            subscriptionPeriod: tier,
+            subscriptionStatus: 'active' as const,
+          };
+          setAuthUser(updatedAuth);
+          localStorage.setItem('nutriplan_auth_user', JSON.stringify(updatedAuth));
+
+          // 2. Send Resend Pro Subscription Email
+          if (activeUser.email) {
+            resendEmailService.sendSubscriptionWelcomeEmail({
+              to: activeUser.email,
+              name: activeUser.name,
+              tier,
+              amount: tier === 'annual' ? 399 : 49,
+            }).then(res => {
+              if (res.success) {
+                showToast('Welcome email sent to your inbox!', 'success');
+              }
+            });
+          }
+        });
+      } else {
+        updateUserProfile({ subscriptionTier: 'pro' });
+      }
+
+      showToast('🎉 Welcome to NutriPlan Pro! Unlimited access activated.', 'success');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (paymentStatus === 'cancelled') {
+      showToast('Payment was cancelled. You can upgrade anytime!', 'info');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [authUser, updateUserProfile, setAuthUser, showToast]);
 
   const handleLogout = async () => {
     await logout();
