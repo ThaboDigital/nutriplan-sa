@@ -36,31 +36,36 @@ export const HomeDashboard: React.FC = () => {
   if (hour >= 12 && hour < 17) timeGreeting = 'Good afternoon';
   else if (hour >= 17) timeGreeting = 'Good evening';
 
+  // South African localized date formatting
+  const formattedToday = new Intl.DateTimeFormat('en-ZA', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  }).format(new Date());
+
+  const firstName = userProfile.name ? userProfile.name.split(' ')[0] : 'Friend';
+
   return (
-    <div className="space-y-6 pb-24 px-3.5 sm:px-6 md:px-8 max-w-7xl mx-auto animate-in fade-in duration-200">
-      {/* Top Banner Greeting & Quick Action Triggers */}
-      <div className="pt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="w-full">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#3FAE68] animate-pulse" />
-              <span className="text-xs font-black uppercase tracking-wider text-[#2C854E]">
-                Today's Overview
+    <div className="space-y-5 pb-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto animate-in fade-in duration-200">
+      {/* Top Native Mobile Header & Quick Actions */}
+      <div className="pt-1 sm:pt-2 space-y-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#3FAE68] animate-pulse" />
+              <span className="text-[11px] font-black uppercase tracking-wider text-[#2C854E]">
+                {formattedToday}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#17211B] tracking-tight mt-0.5">
-              {timeGreeting}, {userProfile.name}
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[#17211B] tracking-tight truncate mt-0.5">
+              {timeGreeting}, {firstName} 👋
             </h1>
-            <p className="text-xs sm:text-sm font-medium text-[#6B756C] mt-0.5">
-              How are you doing today? Here is your personalized daily balance.
-            </p>
           </div>
 
-          {/* Top Quick Actions */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="hidden sm:flex items-center gap-2 shrink-0">
             <button
               onClick={() => openFoodLogForMeal()}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] text-xs font-black shadow-xs active:scale-95 transition"
+              className="flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-2xl bg-[#3FAE68] text-white hover:bg-[#349859] text-xs font-black shadow-xs active:scale-95 transition"
             >
               <Plus className="w-4 h-4" />
               <span>Log Food</span>
@@ -68,7 +73,7 @@ export const HomeDashboard: React.FC = () => {
 
             <button
               onClick={() => setActiveTab('diary')}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8EDE9] hover:border-[#17211B] text-[#17211B] text-xs font-bold shadow-2xs active:scale-95 transition"
+              className="flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-2xl bg-[#FFFDF8] border border-[#E8EDE9] hover:border-[#17211B] text-[#17211B] text-xs font-bold shadow-2xs active:scale-95 transition"
             >
               <BookOpen className="w-4 h-4 text-[#3FAE68]" />
               <span>Diary</span>
@@ -76,12 +81,37 @@ export const HomeDashboard: React.FC = () => {
 
             <button
               onClick={() => setIsCoachOpen(true)}
-              className="flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-2xl bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-2xs active:scale-95 transition hover:bg-[#d5eedf]"
+              className="flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-2xl bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-2xs active:scale-95 transition hover:bg-[#d5eedf]"
             >
               <UserCheck className="w-4 h-4 text-[#3FAE68]" />
               <span>AI Coach</span>
             </button>
           </div>
+        </div>
+
+        {/* Mobile Quick Action Strip */}
+        <div className="flex sm:hidden items-center gap-2 py-0.5">
+          <button
+            onClick={() => openFoodLogForMeal()}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-2xl bg-[#3FAE68] text-white text-xs font-black shadow-xs active:scale-95 transition"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Log Food</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('diary')}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-2xl bg-white border border-[#E8EDE9] text-[#17211B] text-xs font-bold shadow-2xs active:scale-95 transition"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-[#3FAE68]" />
+            <span>Diary</span>
+          </button>
+          <button
+            onClick={() => setIsCoachOpen(true)}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-2xl bg-[#EAF7EF] border border-[#3FAE68]/20 text-[#2C854E] text-xs font-bold shadow-2xs active:scale-95 transition"
+          >
+            <UserCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
+            <span>AI Coach</span>
+          </button>
         </div>
       </div>
 

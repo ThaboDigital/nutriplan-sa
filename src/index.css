@@ -10,6 +10,9 @@
     background-color: #F8F9FA;
     color: #182018;
     -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
     margin: 0;
   }
   
@@ -18,6 +21,12 @@
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
+    overscroll-behavior-y: none;
+  }
+
+  button, a {
+    -webkit-user-select: none;
+    user-select: none;
   }
 }
 
@@ -36,6 +45,13 @@
   box-shadow: 0 8px 24px -4px rgba(23, 33, 27, 0.07), 0 2px 8px -2px rgba(23, 33, 27, 0.03);
 }
 
+.native-card {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(23, 33, 27, 0.07);
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 8px -2px rgba(23, 33, 27, 0.04), 0 1px 2px -1px rgba(23, 33, 27, 0.02);
+}
+
 .card-hover {
   transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.16s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -52,11 +68,24 @@
 
 /* Safe area mobile padding */
 .safe-area-pb {
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
 }
 
 .safe-area-pt {
-  padding-top: max(12px, env(safe-area-inset-top));
+  padding-top: max(12px, env(safe-area-inset-top, 12px));
+}
+
+.pb-safe {
+  padding-bottom: calc(72px + max(16px, env(safe-area-inset-bottom, 16px)));
+}
+
+/* Drag handle indicator for native bottom sheets */
+.drag-handle {
+  width: 36px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: #D1D5DB;
+  margin: 8px auto 12px;
 }
 
 /* Smooth hide scrollbar */

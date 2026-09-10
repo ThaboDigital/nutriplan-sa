@@ -30,7 +30,10 @@ export const RecipeDetailModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
-      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-[#E8EDE9]">
+      <div className="bg-white rounded-t-[28px] sm:rounded-3xl w-full max-w-md max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-[#E8EDE9] relative">
+        {/* Mobile drag handle */}
+        <div className="sm:hidden absolute top-2 left-1/2 -translate-x-1/2 z-20 w-10 h-1 bg-white/50 rounded-full pointer-events-none" />
+
         {/* Sticky Action Top Bar with Hero Image */}
         <div className="relative h-60 w-full overflow-hidden bg-gray-900 shrink-0">
           <img

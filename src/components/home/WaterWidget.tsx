@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Droplets, Plus, RotateCcw, Settings2 } from 'lucide-react';
 import { formatWater } from '../../utils/formatters';
@@ -25,7 +25,7 @@ export const WaterWidget: React.FC = () => {
     if ('Notification' in window) {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        new Notification('?? NutriPlan SA Hydration Alert', {
+        new Notification('💧 NutriPlan SA Hydration Alert', {
           body: `You are doing great! ${remainingMl > 0 ? `${remainingMl} ml remaining to hit your ${userProfile.dailyWaterTargetLiters} L target.` : "You have reached your goal!"}`,
           icon: '/favicon.svg'
         });

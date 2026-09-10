@@ -27,9 +27,14 @@ export const SwapMealModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
-      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border border-[#E8EDE9]">
+      <div className="bg-white rounded-t-[28px] sm:rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col overflow-hidden shadow-2xl border border-[#E8EDE9]">
+        {/* Mobile drag handle */}
+        <div className="sm:hidden pt-2.5 pb-1 bg-[#FFFDF8] flex justify-center shrink-0">
+          <div className="w-10 h-1 bg-neutral-300 rounded-full" />
+        </div>
+
         {/* Header */}
-        <div className="p-4 border-b border-[#E8EDE9] flex items-center justify-between bg-[#FFFDF8]">
+        <div className="px-4 py-3 sm:p-4 border-b border-[#E8EDE9] flex items-center justify-between bg-[#FFFDF8]">
           <div>
             <h3 className="font-extrabold text-base text-[#17211B]">Swap This Meal</h3>
             <p className="text-xs text-[#6B756C]">

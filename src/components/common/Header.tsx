@@ -1,32 +1,27 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { UserCheck, Bell, ShoppingBag, PackageOpen, Check, X } from 'lucide-react';
+import { UserCheck, Bell, Check, X } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const {
-    userProfile,
     notifications,
     markNotificationRead,
     markAllNotificationsRead,
     setIsCoachOpen,
-    setIsPantryOpen,
     setActiveTab,
-    shoppingList,
     authUser,
-    openAuthModal
   } = useApp();
 
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const unreadCount = notifications.filter(n => !n.isRead).length;
-  const uncheckedShoppingCount = shoppingList.filter(i => !i.isChecked && !i.isAlreadyHave).length;
 
   return (
-    <header className="sticky top-0 z-30 bg-[#FFFDF8]/90 backdrop-blur-md border-b border-[#E8EDE9] px-4 py-2.5">
-      <div className="max-w-md mx-auto flex items-center justify-between gap-2">
-        {/* Brand Logo (Left) */}
+    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-[#E8EDE9] px-4 py-2.5">
+      <div className="max-w-md mx-auto flex items-center justify-between">
+        {/* Brand Logo & Guest Chip (Left) */}
         <button
           onClick={() => setActiveTab('home')}
-          className="flex items-center shrink-0 active:scale-95 transition focus:outline-none"
+          className="flex items-center gap-2 shrink-0 active:scale-95 transition focus:outline-none"
           title="NutriPlan SA Home"
         >
           <img
@@ -34,47 +29,30 @@ export const Header: React.FC = () => {
             alt="NutriPlan SA"
             className="w-8 h-8 rounded-xl object-cover shadow-xs border border-[#E8EDE9]"
           />
+          {!authUser && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[10px] font-extrabold text-[#2C854E] border border-[#3FAE68]/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3FAE68] animate-pulse" />
+              Guest
+            </span>
+          )}
         </button>
 
-        {/* Action icons (Right) */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          {/* NutriCoach (Prominent AI Assistant launcher on both Mobile & Desktop) */}
+        {/* Action icons (Right) - Streamlined for mobile */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* NutriCoach (Prominent AI Assistant launcher) */}
           <button
             onClick={() => setIsCoachOpen(true)}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d6f0df] transition active:scale-95 text-xs font-black border border-[#3FAE68]/30 shadow-2xs"
             title="NutriCoach AI Advisor"
           >
             <UserCheck className="w-3.5 h-3.5 text-[#3FAE68]" />
-            <span className="text-[11px] sm:text-xs">AI Coach</span>
+            <span className="text-xs font-bold">AI Coach</span>
           </button>
 
-          {/* Pantry */}
-          <button
-            onClick={() => setIsPantryOpen(true)}
-            className="p-2 rounded-full text-[#6B756C] hover:text-[#17211B] hover:bg-black/5 transition relative active:scale-95"
-            title="My Pantry"
-          >
-            <PackageOpen className="w-5 h-5" />
-          </button>
-
-          {/* Shopping Bag */}
-          <button
-            onClick={() => setActiveTab('mealplan')}
-            className="p-2 rounded-full text-[#6B756C] hover:text-[#17211B] hover:bg-black/5 transition relative active:scale-95"
-            title="Shopping List"
-          >
-            <ShoppingBag className="w-5 h-5" />
-            {uncheckedShoppingCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#F2A65A] text-white text-[10px] font-bold flex items-center justify-center">
-                {uncheckedShoppingCount > 9 ? '9+' : uncheckedShoppingCount}
-              </span>
-            )}
-          </button>
-
-          {/* Notifications */}
+          {/* Notifications Bell */}
           <button
             onClick={() => setShowNotificationsModal(true)}
-            className="p-2 rounded-full text-[#6B756C] hover:text-[#17211B] hover:bg-black/5 transition relative active:scale-95"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-[#6B756C] hover:text-[#17211B] hover:bg-black/5 transition relative active:scale-95"
             title="Notifications"
           >
             <Bell className="w-5 h-5" />
@@ -84,22 +62,6 @@ export const Header: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {/* Streamlined Mobile Guest Mode Banner */}
-      {!authUser && (
-        <div className="max-w-md mx-auto mt-2 py-1.5 px-3 rounded-xl bg-[#EAF7EF]/80 border border-[#3FAE68]/20 flex items-center justify-between text-[11px] shadow-2xs">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="w-2 h-2 rounded-full bg-[#3FAE68] animate-pulse shrink-0" />
-            <span className="font-extrabold text-[#2C854E] truncate">Guest Mode (Local)</span>
-          </div>
-          <button
-            onClick={() => openAuthModal('register')}
-            className="font-black text-[#17211B] bg-white border border-[#3FAE68]/30 px-2 py-0.5 rounded-lg shadow-2xs hover:bg-[#EAF7EF] text-[10px] shrink-0 transition ml-2"
-          >
-            Register to sync →
-          </button>
-        </div>
-      )}
 
       {/* Notifications Drawer Modal */}
       {showNotificationsModal && (

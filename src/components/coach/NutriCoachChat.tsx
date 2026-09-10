@@ -120,26 +120,31 @@ export const NutriCoachChat: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 animate-in fade-in duration-150">
-      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-2xl h-[88vh] md:h-[82vh] flex flex-col overflow-hidden shadow-2xl border border-[#E8EDE9]">
+      <div className="bg-white rounded-t-[28px] sm:rounded-3xl w-full max-w-2xl h-[92vh] sm:h-[84vh] md:h-[82vh] flex flex-col overflow-hidden shadow-2xl border border-[#E8EDE9]">
+        {/* Mobile drag handle */}
+        <div className="sm:hidden pt-2.5 pb-1 bg-[#17211B] flex justify-center shrink-0">
+          <div className="w-10 h-1 bg-white/30 rounded-full" />
+        </div>
+
         {/* Header */}
-        <div className="p-5 bg-[#17211B] text-white flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#3FAE68] flex items-center justify-center text-white font-bold shadow-xs">
-              <UserCheck className="w-5 h-5" />
+        <div className="px-4 py-3.5 sm:p-5 bg-[#17211B] text-white flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-[#3FAE68] flex items-center justify-center text-white font-bold shadow-xs shrink-0">
+              <UserCheck className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-sm sm:text-base">NutriCoach</h3>
-                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#2C854E]">
-                  Nutrition Advisor
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h3 className="font-extrabold text-sm sm:text-base truncate">NutriCoach</h3>
+                <span className="text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#2C854E] shrink-0">
+                  AI Advisor
                 </span>
               </div>
-              <p className="text-xs text-white/70">Personalized South African nutrition & meal guidance</p>
+              <p className="text-[11px] sm:text-xs text-white/70 truncate">Personalized South African meal guidance</p>
             </div>
           </div>
           <button
             onClick={() => setIsCoachOpen(false)}
-            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
+            className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition shrink-0"
           >
             <X className="w-5 h-5" />
           </button>

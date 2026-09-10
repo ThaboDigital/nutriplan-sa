@@ -10,7 +10,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { MealCategory, FoodLogEntry } from '../../types';
-import { MacroBar, TouchButton } from '../common/DesignSystem';
+import { MacroBar } from '../common/DesignSystem';
 
 export const FoodDiaryView: React.FC = () => {
   const {
@@ -78,19 +78,19 @@ export const FoodDiaryView: React.FC = () => {
     : 0;
 
   return (
-    <div className="space-y-5 pb-28 px-3.5 sm:px-6 md:px-8 max-w-4xl mx-auto animate-in fade-in duration-200">
+    <div className="space-y-5 pb-28 px-4 sm:px-6 md:px-8 max-w-4xl mx-auto animate-in fade-in duration-200">
       {/* 1. Top Date Stepper Bar */}
-      <div className="pt-2 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#17211B] tracking-tight">Food Diary</h1>
-          <p className="text-xs text-[#6B756C] font-medium">Fast, frictionless nutrition tracking</p>
+      <div className="pt-2 flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[#17211B] tracking-tight truncate">Food Diary</h1>
+          <p className="text-xs text-[#6B756C] font-medium hidden sm:block">Fast, frictionless nutrition tracking</p>
         </div>
 
         {/* Date Selector Navigation */}
-        <div className="flex items-center gap-1.5 bg-white border border-[#E8EDE9] rounded-2xl p-1 subtle-shadow">
+        <div className="flex items-center gap-1 bg-white border border-[#E8EDE9] rounded-2xl p-1 subtle-shadow shrink-0">
           <button
             onClick={() => handleDateChange(-1)}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-[#6B756C] hover:text-[#17211B] hover:bg-[#F8F9FA] transition"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-[#6B756C] hover:text-[#17211B] hover:bg-[#F8F9FA] transition active:scale-95"
             title="Previous Day"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -105,7 +105,7 @@ export const FoodDiaryView: React.FC = () => {
 
           <button
             onClick={() => handleDateChange(1)}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-[#6B756C] hover:text-[#17211B] hover:bg-[#F8F9FA] transition"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-[#6B756C] hover:text-[#17211B] hover:bg-[#F8F9FA] transition active:scale-95"
             title="Next Day"
           >
             <ChevronRight className="w-4 h-4" />
@@ -147,7 +147,7 @@ export const FoodDiaryView: React.FC = () => {
         </div>
 
         {/* Macronutrient Bars */}
-        <div className="grid grid-cols-3 gap-3 pt-1">
+        <div className="grid grid-cols-3 gap-2.5 sm:gap-3 pt-1">
           <MacroBar
             label="Protein"
             current={summary.proteinConsumedG}
@@ -185,37 +185,36 @@ export const FoodDiaryView: React.FC = () => {
               className="bg-white rounded-3xl p-4 sm:p-5 border border-[#E8EDE9] subtle-shadow space-y-3"
             >
               {/* Meal Header */}
-              <div className="flex items-center justify-between border-b border-[#F0F2F0] pb-2.5">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl bg-[#EAF7EF] text-[#2C854E] flex items-center justify-center">
+              <div className="flex items-center justify-between border-b border-[#F0F2F0] pb-2.5 gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-xl bg-[#EAF7EF] text-[#2C854E] flex items-center justify-center shrink-0">
                     <UtensilsCrossed className="w-3.5 h-3.5" />
                   </div>
-                  <div>
-                    <h3 className="font-extrabold text-sm sm:text-base text-[#17211B]">{m.label}</h3>
-                    <span className="text-[10px] text-[#6B756C]">{m.timeHint}</span>
+                  <div className="min-w-0">
+                    <h3 className="font-extrabold text-sm sm:text-base text-[#17211B] truncate">{m.label}</h3>
+                    <span className="text-[10px] text-[#6B756C] hidden sm:inline">{m.timeHint}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 shrink-0">
                   {entries.length > 0 && (
                     <div className="text-right">
                       <span className="text-xs font-black text-[#17211B] block">
                         {mealKcal} kcal
                       </span>
                       <span className="text-[10px] font-bold text-[#3FAE68]">
-                        {mealProtein}g protein
+                        {mealProtein}g P
                       </span>
                     </div>
                   )}
 
-                  <TouchButton
-                    variant="secondary"
-                    size="sm"
-                    icon={Plus}
+                  <button
                     onClick={() => openFoodLogForMeal(m.type)}
+                    className="flex items-center gap-1 py-1 px-2.5 rounded-xl bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d8f1e1] text-xs font-bold transition active:scale-95 border border-[#3FAE68]/20"
                   >
-                    Add Food
-                  </TouchButton>
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add</span>
+                  </button>
                 </div>
               </div>
 

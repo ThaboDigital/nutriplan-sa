@@ -24,16 +24,16 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
       meal.isEaten ? 'border-[#3FAE68]/40 bg-[#FBFDFB]' : 'border-[#E8EDE9]'
     }`}>
       {/* Top row: Time badge, category, SA tag, and Eaten toggle */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="px-2.5 py-1 rounded-xl bg-[#17211B] text-white text-xs font-black tracking-wide">
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
+          <span className="px-2 py-0.5 rounded-lg bg-[#17211B] text-white text-[11px] font-black tracking-wide shrink-0">
             {meal.time}
           </span>
-          <span className="text-xs font-semibold text-[#6B756C] capitalize">
+          <span className="text-xs font-semibold text-[#6B756C] capitalize truncate">
             {meal.category}
           </span>
           {recipe.isSouthAfricanClassic && (
-            <span className="px-2 py-0.5 rounded-full bg-[#FFF2E0] text-[#D97706] text-[10px] font-bold">
+            <span className="px-2 py-0.5 rounded-full bg-[#FFF2E0] text-[#D97706] text-[10px] font-bold shrink-0">
               🇿🇦 SA Classic
             </span>
           )}
@@ -41,7 +41,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
 
         <button
           onClick={() => markMealEaten(meal.id)}
-          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition active:scale-95 ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shrink-0 transition active:scale-95 ${
             meal.isEaten
               ? 'bg-[#3FAE68] text-white'
               : 'bg-[#EAF7EF] text-[#2C854E] hover:bg-[#d8f1e1]'
@@ -53,10 +53,10 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
       </div>
 
       {/* Main Content with Photo */}
-      <div className="flex gap-3.5 items-center">
+      <div className="flex gap-3 sm:gap-3.5 items-center">
         <div
           onClick={() => setSelectedRecipeForDetail(recipe)}
-          className="relative w-24 h-24 rounded-2xl overflow-hidden shrink-0 cursor-pointer group shadow-sm"
+          className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 cursor-pointer group shadow-xs"
         >
           <img
             src={recipe.imageUrl}
@@ -72,7 +72,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
         <div className="flex-1 min-w-0">
           <h4
             onClick={() => setSelectedRecipeForDetail(recipe)}
-            className="font-bold text-sm text-[#17211B] truncate hover:text-[#3FAE68] transition cursor-pointer"
+            className="font-bold text-xs sm:text-sm text-[#17211B] truncate hover:text-[#3FAE68] transition cursor-pointer"
           >
             {recipe.title}
           </h4>
@@ -82,7 +82,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
           </p>
 
           {/* Quick Metrics */}
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] font-semibold text-[#6B756C]">
+          <div className="flex flex-wrap items-center gap-x-2.5 sm:gap-x-3 gap-y-1 mt-1.5 text-[11px] font-semibold text-[#6B756C]">
             {userProfile.trackCalories && (
               <span className="flex items-center gap-1 text-[#17211B]">
                 <Flame className="w-3 h-3 text-[#F2A65A]" />
@@ -108,21 +108,21 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
 
       {/* Smart Why this meal pill */}
       {meal.whyThisMeal && (
-        <div className="mt-3 px-3 py-1.5 rounded-xl bg-[#FFFDF8] border border-[#F0EBE1] text-[11px] text-[#6B756C] flex items-center gap-1.5">
+        <div className="mt-2.5 px-3 py-1.5 rounded-xl bg-[#FFFDF8] border border-[#F0EBE1] text-[11px] text-[#6B756C] flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-[#3FAE68] shrink-0" />
-          <span className="italic">{meal.whyThisMeal}</span>
+          <span className="italic truncate">{meal.whyThisMeal}</span>
         </div>
       )}
 
       {/* Action Footer */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#F0F2F0]">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-[#F0F2F0]">
+        <div className="flex items-center gap-1 sm:gap-2">
           <button
             onClick={() => setSwapModalTargetMeal(meal)}
             className="text-xs font-semibold text-[#17211B] hover:text-[#3FAE68] flex items-center gap-1 transition px-2 py-1 rounded-lg hover:bg-black/5"
           >
             <Shuffle className="w-3.5 h-3.5" />
-            <span>Swap meal</span>
+            <span>Swap</span>
           </button>
 
           <button
@@ -138,7 +138,7 @@ export const MealCard: React.FC<MealCardProps> = ({ meal }) => {
           onClick={() => setSelectedRecipeForDetail(recipe)}
           className="text-xs font-bold text-[#3FAE68] hover:text-[#2C854E] flex items-center gap-1 transition"
         >
-          <span>View recipe</span>
+          <span>Recipe</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>

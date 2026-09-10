@@ -183,9 +183,14 @@ export const FoodLogModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
-      <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-lg h-[92vh] sm:h-[84vh] flex flex-col overflow-hidden shadow-2xl border border-[#E8EDE9]">
+      <div className="bg-white rounded-t-[28px] sm:rounded-3xl w-full max-w-lg h-[92vh] sm:h-[84vh] flex flex-col overflow-hidden shadow-2xl border border-[#E8EDE9]">
+        {/* Mobile drag handle */}
+        <div className="sm:hidden pt-2.5 pb-1 bg-[#17211B] flex justify-center shrink-0">
+          <div className="w-10 h-1 bg-white/30 rounded-full" />
+        </div>
+
         {/* 1. Modal Top Bar */}
-        <div className="p-4 bg-[#17211B] text-white flex items-center justify-between shrink-0">
+        <div className="px-4 py-3 sm:p-4 bg-[#17211B] text-white flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-base sm:text-lg font-black tracking-tight">Log Food</h2>
             <p className="text-xs text-white/70">

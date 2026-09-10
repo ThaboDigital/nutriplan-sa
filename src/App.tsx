@@ -30,7 +30,7 @@ import { UpgradeModal } from './components/subscription/UpgradeModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
-import { Smartphone, Monitor } from 'lucide-react';
+import { Smartphone, Monitor, Plus } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const { activeTab, setIsFoodLogOpen, showToast, isLoginOpen, setIsLoginOpen, loginInitialMode } = useApp();
@@ -159,7 +159,7 @@ const AppContent: React.FC = () => {
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="w-full max-w-[430px] rounded-[44px] border-[10px] border-[#17211B] shadow-2xl bg-[#FFFDF8] h-[880px] flex flex-col overflow-hidden relative">
             <Header />
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-y-auto pb-safe">
               {activeTab === 'home' && <HomeDashboard />}
               {activeTab === 'diary' && <FoodDiaryView />}
               {activeTab === 'mealplan' && <MealPlanView />}
@@ -168,13 +168,16 @@ const AppContent: React.FC = () => {
               {activeTab === 'profile' && <ProfileView />}
             </main>
             <BottomNav />
-            <button
-              onClick={() => setIsFoodLogOpen(true)}
-              className="absolute bottom-20 right-5 z-30 w-12 h-12 rounded-full bg-[#17211B] text-white shadow-xl flex items-center justify-center hover:bg-black active:scale-95 transition"
-              title="Quick Food Log"
-            >
-              <span className="text-xl font-bold leading-none">+</span>
-            </button>
+            {(activeTab === 'home' || activeTab === 'diary') && (
+              <button
+                onClick={() => setIsFoodLogOpen(true)}
+                className="absolute bottom-20 right-4 z-30 h-11 px-4 rounded-full bg-[#17211B]/95 backdrop-blur-md text-white shadow-xl flex items-center gap-1.5 active:scale-95 transition border border-white/10"
+                title="Quick Food Log"
+              >
+                <Plus className="w-4 h-4 text-[#3FAE68]" />
+                <span className="text-xs font-black">Log Food</span>
+              </button>
+            )}
           </div>
         </div>
       ) : (
@@ -205,7 +208,7 @@ const AppContent: React.FC = () => {
             </div>
 
             {/* Viewport Router / Active Tab View */}
-            <main className="flex-1 w-full p-2 sm:p-4 md:p-6 overflow-y-auto">
+            <main className="flex-1 w-full p-0 md:p-6 overflow-y-auto pb-safe md:pb-0">
               {activeTab === 'home' && <HomeDashboard />}
               {activeTab === 'diary' && <FoodDiaryView />}
               {activeTab === 'mealplan' && <MealPlanView />}
@@ -219,13 +222,16 @@ const AppContent: React.FC = () => {
           {/* Mobile Bottom Navigation (Visible only on mobile < md) */}
           <div className="block md:hidden">
             <BottomNav />
-            <button
-              onClick={() => setIsFoodLogOpen(true)}
-              className="fixed bottom-20 right-5 z-30 w-12 h-12 rounded-full bg-[#17211B] text-white shadow-xl flex items-center justify-center hover:bg-black active:scale-95 transition"
-              title="Quick Food Log"
-            >
-              <span className="text-xl font-bold leading-none">+</span>
-            </button>
+            {(activeTab === 'home' || activeTab === 'diary') && (
+              <button
+                onClick={() => setIsFoodLogOpen(true)}
+                className="fixed bottom-20 right-4 z-30 h-11 px-4 rounded-full bg-[#17211B]/95 backdrop-blur-md text-white shadow-xl flex items-center gap-1.5 active:scale-95 transition border border-white/10"
+                title="Quick Food Log"
+              >
+                <Plus className="w-4 h-4 text-[#3FAE68]" />
+                <span className="text-xs font-black">Log Food</span>
+              </button>
+            )}
           </div>
         </div>
       )}

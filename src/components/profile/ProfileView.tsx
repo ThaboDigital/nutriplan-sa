@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { User, Shield, Sliders, Bell, RotateCcw, Droplets, Target, AlertCircle, Trash2, Smartphone, Download } from 'lucide-react';
-import { formatCalories } from '../../utils/formatters';
+import { Shield, Bell, RotateCcw, Smartphone, Download } from 'lucide-react';
 
 export const ProfileView: React.FC = () => {
   const {
@@ -13,7 +12,6 @@ export const ProfileView: React.FC = () => {
     updateNotificationPreferences,
     showToast,
     promptInstallApp,
-    isInstallable,
     openUpgradeModal,
     setActiveTab,
     authUser,
@@ -69,50 +67,50 @@ export const ProfileView: React.FC = () => {
         </div>
 
         {/* Key Metrics Grid */}
-        <div className="grid grid-cols-3 gap-3 pt-4 border-t border-[#F0F2F0]">
-          <div className="p-3.5 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF]">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-4 border-t border-[#F0F2F0]">
+          <div className="p-3 sm:p-3.5 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF] text-center sm:text-left">
             <span className="text-[10px] font-bold text-[#6B756C] block">Weight</span>
             {isEditingWeight ? (
-              <div className="flex items-center gap-1.5 mt-1">
+              <div className="flex items-center gap-1 mt-1 justify-center sm:justify-start">
                 <input
                   type="number"
                   value={tempWeight}
                   onChange={e => setTempWeight(e.target.value)}
-                  className="w-16 text-xs font-black border rounded-lg px-1.5 py-0.5 bg-white"
+                  className="w-14 text-xs font-black border rounded-lg px-1 py-0.5 bg-white text-center"
                 />
                 <button
                   onClick={handleSaveWeight}
                   className="px-2 py-0.5 rounded-lg bg-[#3FAE68] text-white text-[10px] font-bold"
                 >
-                  Save
+                  ✓
                 </button>
               </div>
             ) : (
               <div
                 onClick={() => setIsEditingWeight(true)}
-                className="text-base font-black text-[#17211B] mt-0.5 cursor-pointer hover:text-[#3FAE68] transition"
+                className="text-sm sm:text-base font-black text-[#17211B] mt-0.5 cursor-pointer hover:text-[#3FAE68] transition"
                 title="Click to edit weight"
               >
                 {userProfile.weightKg} kg
               </div>
             )}
-            <span className="text-[10px] text-[#6B756C]">Target: {userProfile.targetWeightKg}kg</span>
+            <span className="text-[9px] sm:text-[10px] text-[#6B756C] block truncate">Goal: {userProfile.targetWeightKg}kg</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF]">
-            <span className="text-[10px] font-bold text-[#6B756C] block">Meals / Day</span>
-            <span className="text-base font-black text-[#17211B] mt-0.5 block">
+          <div className="p-3 sm:p-3.5 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF] text-center sm:text-left">
+            <span className="text-[10px] font-bold text-[#6B756C] block">Meals/Day</span>
+            <span className="text-sm sm:text-base font-black text-[#17211B] mt-0.5 block">
               {userProfile.mealsPerDay} Meals
             </span>
-            <span className="text-[10px] text-[#6B756C] truncate block">{userProfile.preferredEatingTimes.join(', ')}</span>
+            <span className="text-[9px] sm:text-[10px] text-[#6B756C] block truncate">Plan</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF]">
+          <div className="p-3 sm:p-3.5 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF] text-center sm:text-left">
             <span className="text-[10px] font-bold text-[#6B756C] block">Daily Water</span>
-            <span className="text-base font-black text-[#3FAE68] mt-0.5 block">
+            <span className="text-sm sm:text-base font-black text-[#3FAE68] mt-0.5 block">
               {userProfile.dailyWaterTargetLiters} L
             </span>
-            <span className="text-[10px] text-[#6B756C]">Target</span>
+            <span className="text-[9px] sm:text-[10px] text-[#6B756C] block truncate">Hydration</span>
           </div>
         </div>
       </div>
@@ -128,6 +126,13 @@ export const ProfileView: React.FC = () => {
               <span className="text-[#6B756C]">Diet Strategy</span>
               <span className="font-bold text-[#17211B] capitalize">
                 {userProfile.dietaryPreference.replace('_', ' ')}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-[#6B756C]">Meal Timings</span>
+              <span className="font-bold text-[#17211B]">
+                {userProfile.preferredEatingTimes.join(' • ')}
               </span>
             </div>
 
