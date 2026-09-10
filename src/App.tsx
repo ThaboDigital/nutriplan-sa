@@ -33,15 +33,17 @@ import { TermsOfService } from './pages/TermsOfService';
 import { Smartphone, Monitor, Plus } from 'lucide-react';
 
 const AppContent: React.FC = () => {
-  const { activeTab, setIsFoodLogOpen, showToast, isLoginOpen, setIsLoginOpen, loginInitialMode, setAuthUser: setContextAuthUser } = useApp();
+  const {
+    activeTab,
+    setIsFoodLogOpen,
+    showToast,
+    isLoginOpen,
+    setIsLoginOpen,
+    loginInitialMode,
+    authUser,
+    setAuthUser,
+  } = useApp();
   const [devicePreviewMode, setDevicePreviewMode] = useState<'desktop' | 'mobile_frame'>('desktop');
-  const [authUser, setAuthUser] = useState<AuthUser | null>(() => {
-    const saved = localStorage.getItem('nutriplan_auth_user');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
-    }
-    return null;
-  });
   const [migrationSummary, setMigrationSummary] = useState<MigrationSummary | null>(null);
   const [isMigrationOpen, setIsMigrationOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState<string>(() => {
@@ -78,7 +80,6 @@ const AppContent: React.FC = () => {
     // Listen to Auth State
     const { unsubscribe } = authService.onAuthStateChange(user => {
       setAuthUser(user);
-      setContextAuthUser(user);
       if (user && !user.isGuest) {
         // Check for local data migration
         const summary = migrationService.detectLocalData();
@@ -91,18 +92,17 @@ const AppContent: React.FC = () => {
     });
 
     return () => unsubscribe();
-  }, [setContextAuthUser]);
+  }, [setAuthUser]);
 
   const handleLogout = async () => {
     await authService.signOut();
     setAuthUser(null);
-    setContextAuthUser(null);
+    localStorage.removeItem('nutriplan_auth_user');
     showToast('Signed out of cloud account', 'info');
   };
 
   const handleAuthSuccess = (user: AuthUser) => {
     setAuthUser(user);
-    setContextAuthUser(user);
     localStorage.setItem('nutriplan_auth_user', JSON.stringify(user));
     showToast(`Welcome, ${user.name}! Cloud sync active.`, 'success');
   };

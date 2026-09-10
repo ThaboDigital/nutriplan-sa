@@ -15,6 +15,17 @@ export const Header: React.FC = () => {
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
+  const effectiveUser = authUser || (() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('nutriplan_auth_user') : null;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && !parsed.isGuest && parsed.email) return parsed;
+      } catch (e) {}
+    }
+    return null;
+  })();
+
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-[#E8EDE9] px-4 py-2.5">
       <div className="max-w-md mx-auto flex items-center justify-between">
@@ -29,7 +40,7 @@ export const Header: React.FC = () => {
             alt="NutriPlan SA"
             className="w-8 h-8 rounded-xl object-cover shadow-xs border border-[#E8EDE9]"
           />
-          {!authUser && (
+          {!effectiveUser && (
             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[10px] font-extrabold text-[#2C854E] border border-[#3FAE68]/20">
               <span className="w-1.5 h-1.5 rounded-full bg-[#3FAE68] animate-pulse" />
               Guest

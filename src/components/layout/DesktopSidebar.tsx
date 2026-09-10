@@ -26,7 +26,7 @@ interface DesktopSidebarProps {
 
 export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   onOpenLogin,
-  authUser,
+  authUser: propAuthUser,
   onLogout
 }) => {
   const {
@@ -38,9 +38,21 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
     shoppingList,
     userProfile,
     openUpgradeModal,
+    authUser: contextAuthUser,
   } = useApp();
 
-  const isAdmin = authUser?.role === 'admin' || userProfile?.role === 'admin';
+  const effectiveUser = propAuthUser || contextAuthUser || (() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('nutriplan_auth_user') : null;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && !parsed.isGuest && parsed.email) return parsed;
+      } catch (e) {}
+    }
+    return null;
+  })();
+
+  const isAdmin = effectiveUser?.role === 'admin' || userProfile?.role === 'admin';
   const uncheckedShoppingCount = shoppingList.filter(i => !i.isChecked && !i.isAlreadyHave).length;
 
   const mainNavItems: { id: NavTab; label: string; icon: any }[] = [
@@ -186,15 +198,17 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
 
       {/* User / Auth Footer */}
       <div className="pt-3 border-t border-[#E8EDE9] space-y-2 mt-3 shrink-0">
-        {authUser ? (
+        {effectiveUser ? (
           <div className="flex items-center justify-between p-2 rounded-xl bg-[#F8F9FA] border border-[#E8EDE9]">
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-lg bg-[#17211B] text-white flex items-center justify-center text-xs font-black shrink-0">
-                {authUser.name.charAt(0)}
+                {effectiveUser.name ? effectiveUser.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div className="min-w-0">
-                <span className="font-bold text-xs text-[#17211B] block truncate">{authUser.name}</span>
-                <span className="text-[10px] text-[#3FAE68] font-semibold block">Cloud Synced</span>
+                <span className="font-bold text-xs text-[#17211B] block truncate">{effectiveUser.name}</span>
+                <span className="text-[10px] text-[#3FAE68] font-semibold block truncate">
+                  {effectiveUser.email || 'Cloud Synced'}
+                </span>
               </div>
             </div>
 

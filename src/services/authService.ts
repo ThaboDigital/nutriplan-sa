@@ -243,15 +243,61 @@ export const authService = {
       return { unsubscribe: () => {} };
     }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        callback({
+        let role: UserRole = 'user';
+        let subscriptionTier: SubscriptionTier = 'free';
+        let subscriptionPeriod: SubscriptionPeriod = 'monthly';
+        let subscriptionStatus: SubscriptionStatus = 'inactive';
+        let cellNumber: string | undefined = undefined;
+
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role, subscription_tier, subscription_period, subscription_status, cell_number')
+            .eq('id', session.user.id)
+            .maybeSingle();
+
+          if (profile) {
+            role = (profile.role as UserRole) || 'user';
+            subscriptionTier = (profile.subscription_tier as SubscriptionTier) || 'free';
+            subscriptionPeriod = (profile.subscription_period as SubscriptionPeriod) || 'monthly';
+            subscriptionStatus = (profile.subscription_status as SubscriptionStatus) || 'inactive';
+            cellNumber = profile.cell_number || undefined;
+          }
+        } catch (e) {
+          console.warn('Profile fetch notice in onAuthStateChange:', e);
+        }
+
+        const userObj: AuthUser = {
           id: session.user.id,
           email: session.user.email || '',
           name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
           isGuest: false,
-        });
+          role,
+          subscriptionTier,
+          subscriptionPeriod,
+          subscriptionStatus,
+          cellNumber,
+        };
+        localStorage.setItem('nutriplan_auth_user', JSON.stringify(userObj));
+        callback(userObj);
+      } else if (event === 'SIGNED_OUT') {
+        localStorage.removeItem('nutriplan_auth_user');
+        callback(null);
       } else {
+        // For INITIAL_SESSION or network delays where session might be momentarily null,
+        // preserve the authenticated user if saved in localStorage
+        const saved = localStorage.getItem('nutriplan_auth_user');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed && !parsed.isGuest && parsed.email) {
+              callback(parsed);
+              return;
+            }
+          } catch (e) {}
+        }
         callback(null);
       }
     });
