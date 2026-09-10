@@ -17,6 +17,12 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <title>NutriPlan SA | Healthy Eating & Meal Planning</title>
+    <script>
+      // Automatically redirect any traffic arriving at vercel.app to the custom domain
+      if (window.location.hostname === 'nutriplan-sa.vercel.app') {
+        window.location.replace('https://nutriplan.thabosystems.co.za' + window.location.pathname + window.location.search + window.location.hash);
+      }
+    </script>
   </head>
   <body class="bg-[#F8F9FA] text-[#182018] antialiased selection:bg-[#3FAE68] selection:text-white">
     <div id="root"></div>

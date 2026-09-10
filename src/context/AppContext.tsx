@@ -38,6 +38,7 @@ interface ToastState {
 
 interface AppContextType {
   authUser: AuthUser | null;
+  setAuthUser: (user: AuthUser | null) => void;
   userProfile: UserProfile;
   updateUserProfile: (updates: Partial<UserProfile>) => void;
   weeklyPlan: DayPlan[];
@@ -209,7 +210,13 @@ const DEFAULT_FOOD_LOG: FoodLogEntry[] = [
 ];
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(() => {
+    const saved = localStorage.getItem('nutriplan_auth_user');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return null;
+  });
   const authUserRef = useRef<AuthUser | null>(null);
   authUserRef.current = authUser;
 
@@ -813,6 +820,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     <AppContext.Provider
       value={{
         authUser,
+        setAuthUser,
         userProfile,
         updateUserProfile,
         weeklyPlan,

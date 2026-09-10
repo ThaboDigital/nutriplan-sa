@@ -13,6 +13,14 @@ export interface AuthUser {
   cellNumber?: string;
 }
 
+const getAppOrigin = (): string => {
+  if (typeof window === 'undefined') return 'https://nutriplan.thabosystems.co.za';
+  if (window.location.hostname.includes('localhost') || window.location.hostname === '127.0.0.1') {
+    return window.location.origin;
+  }
+  return 'https://nutriplan.thabosystems.co.za';
+};
+
 export const authService = {
   async getCurrentUser(): Promise<AuthUser | null> {
     if (!isSupabaseConfigured) {
@@ -20,7 +28,16 @@ export const authService = {
       return guest ? JSON.parse(guest) : null;
     }
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (error || !user) return null;
+    if (error || !user) {
+      const local = localStorage.getItem('nutriplan_auth_user');
+      if (local) {
+        try {
+          const parsed = JSON.parse(local);
+          if (parsed && !parsed.isGuest) return parsed;
+        } catch (e) {}
+      }
+      return null;
+    }
 
     let role: UserRole = 'user';
     let subscriptionTier: SubscriptionTier = 'free';
@@ -46,7 +63,7 @@ export const authService = {
       console.warn('Profile fetch notice:', e);
     }
 
-    return {
+    const authUserObj: AuthUser = {
       id: user.id,
       email: user.email || '',
       name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
@@ -57,6 +74,8 @@ export const authService = {
       subscriptionStatus,
       cellNumber,
     };
+    localStorage.setItem('nutriplan_auth_user', JSON.stringify(authUserObj));
+    return authUserObj;
   },
 
   async signUp(email: string, password: string, name: string): Promise<{ user: AuthUser | null; error: string | null }> {
@@ -74,27 +93,32 @@ export const authService = {
       return { user: mockUser, error: null };
     }
 
+    const redirectUrl = getAppOrigin();
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { name },
+        emailRedirectTo: redirectUrl,
       },
     });
 
     if (error) return { user: null, error: error.message };
     if (!data.user) return { user: null, error: 'Registration failed. Try again.' };
 
+    const registeredUser: AuthUser = {
+      id: data.user.id,
+      email: data.user.email || '',
+      name: data.user.user_metadata?.name || name,
+      isGuest: false,
+      role: 'user',
+      subscriptionTier: 'free',
+      subscriptionStatus: 'inactive',
+    };
+    localStorage.setItem('nutriplan_auth_user', JSON.stringify(registeredUser));
+
     return {
-      user: {
-        id: data.user.id,
-        email: data.user.email || '',
-        name: data.user.user_metadata?.name || name,
-        isGuest: false,
-        role: 'user',
-        subscriptionTier: 'free',
-        subscriptionStatus: 'inactive',
-      },
+      user: registeredUser,
       error: null,
     };
   },
@@ -146,28 +170,32 @@ export const authService = {
       console.warn('Profile fetch notice on signin:', e);
     }
 
+    const loggedUser: AuthUser = {
+      id: data.user.id,
+      email: data.user.email || '',
+      name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
+      isGuest: false,
+      role,
+      subscriptionTier,
+      subscriptionPeriod,
+      subscriptionStatus,
+      cellNumber,
+    };
+    localStorage.setItem('nutriplan_auth_user', JSON.stringify(loggedUser));
+
     return {
-      user: {
-        id: data.user.id,
-        email: data.user.email || '',
-        name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
-        isGuest: false,
-        role,
-        subscriptionTier,
-        subscriptionPeriod,
-        subscriptionStatus,
-        cellNumber,
-      },
+      user: loggedUser,
       error: null,
     };
   },
 
   async signInWithGoogle(): Promise<{ error: string | null }> {
     try {
+      const redirectUrl = getAppOrigin();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: redirectUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -200,8 +228,9 @@ export const authService = {
     if (!isSupabaseConfigured) {
       return { success: true, error: null };
     }
+    const redirectUrl = getAppOrigin();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/reset-password',
+      redirectTo: redirectUrl + '/reset-password',
     });
     if (error) return { success: false, error: error.message };
     return { success: true, error: null };
