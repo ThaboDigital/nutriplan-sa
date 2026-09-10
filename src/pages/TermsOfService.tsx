@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ArrowLeft, Scale, AlertTriangle, CreditCard, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
 interface TermsOfServiceProps {
@@ -85,7 +85,7 @@ export const TermsOfService: React.FC<TermsOfServiceProps> = ({ onBack }) => {
               <span>Pro Subscriptions & PayFast Billing</span>
             </h2>
             <p>
-              NutriPlan SA offers both a free tier and optional premium "NutriPlan Pro" subscription plans (Monthly at R69.00 or Annual at R579.00 ZAR).
+              NutriPlan SA offers both a free tier and optional premium "NutriPlan Pro" subscription plans (Monthly at R49.00 or Annual at R399.00 ZAR).
             </p>
             <ul className="list-disc pl-5 space-y-1 text-xs sm:text-sm">
               <li><strong>Billing Currency:</strong> All subscription transactions are billed in South African Rand (ZAR) processed securely through PayFast.</li>

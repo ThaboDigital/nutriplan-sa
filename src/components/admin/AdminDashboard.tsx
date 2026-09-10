@@ -173,7 +173,7 @@ export const AdminDashboard: React.FC = () => {
   const totalProSubscribers = subscribers.filter(s => s.subscription_tier === 'pro').length;
   const monthlySubscribers = subscribers.filter(s => s.subscription_tier === 'pro' && s.subscription_period === 'monthly').length;
   const annualSubscribers = subscribers.filter(s => s.subscription_tier === 'pro' && s.subscription_period === 'annual').length;
-  const totalMRR = (monthlySubscribers * 69) + (annualSubscribers * (579 / 12));
+  const totalMRR = (monthlySubscribers * 49) + (annualSubscribers * (399 / 12));
   const conversionRate = totalUsers > 0 ? Math.round((totalProSubscribers / totalUsers) * 100) : 0;
 
   const filteredSubscribers = subscribers.filter(

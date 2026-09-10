@@ -10,14 +10,14 @@ export interface PayFastSubscriptionParams {
 export const PAYFAST_PLANS = {
   monthly: {
     name: 'NutriPlan SA Pro (Monthly Subscription)',
-    price: 69.00,
+    price: 49.00,
     frequency: '3', // 3 = Monthly
     cycles: 0, // 0 = indefinite until cancelled
     description: 'Unlimited AI NutriCoach, automated grocery cart syncing, and South African recipe swaps.',
   },
   annual: {
-    name: 'NutriPlan SA Pro (Annual Plan - 30% Off)',
-    price: 579.00,
+    name: 'NutriPlan SA Pro (Annual Plan - 32% Off)',
+    price: 399.00,
     frequency: '6', // 6 = Annual
     cycles: 0,
     description: '12 months unlimited access to NutriPlan SA Pro with priority meal planning and support.',

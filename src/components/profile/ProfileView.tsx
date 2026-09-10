@@ -232,7 +232,7 @@ export const ProfileView: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-bold text-[#17211B] block">Upgrade to NutriPlan Pro</span>
-                  <span className="text-[10px] text-[#6B756C]">Save 30% on Annual Plan (R48/mo equivalent)</span>
+                  <span className="text-[10px] text-[#6B756C]">Save 32% on Annual Plan (R33/mo equivalent) — From R49/mo</span>
                 </div>
                 <button
                   onClick={() => openUpgradeModal('Profile Upgrade')}

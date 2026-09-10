@@ -15,7 +15,7 @@ export const UpgradeModal: React.FC = () => {
     openAuthModal,
   } = useApp();
 
-  // R69 (monthly) is pre-selected by default
+  // R49 (monthly) is pre-selected by default
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
   const [loading, setLoading] = useState(false);
 
@@ -141,14 +141,14 @@ export const UpgradeModal: React.FC = () => {
             </div>
           )}
 
-          {/* Plan Selection Cards: R69 Monthly (Pre-selected) vs Annual */}
+          {/* Plan Selection Cards: R49 Monthly (Pre-selected) vs Annual */}
           <div className="space-y-2.5">
             <span className="text-[11px] font-black uppercase tracking-wider text-[#6B756C] block">
               Choose Your Plan
             </span>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Option 1: Monthly R69 (Pre-selected) */}
+              {/* Option 1: Monthly R49 (Pre-selected) */}
               <div
                 onClick={() => setBillingPeriod('monthly')}
                 className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between relative ${
@@ -172,7 +172,7 @@ export const UpgradeModal: React.FC = () => {
 
                 <div className="mt-1">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-black text-[#17211B]">R69</span>
+                    <span className="text-2xl font-black text-[#17211B]">R49</span>
                     <span className="text-xs text-[#6B756C] font-semibold">/ month</span>
                   </div>
                   <p className="text-[11px] text-[#6B756C] mt-1">
@@ -181,7 +181,7 @@ export const UpgradeModal: React.FC = () => {
                 </div>
               </div>
 
-              {/* Option 2: Annual R579 (Save 30%) */}
+              {/* Option 2: Annual R399 (Save 32%) */}
               <div
                 onClick={() => setBillingPeriod('annual')}
                 className={`p-4 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between relative ${
@@ -205,15 +205,15 @@ export const UpgradeModal: React.FC = () => {
 
                 <div className="mt-1">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-black text-[#17211B]">R579</span>
+                    <span className="text-2xl font-black text-[#17211B]">R399</span>
                     <span className="text-xs text-[#6B756C] font-semibold">/ year</span>
                   </div>
                   <div className="mt-1 flex items-center gap-1.5">
                     <span className="px-1.5 py-0.5 rounded-md bg-[#3FAE68] text-white text-[9px] font-black">
-                      SAVE 30%
+                      SAVE 32%
                     </span>
                     <span className="text-[10px] text-[#2C854E] font-bold">
-                      R48.25/month equiv.
+                      R33.25/month equiv.
                     </span>
                   </div>
                 </div>
@@ -229,7 +229,7 @@ export const UpgradeModal: React.FC = () => {
               </span>
               <div className="flex items-baseline gap-1 mt-0.5">
                 <span className="text-xl sm:text-2xl font-black text-[#17211B]">
-                  {billingPeriod === 'monthly' ? 'R69.00' : 'R579.00'}
+                  {billingPeriod === 'monthly' ? 'R49.00' : 'R399.00'}
                 </span>
                 <span className="text-xs text-[#6B756C]">
                   {billingPeriod === 'monthly' ? 'ZAR (Billed Monthly)' : 'ZAR (Billed Annually)'}
@@ -281,8 +281,8 @@ export const UpgradeModal: React.FC = () => {
               {loading
                 ? 'Connecting to PayFast...'
                 : billingPeriod === 'monthly'
-                ? 'Upgrade to NutriPlan Pro — R69 / month'
-                : 'Upgrade to NutriPlan Pro — R579 / year'}
+                ? 'Upgrade to NutriPlan Pro — R49 / month'
+                : 'Upgrade to NutriPlan Pro — R399 / year'}
             </span>
             <ArrowRight className="w-4 h-4" />
           </button>
