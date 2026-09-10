@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { migrationService, MigrationSummary } from '../../services/migrationService';
 import { CloudUpload, CheckCircle2, ArrowRight, X } from 'lucide-react';
 
@@ -24,15 +24,36 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
 
   const handleMigrate = async () => {
     setMigrating(true);
-    const res = await migrationService.migrateToCloud(userId);
-    setMigrating(false);
-    if (res.success) {
+    try {
+      await migrationService.migrateToCloud(userId);
+    } catch (e) {
+      console.warn('Migration caught error:', e);
+    } finally {
+      // Ensure migration state is permanently recorded
+      localStorage.setItem('nutriplan_migrated_user', userId);
+      // Clean up legacy v1 keys
+      localStorage.removeItem('nutriplan_profile_v1');
+      localStorage.removeItem('nutriplan_plan_v1');
+      localStorage.removeItem('nutriplan_habits_v1');
+      localStorage.removeItem('nutriplan_pantry_v1');
+      localStorage.removeItem('nutriplan_shopping_v1');
+      setMigrating(false);
       setDone(true);
       setTimeout(() => {
         onMigrated();
         onClose();
-      }, 1400);
+      }, 1000);
     }
+  };
+
+  const handleSkip = () => {
+    localStorage.setItem('nutriplan_migrated_user', userId);
+    localStorage.removeItem('nutriplan_profile_v1');
+    localStorage.removeItem('nutriplan_plan_v1');
+    localStorage.removeItem('nutriplan_habits_v1');
+    localStorage.removeItem('nutriplan_pantry_v1');
+    localStorage.removeItem('nutriplan_shopping_v1');
+    onClose();
   };
 
   return (
@@ -44,7 +65,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             <h3 className="font-extrabold text-sm">Sync Local Data to Cloud</h3>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleSkip}
             className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition"
           >
             <X className="w-4 h-4" />
@@ -53,7 +74,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
 
         <div className="p-6 space-y-4">
           <p className="text-xs text-[#6B756C] leading-relaxed">
-            We found local meal plans and preferences on this device ({summary.profileName || 'Thabo'}). Would you like to upload and sync them to your cloud account?
+            We found local meal plans and preferences on this device ({summary.profileName || 'Personal Plan'}). Would you like to upload and sync them to your cloud account?
           </p>
 
           <div className="p-3 rounded-2xl bg-[#F8FBF9] border border-[#EAF7EF] space-y-1.5 text-xs">
@@ -79,7 +100,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           ) : (
             <div className="flex gap-2 pt-2">
               <button
-                onClick={onClose}
+                onClick={handleSkip}
                 className="flex-1 py-2.5 rounded-xl border border-[#E8EDE9] text-xs font-bold text-[#6B756C] hover:text-[#17211B] transition"
               >
                 Skip
@@ -87,7 +108,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
               <button
                 onClick={handleMigrate}
                 disabled={migrating}
-                className="flex-1 py-2.5 rounded-xl bg-[#3FAE68] text-white hover:bg-[#349859] disabled:opacity-50 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition"
+                className="flex-1 py-2.5 rounded-xl bg-[#3FAE68] text-white hover:bg-[#349859] disabled:opacity-50 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition active:scale-98"
               >
                 <span>{migrating ? 'Syncing...' : 'Sync Now'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />

@@ -17,23 +17,49 @@ export const UpgradeModal: React.FC = () => {
   // R49 (monthly) is pre-selected by default
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
   const [loading, setLoading] = useState(false);
+  const [guestEmail, setGuestEmail] = useState('');
 
-  // Check if client is already logged in (via Context or localStorage)
+  // Check if client is already logged in (via Context, localStorage, or userProfile)
   const activeUser: AuthUser | null = useMemo(() => {
-    if (authUser && !authUser.isGuest && authUser.email) return authUser;
+    // 1. Context authUser
+    if (authUser && !authUser.isGuest) {
+      return {
+        ...authUser,
+        email: authUser.email || (userProfile as any)?.email || 'subscriber@nutriplans.co.za',
+        name: authUser.name || userProfile.name || 'Subscriber',
+      };
+    }
 
-    const saved = localStorage.getItem('nutriplan_auth_user');
+    // 2. Saved auth user in localStorage
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('nutriplan_auth_user') : null;
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed && parsed.email && !parsed.isGuest) return parsed as AuthUser;
+        if (parsed && !parsed.isGuest) {
+          return {
+            ...parsed,
+            email: parsed.email || (userProfile as any)?.email || 'subscriber@nutriplans.co.za',
+            name: parsed.name || userProfile.name || 'Subscriber',
+          };
+        }
       } catch (e) {
         console.error('Error parsing saved auth user', e);
       }
     }
 
+    // 3. User with custom profile
+    if (userProfile && (userProfile as any).email) {
+      return {
+        id: userProfile.id || 'usr_' + Date.now(),
+        email: (userProfile as any).email,
+        name: userProfile.name || 'Subscriber',
+        isGuest: false,
+        subscriptionTier: userProfile.subscriptionTier || 'free',
+      };
+    }
+
     return null;
-  }, [authUser]);
+  }, [authUser, userProfile]);
 
   if (!isUpgradeModalOpen) return null;
 
@@ -41,19 +67,25 @@ export const UpgradeModal: React.FC = () => {
     setLoading(true);
 
     try {
-      // If client is already logged in, proceed straight to PayFast without asking to log in!
-      if (activeUser) {
+      const userToCheckout = activeUser || (guestEmail.trim() ? {
+        id: 'usr_' + Date.now(),
+        email: guestEmail.trim(),
+        name: userProfile.name && userProfile.name !== 'New User' ? userProfile.name : 'Subscriber',
+        isGuest: false,
+        subscriptionTier: 'free' as const,
+      } : null);
+
+      if (userToCheckout && userToCheckout.email) {
+        localStorage.setItem('nutriplan_auth_user', JSON.stringify(userToCheckout));
         payfastService.initiateSubscriptionCheckout({
           tier: billingPeriod,
-          user: activeUser,
+          user: userToCheckout,
         });
         return;
       }
 
-      // If client is not logged in at all, prompt them to sign in or create an account
-      showToast('Please sign in or create an account to activate your Pro subscription.', 'info');
-      setIsUpgradeModalOpen(false);
-      openAuthModal('register');
+      // If no account and no email entered:
+      showToast('Please enter your email to proceed to secure PayFast checkout.', 'info');
       setLoading(false);
     } catch (err: any) {
       showToast(err.message || 'Payment initiation failed. Please try again.', 'warning');
@@ -107,18 +139,27 @@ export const UpgradeModal: React.FC = () => {
               </span>
             </div>
           ) : (
-            <div className="px-3.5 py-2 rounded-2xl bg-[#FFFDF8] border border-[#F0EBE1] flex items-center justify-between text-xs">
-              <span className="text-[#6B756C]">Already have an account?</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsUpgradeModalOpen(false);
-                  openAuthModal('login');
-                }}
-                className="text-[#2C854E] hover:underline font-extrabold"
-              >
-                Sign In First
-              </button>
+            <div className="p-3.5 rounded-2xl bg-[#FFFDF8] border border-[#F0EBE1] space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-[#17211B]">Email for PayFast Receipt & Activation:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsUpgradeModalOpen(false);
+                    openAuthModal('login');
+                  }}
+                  className="text-[#2C854E] hover:underline font-bold text-[10px]"
+                >
+                  Already registered? Sign in
+                </button>
+              </div>
+              <input
+                type="email"
+                value={guestEmail}
+                onChange={(e) => setGuestEmail(e.target.value)}
+                placeholder="e.g. yourname@gmail.com"
+                className="w-full px-3 py-2 rounded-xl border border-[#E8EDE9] text-xs font-semibold focus:outline-none focus:border-[#3FAE68] bg-white"
+              />
             </div>
           )}
 

@@ -10,6 +10,7 @@ export const Header: React.FC = () => {
     setIsCoachOpen,
     setActiveTab,
     authUser,
+    openAuthModal,
   } = useApp();
 
   const [showNotificationsModal, setShowNotificationsModal] = useState(false);
@@ -29,24 +30,35 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-[#E8EDE9] px-4 py-2.5">
       <div className="max-w-md mx-auto flex items-center justify-between">
-        {/* Brand Logo & Guest Chip (Left) */}
-        <button
-          onClick={() => setActiveTab('home')}
-          className="flex items-center gap-2 shrink-0 active:scale-95 transition focus:outline-none"
-          title="NutriPlan SA Home"
-        >
-          <img
-            src="/logo.png"
-            alt="NutriPlan SA"
-            className="w-8 h-8 rounded-xl object-cover shadow-xs border border-[#E8EDE9]"
-          />
-          {!effectiveUser && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[10px] font-extrabold text-[#2C854E] border border-[#3FAE68]/20">
+        {/* Brand Logo & Status Chip (Left) */}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setActiveTab('home')}
+            className="flex items-center gap-2 active:scale-95 transition focus:outline-none"
+            title="NutriPlan SA Home"
+          >
+            <img
+              src="/logo.png"
+              alt="NutriPlan SA"
+              className="w-8 h-8 rounded-xl object-cover shadow-xs border border-[#E8EDE9]"
+            />
+          </button>
+          {!effectiveUser ? (
+            <button
+              onClick={() => openAuthModal('login')}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[10px] font-extrabold text-[#2C854E] border border-[#3FAE68]/20 hover:bg-[#d5eedf] transition active:scale-95"
+              title="Tap to Sign In"
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-[#3FAE68] animate-pulse" />
-              Guest
+              Sign In
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[10px] font-bold text-[#2C854E] border border-[#3FAE68]/20 max-w-[110px] truncate">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3FAE68]" />
+              <span className="truncate">{effectiveUser.name.split(' ')[0]}</span>
             </span>
           )}
-        </button>
+        </div>
 
         {/* Action icons (Right) - Streamlined for mobile */}
         <div className="flex items-center gap-2 shrink-0">
@@ -71,6 +83,17 @@ export const Header: React.FC = () => {
               <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-[#3FAE68] ring-2 ring-white" />
             )}
           </button>
+
+          {/* User Profile Avatar on Mobile */}
+          {effectiveUser && (
+            <button
+              onClick={() => setActiveTab('profile')}
+              className="w-8 h-8 rounded-full bg-[#17211B] text-white flex items-center justify-center text-xs font-black ring-2 ring-[#3FAE68]/30 hover:ring-[#3FAE68] transition active:scale-95 shrink-0"
+              title={`Signed in as ${effectiveUser.name} • View Profile & Sign Out`}
+            >
+              {effectiveUser.name ? effectiveUser.name.charAt(0).toUpperCase() : 'U'}
+            </button>
+          )}
         </div>
       </div>
 

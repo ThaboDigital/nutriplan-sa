@@ -126,12 +126,12 @@ export const authService = {
   async signIn(email: string, password: string): Promise<{ user: AuthUser | null; error: string | null }> {
     if (!isSupabaseConfigured) {
       const mockUser: AuthUser = {
-        id: 'usr_thabo_demo',
+        id: 'usr_' + Date.now(),
         email,
-        name: 'Thabo',
+        name: email.split('@')[0] || 'Subscriber',
         isGuest: false,
-        role: 'admin',
-        subscriptionTier: 'pro',
+        role: 'user',
+        subscriptionTier: 'free',
         subscriptionStatus: 'active',
       };
       localStorage.setItem('nutriplan_auth_user', JSON.stringify(mockUser));

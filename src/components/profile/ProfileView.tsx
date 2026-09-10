@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Shield, Bell, RotateCcw, Smartphone, Download } from 'lucide-react';
+import { Shield, Bell, RotateCcw, Smartphone, Download, LogOut, LogIn, CheckCircle2 } from 'lucide-react';
+import { authService } from '../../services/authService';
 
 export const ProfileView: React.FC = () => {
   const {
@@ -15,7 +16,27 @@ export const ProfileView: React.FC = () => {
     openUpgradeModal,
     setActiveTab,
     authUser,
+    setAuthUser,
+    openAuthModal,
   } = useApp();
+
+  const effectiveUser = authUser || (() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('nutriplan_auth_user') : null;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && !parsed.isGuest && parsed.email) return parsed;
+      } catch (e) {}
+    }
+    return null;
+  })();
+
+  const handleLogout = async () => {
+    await authService.signOut();
+    setAuthUser(null);
+    localStorage.removeItem('nutriplan_auth_user');
+    showToast('Signed out of cloud account', 'info');
+  };
 
   const isAdmin = authUser?.role === 'admin' || userProfile?.role === 'admin';
   const isPro = userProfile?.subscriptionTier === 'pro';
@@ -243,6 +264,61 @@ export const ProfileView: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Account & Session Management (Mobile & Desktop) */}
+          <div className="pt-3 border-t border-[#F0EBE1] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black text-[#17211B] uppercase tracking-wider">
+                Account & Cloud Sync
+              </span>
+              {effectiveUser ? (
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#EAF7EF] text-[#2C854E] border border-[#3FAE68]/30 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-[#3FAE68]" />
+                  <span>Cloud Synced</span>
+                </span>
+              ) : (
+                <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                  Guest Mode
+                </span>
+              )}
+            </div>
+
+            {effectiveUser ? (
+              <div className="p-3 rounded-2xl bg-[#F8F9FA] border border-[#E8EDE9] flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-[#17211B] text-white flex items-center justify-center font-black text-xs shrink-0">
+                    {effectiveUser.name ? effectiveUser.name.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <div className="min-w-0">
+                    <span className="font-bold text-xs text-[#17211B] block truncate">{effectiveUser.name}</span>
+                    <span className="text-[11px] text-[#6B756C] block truncate">{effectiveUser.email}</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className="px-3 py-2 rounded-xl border border-red-200 bg-white hover:bg-red-50 text-red-600 font-bold text-xs flex items-center gap-1.5 transition active:scale-95 shrink-0 shadow-2xs"
+                  title="Sign out of your account"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            ) : (
+              <div className="p-3 rounded-2xl bg-[#EAF7EF]/50 border border-[#3FAE68]/20 space-y-2">
+                <p className="text-[11px] text-[#6B756C] leading-snug">
+                  Currently running locally as guest. Create an account to backup your meal plans and access them across devices.
+                </p>
+                <button
+                  onClick={() => openAuthModal('login')}
+                  className="w-full py-2.5 rounded-xl bg-[#3FAE68] text-white hover:bg-[#349859] font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Create Account / Sign In</span>
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Admin Console Shortcut */}
           {isAdmin && (
