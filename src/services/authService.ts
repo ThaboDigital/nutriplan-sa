@@ -45,14 +45,19 @@ export const authService = {
     let subscriptionStatus: SubscriptionStatus = 'inactive';
     let cellNumber: string | undefined = undefined;
 
+    let profileName: string | undefined = undefined;
+
     try {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role, subscription_tier, subscription_period, subscription_status, cell_number')
+        .select('name, role, subscription_tier, subscription_period, subscription_status, cell_number')
         .eq('id', user.id)
         .maybeSingle();
 
       if (profile) {
+        if (profile.name && !['jane', 'new user', 'user'].includes(profile.name.trim().toLowerCase())) {
+          profileName = profile.name.trim();
+        }
         role = (profile.role as UserRole) || 'user';
         subscriptionTier = (profile.subscription_tier as SubscriptionTier) || 'free';
         subscriptionPeriod = (profile.subscription_period as SubscriptionPeriod) || 'monthly';
@@ -63,10 +68,17 @@ export const authService = {
       console.warn('Profile fetch notice:', e);
     }
 
+    const resolvedName =
+      profileName ||
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.user_metadata?.preferred_username ||
+      (user.email ? user.email.split('@')[0] : 'User');
+
     const authUserObj: AuthUser = {
       id: user.id,
       email: user.email || '',
-      name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+      name: resolvedName,
       isGuest: false,
       role,
       subscriptionTier,
@@ -251,14 +263,19 @@ export const authService = {
         let subscriptionStatus: SubscriptionStatus = 'inactive';
         let cellNumber: string | undefined = undefined;
 
+        let profileName: string | undefined = undefined;
+
         try {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('role, subscription_tier, subscription_period, subscription_status, cell_number')
+            .select('name, role, subscription_tier, subscription_period, subscription_status, cell_number')
             .eq('id', session.user.id)
             .maybeSingle();
 
           if (profile) {
+            if (profile.name && !['jane', 'new user', 'user'].includes(profile.name.trim().toLowerCase())) {
+              profileName = profile.name.trim();
+            }
             role = (profile.role as UserRole) || 'user';
             subscriptionTier = (profile.subscription_tier as SubscriptionTier) || 'free';
             subscriptionPeriod = (profile.subscription_period as SubscriptionPeriod) || 'monthly';
@@ -269,10 +286,17 @@ export const authService = {
           console.warn('Profile fetch notice in onAuthStateChange:', e);
         }
 
+        const resolvedName =
+          profileName ||
+          session.user.user_metadata?.full_name ||
+          session.user.user_metadata?.name ||
+          session.user.user_metadata?.preferred_username ||
+          (session.user.email ? session.user.email.split('@')[0] : 'User');
+
         const userObj: AuthUser = {
           id: session.user.id,
           email: session.user.email || '',
-          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+          name: resolvedName,
           isGuest: false,
           role,
           subscriptionTier,

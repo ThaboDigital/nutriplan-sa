@@ -113,6 +113,7 @@ interface AppContextType {
   regenerateEntireWeek: () => void;
   regenerateSingleDay: (dayOfWeek: string) => void;
   resetToDemo: () => void;
+  logout: () => Promise<void>;
   
   // PWA Install Prompt
   isInstallable: boolean;
@@ -224,10 +225,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.PROFILE);
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+      try {
+        const parsed = JSON.parse(saved);
+        // Sanitize legacy 'Jane' placeholder if not authenticated as Jane
+        if (parsed && (parsed.name === 'Jane' || parsed.name === 'jane')) {
+          const authSaved = localStorage.getItem('nutriplan_auth_user');
+          const authObj = authSaved ? JSON.parse(authSaved) : null;
+          if (!authObj || !authObj.name?.toLowerCase().includes('jane')) {
+            parsed.name = authObj?.name && authObj.name !== 'User' ? authObj.name : 'New User';
+          }
+        }
+        return parsed;
+      } catch (e) {}
     }
     return DEFAULT_USER_PROFILE;
   });
+
+  // Automatically keep userProfile.name synchronized with authenticated user name
+  useEffect(() => {
+    if (authUser && !authUser.isGuest && authUser.name && authUser.name !== 'User') {
+      setUserProfile((prev) => {
+        if (prev.name !== authUser.name) {
+          return { ...prev, name: authUser.name };
+        }
+        return prev;
+      });
+    }
+  }, [authUser]);
 
   // Weekly Plan
   const [weeklyPlan, setWeeklyPlan] = useState<DayPlan[]>(() => {
@@ -418,19 +442,44 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     authService.getCurrentUser().then((user) => {
       setAuthUser(user);
+      if (user && !user.isGuest && user.name && user.name !== 'User') {
+        setUserProfile((prev) => (prev.name !== user.name ? { ...prev, name: user.name } : prev));
+      }
     });
 
     const sub = authService.onAuthStateChange(async (user) => {
       setAuthUser(user);
       if (user) {
+        if (!user.isGuest && user.name && user.name !== 'User') {
+          setUserProfile((prev) => (prev.name !== user.name ? { ...prev, name: user.name } : prev));
+        }
         try {
           const cloudData = await dataSyncService.loadAllUserData(user.id);
           if (cloudData.profile) {
-            setUserProfile(cloudData.profile);
+            const cleanName = (user.name && user.name !== 'User' && user.name !== 'Jane')
+              ? user.name
+              : (cloudData.profile.name && !['jane', 'new user', 'user'].includes(cloudData.profile.name.toLowerCase().trim()))
+              ? cloudData.profile.name
+              : user.name || 'New User';
+
+            setUserProfile({
+              ...cloudData.profile,
+              name: cleanName,
+            });
           } else {
             // First time user registered after building local plan -> auto-migrate to cloud!
+            const cleanName = (user.name && user.name !== 'User' && user.name !== 'Jane')
+              ? user.name
+              : (userProfile.name && !['jane', 'new user', 'user'].includes(userProfile.name.toLowerCase().trim()))
+              ? userProfile.name
+              : 'New User';
+            const initialProfile = {
+              ...userProfile,
+              name: cleanName,
+            };
+            setUserProfile(initialProfile);
             await dataSyncService.migrateLocalDataToCloud(user.id, {
-              profile: userProfile,
+              profile: initialProfile,
               weeklyPlan,
               todayWaterMl,
               habits,
@@ -602,6 +651,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updated = { ...prev, ...updates };
       return updated;
     });
+    if (updates.name && authUser && authUser.name !== updates.name) {
+      const updatedAuth = { ...authUser, name: updates.name };
+      setAuthUser(updatedAuth);
+      localStorage.setItem('nutriplan_auth_user', JSON.stringify(updatedAuth));
+    }
   };
 
   const addWaterMl = (amountMl: number) => {
@@ -816,6 +870,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('Reset to clean state. Start your personalized plan questionnaire!', 'info');
   };
 
+  const logout = async () => {
+    try {
+      await authService.signOut();
+    } catch (e) {
+      console.warn('SignOut notice:', e);
+    }
+    setAuthUser(null);
+    localStorage.removeItem('nutriplan_auth_user');
+    localStorage.removeItem(STORAGE_KEYS.PROFILE);
+    setUserProfile(DEFAULT_USER_PROFILE);
+    showToast('Signed out of your account', 'info');
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -889,6 +956,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         regenerateEntireWeek,
         regenerateSingleDay,
         resetToDemo,
+        logout,
         isInstallable,
         promptInstallApp,
         toasts,

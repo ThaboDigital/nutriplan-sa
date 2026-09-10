@@ -16,8 +16,15 @@ export const NutriCoachChat: React.FC = () => {
     setActiveTab,
     swapMeal,
     regenerateEntireWeek,
-    showToast
+    showToast,
+    authUser,
   } = useApp();
+
+  const coachGreetingName = (authUser && !authUser.isGuest && authUser.name?.trim())
+    ? authUser.name.split(' ')[0]
+    : (userProfile.name && !['new user', 'guest', 'user', 'health champion', 'jane'].includes(userProfile.name.trim().toLowerCase()))
+    ? userProfile.name.split(' ')[0]
+    : 'Friend';
 
   const [inputQuery, setInputQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,7 +32,7 @@ export const NutriCoachChat: React.FC = () => {
     {
       id: 'msg_initial',
       sender: 'coach',
-      text: `Sawubona, ${userProfile.name}! I am NutriCoach, your AI South African nutrition advisor.\n\nAsk me about braai strategies, biltong & snack ideas, Mogodu / Maotwana budget banting, or what to cook with ingredients in your fridge. How can I help you today?`,
+      text: `Sawubona, ${coachGreetingName}! I am NutriCoach, your AI South African nutrition advisor.\n\nAsk me about braai strategies, biltong & snack ideas, Mogodu / Maotwana budget banting, or what to cook with ingredients in your fridge. How can I help you today?`,
       timestamp: 'Just now'
     }
   ]);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Shield, Bell, RotateCcw, Smartphone, Download, LogOut, LogIn, CheckCircle2 } from 'lucide-react';
+import { Shield, Bell, RotateCcw, Smartphone, Download, LogOut, LogIn, CheckCircle2, Edit2, Check, X } from 'lucide-react';
 import { authService } from '../../services/authService';
 
 export const ProfileView: React.FC = () => {
@@ -8,6 +8,7 @@ export const ProfileView: React.FC = () => {
     userProfile,
     updateUserProfile,
     resetToDemo,
+    logout,
     setShowOnboardingWizard,
     notificationPreferences,
     updateNotificationPreferences,
@@ -32,10 +33,7 @@ export const ProfileView: React.FC = () => {
   })();
 
   const handleLogout = async () => {
-    await authService.signOut();
-    setAuthUser(null);
-    localStorage.removeItem('nutriplan_auth_user');
-    showToast('Signed out of cloud account', 'info');
+    await logout();
   };
 
   const isAdmin = authUser?.role === 'admin' || userProfile?.role === 'admin';
@@ -43,6 +41,20 @@ export const ProfileView: React.FC = () => {
 
   const [isEditingWeight, setIsEditingWeight] = useState(false);
   const [tempWeight, setTempWeight] = useState(userProfile.weightKg.toString());
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(userProfile.name);
+
+  const handleSaveName = () => {
+    const trimmed = tempName.trim();
+    if (trimmed && trimmed.length >= 2) {
+      updateUserProfile({ name: trimmed });
+      setIsEditingName(false);
+      showToast(`Name updated to "${trimmed}"`, 'success');
+    } else {
+      showToast('Please enter a valid name (at least 2 characters)', 'warning');
+    }
+  };
 
   const handleSaveWeight = () => {
     const val = parseFloat(tempWeight);
@@ -73,11 +85,57 @@ export const ProfileView: React.FC = () => {
       {/* Profile Overview Card */}
       <div className="bg-white rounded-3xl p-6 border border-[#E8EDE9] subtle-shadow">
         <div className="flex items-center gap-4 mb-5">
-          <div className="w-16 h-16 rounded-2xl bg-[#17211B] text-white flex items-center justify-center font-black text-2xl shadow-sm">
-            {userProfile.name.charAt(0)}
+          <div className="w-16 h-16 rounded-2xl bg-[#17211B] text-white flex items-center justify-center font-black text-2xl shadow-sm shrink-0">
+            {userProfile.name ? userProfile.name.charAt(0).toUpperCase() : 'U'}
           </div>
-          <div>
-            <h2 className="text-xl font-black text-[#17211B]">{userProfile.name}</h2>
+          <div className="flex-1 min-w-0">
+            {isEditingName ? (
+              <div className="flex items-center gap-1.5 mb-1 flex-wrap sm:flex-nowrap">
+                <input
+                  type="text"
+                  value={tempName}
+                  onChange={e => setTempName(e.target.value)}
+                  placeholder="Enter your name"
+                  className="px-2.5 py-1 text-sm sm:text-base font-black border border-[#3FAE68] rounded-xl bg-white text-[#17211B] focus:outline-none focus:ring-2 focus:ring-[#3FAE68]/40 w-44 sm:w-56"
+                  autoFocus
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') handleSaveName();
+                    if (e.key === 'Escape') setIsEditingName(false);
+                  }}
+                />
+                <button
+                  onClick={handleSaveName}
+                  className="px-2.5 py-1 rounded-xl bg-[#3FAE68] hover:bg-[#349859] text-white text-xs font-bold transition shadow-xs active:scale-95"
+                  title="Save Name"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => {
+                    setTempName(userProfile.name);
+                    setIsEditingName(false);
+                  }}
+                  className="p-1 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#6B756C] text-xs font-bold transition"
+                  title="Cancel"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-black text-[#17211B] truncate">{userProfile.name}</h2>
+                <button
+                  onClick={() => {
+                    setTempName(userProfile.name);
+                    setIsEditingName(true);
+                  }}
+                  className="p-1.5 rounded-lg text-[#6B756C] hover:text-[#3FAE68] hover:bg-[#EAF7EF] transition"
+                  title="Edit Name"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
             <p className="text-xs font-semibold text-[#6B756C]">
               {userProfile.age} yrs • {userProfile.heightCm} cm • South Africa
             </p>

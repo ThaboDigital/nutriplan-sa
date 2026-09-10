@@ -42,6 +42,8 @@ const AppContent: React.FC = () => {
     loginInitialMode,
     authUser,
     setAuthUser,
+    updateUserProfile,
+    logout,
   } = useApp();
   const [devicePreviewMode, setDevicePreviewMode] = useState<'desktop' | 'mobile_frame'>('desktop');
   const [migrationSummary, setMigrationSummary] = useState<MigrationSummary | null>(null);
@@ -81,6 +83,9 @@ const AppContent: React.FC = () => {
     const { unsubscribe } = authService.onAuthStateChange(user => {
       setAuthUser(user);
       if (user && !user.isGuest) {
+        if (user.name && user.name !== 'User') {
+          updateUserProfile({ name: user.name });
+        }
         // Check for local data migration
         const summary = migrationService.detectLocalData();
         const alreadyMigrated = localStorage.getItem('nutriplan_migrated_user') === user.id;
@@ -92,17 +97,17 @@ const AppContent: React.FC = () => {
     });
 
     return () => unsubscribe();
-  }, [setAuthUser]);
+  }, [setAuthUser, updateUserProfile]);
 
   const handleLogout = async () => {
-    await authService.signOut();
-    setAuthUser(null);
-    localStorage.removeItem('nutriplan_auth_user');
-    showToast('Signed out of cloud account', 'info');
+    await logout();
   };
 
   const handleAuthSuccess = (user: AuthUser) => {
     setAuthUser(user);
+    if (user.name && user.name !== 'User') {
+      updateUserProfile({ name: user.name });
+    }
     localStorage.setItem('nutriplan_auth_user', JSON.stringify(user));
     showToast(`Welcome, ${user.name}! Cloud sync active.`, 'success');
   };

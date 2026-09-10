@@ -18,6 +18,7 @@ import {
 export const HomeDashboard: React.FC = () => {
   const {
     userProfile,
+    authUser,
     weeklyPlan,
     habits,
     toggleHabit,
@@ -43,7 +44,15 @@ export const HomeDashboard: React.FC = () => {
     month: 'short',
   }).format(new Date());
 
-  const firstName = userProfile.name ? userProfile.name.split(' ')[0] : 'Friend';
+  // Determine display name prioritizing authenticated user, then valid profile name, avoiding generic/stale fallbacks
+  const activeName = (authUser && !authUser.isGuest && authUser.name?.trim())
+    ? authUser.name.trim()
+    : (userProfile.name && !['new user', 'guest', 'user', 'health champion'].includes(userProfile.name.trim().toLowerCase()))
+    ? userProfile.name.trim()
+    : '';
+
+  const firstName = activeName ? activeName.split(' ')[0] : '';
+  const greetingHeading = firstName ? `${timeGreeting}, ${firstName} 👋` : `${timeGreeting}! 👋`;
 
   return (
     <div className="space-y-5 pb-24 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto animate-in fade-in duration-200">
@@ -58,7 +67,7 @@ export const HomeDashboard: React.FC = () => {
               </span>
             </div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-[#17211B] tracking-tight truncate mt-0.5">
-              {timeGreeting}, {firstName} 👋
+              {greetingHeading}
             </h1>
           </div>
 
